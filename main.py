@@ -266,6 +266,239 @@ async def get_members_page(request: Request, db: Session = Depends(get_db)):
         logger.error(f"Error rendering members page: {e}")
         return HTMLResponse(content="<p>Error loading members page</p>")
 
+# Login page
+@app.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request):
+    try:
+        return HTMLResponse(content="""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Olympus Strength</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        .nav {
+            margin-bottom: 20px;
+        }
+        .nav a {
+            margin-right: 10px;
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        form {
+            margin-top: 30px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 4px;
+            max-width: 400px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #388E3C;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/members">Members</a>
+        <a href="/workouts">Workouts</a>
+        <a href="/login">Login</a>
+    </div>
+    
+    <h1>Login to Olympus Strength</h1>
+    
+    <form id="login-form">
+        <div>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Login</button>
+        <p>Don't have an account? <a href="/members">Join now</a></p>
+    </form>
+    
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    alert('Login successful!');
+                    window.location.href = '/';
+                } else {
+                    const data = await response.json();
+                    alert('Error: ' + (data.detail || 'Login failed'));
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
+        """)
+    except Exception as e:
+        logger.error(f"Error rendering login page: {e}")
+        return HTMLResponse(content="<p>Error loading login page</p>")
+
+# Workouts page
+@app.get("/workouts", response_class=HTMLResponse)
+async def get_workouts_page(request: Request, db: Session = Depends(get_db)):
+    try:
+        workouts = crud.get_workouts(db)
+        return HTMLResponse(content=f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workouts - Olympus Strength</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }}
+        h1 {{
+            color: #4CAF50;
+        }}
+        .nav {{
+            margin-bottom: 20px;
+        }}
+        .nav a {{
+            margin-right: 10px;
+            color: #4CAF50;
+            text-decoration: none;
+        }}
+        .workout-card {{
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }}
+        .workout-card h2 {{
+            color: #212121;
+            margin-top: 0;
+        }}
+        .difficulty {{
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: white;
+            margin-bottom: 10px;
+        }}
+        .Beginner {{
+            background-color: #4CAF50;
+        }}
+        .Intermediate {{
+            background-color: #FF9800;
+        }}
+        .Advanced {{
+            background-color: #F44336;
+        }}
+        button {{
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }}
+        button:hover {{
+            background-color: #388E3C;
+        }}
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/members">Members</a>
+        <a href="/workouts">Workouts</a>
+        <a href="/login">Login</a>
+    </div>
+    
+    <h1>Featured Workouts</h1>
+    
+    <div class="workout-list">
+        {
+            ''.join([f"""
+            <div class="workout-card">
+                <h2>{workout.name}</h2>
+                <span class="difficulty {workout.difficulty}">{workout.difficulty}</span>
+                <p>{workout.description}</p>
+                <div>
+                    <button class="view-workout" data-id="{workout.id}">View Details</button>
+                </div>
+            </div>
+            """ for workout in workouts]) if workouts else '<p>No workouts found.</p>'
+        }
+    </div>
+    
+    <script>
+        document.querySelectorAll('.view-workout').forEach(button => {{
+            button.addEventListener('click', () => {{
+                alert('Workout details will be available soon!');
+            }});
+        }});
+    </script>
+</body>
+</html>
+        """)
+    except Exception as e:
+        logger.error(f"Error rendering workouts page: {e}")
+        return HTMLResponse(content="<p>Error loading workouts page</p>")
+
 # API endpoint for creating members
 @app.post("/api/members", response_model=schemas.Member)
 def create_member_api(member: schemas.MemberCreate, db: Session = Depends(get_db)):
@@ -273,6 +506,15 @@ def create_member_api(member: schemas.MemberCreate, db: Session = Depends(get_db
     if db_member:
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_member(db=db, member=member)
+
+# API endpoint for login
+@app.post("/api/login")
+async def login(credentials: schemas.Login, db: Session = Depends(get_db)):
+    user = crud.authenticate_member(db, credentials.email, credentials.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
+    
+    return {"id": user.id, "name": user.name, "email": user.email}
 
 # Initial data seeding function
 def seed_initial_data():
