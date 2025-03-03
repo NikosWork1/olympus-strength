@@ -96,15 +96,8 @@ async def get_optional_user(request: Request, db: Session = Depends(get_db)):
 # Home page
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    try:
-        # No need for complex logic just to serve the homepage
-        # This directly serves your HTML file with inline styles
-        with open("templates/index.html", "r") as file:
-            html_content = file.read()
-        return HTMLResponse(content=html_content)
-    except Exception as e:
-        logger.error(f"Error rendering home page: {e}")
-        return HTMLResponse(content=f"Error: {str(e)}")
+    with open("templates/index.html", "r") as file:
+        return HTMLResponse(content=file.read())
         
         # Generate classes HTML
         classes_html = ""
