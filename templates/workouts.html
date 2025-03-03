@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div class="page-header-content">
+        <h1>Elite Training Programs</h1>
+        <p>Discover our professional workout programs designed for maximum results</p>
+    </div>
+</section>
+
+<section class="workouts">
+    <h2>Featured Workouts</h2>
+    
+    <div class="workout-filters">
+        <button class="filter-btn active" data-filter="all">All Programs</button>
+        <button class="filter-btn" data-filter="Beginner">Beginner</button>
+        <button class="filter-btn" data-filter="Intermediate">Intermediate</button>
+        <button class="filter-btn" data-filter="Advanced">Advanced</button>
+    </div>
+    
+    <div class="workout-grid">
+        {% for workout in workouts %}
+        <div class="workout-card" data-difficulty="{{ workout.difficulty }}">
+            <div class="workout-card-header" style="background-color: {% if workout.difficulty == 'Beginner' %}#4CAF50{% elif workout.difficulty == 'Intermediate' %}#FF9800{% else %}#F44336{% endif %};">
+                <h3>{{ workout.name }}</h3>
+                <span class="difficulty-badge {{ workout.difficulty.lower() }}">
+                    {{ workout.difficulty }}
+                </span>
+            </div>
+            <div class="workout-card-content">
+                <p>{{ workout.description }}</p>
+                <div class="workout-details">
+                    <span><i class="fas fa-clock"></i> 45-60 min</span>
+                    <span><i class="fas fa-fire"></i> 400-600 cal</span>
+                </div>
+                <button class="btn view-workout-btn">View Details</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="add-workout-container">
+        <form id="add-workout-form" class="form">
+            <h2>Create Your Own Workout</h2>
+            <div class="form-group">
+                <label for="workout-name">Workout Name</label>
+                <input type="text" id="workout-name" name="name" placeholder="Enter workout name" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" placeholder="Describe the workout routine" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="difficulty">Difficulty Level</label>
+                <select id="difficulty" name="difficulty" required>
+                    <option value="" disabled selected>Select difficulty level</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="duration">Estimated Duration (minutes)</label>
+                <input type="number" id="duration" name="duration" min="5" max="120" placeholder="e.g., 45">
+            </div>
+            <div class="form-group">
+                <label for="target-area">Primary Target Area</label>
+                <select id="target-area" name="target_area">
+                    <option value="" disabled selected>Select primary muscle group</option>
+                    <option value="Full Body">Full Body</option>
+                    <option value="Upper Body">Upper Body</option>
+                    <option value="Lower Body">Lower Body</option>
+                    <option value="Core">Core</option>
+                    <option value="Cardio">Cardio</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">Create Workout</button>
+        </form>
+        
+        <div class="workout-tips">
+            <h3>Workout Creation Tips</h3>
+            <ul>
+                <li><i class="fas fa-lightbulb"></i> Start with a 5-10 minute warm-up</li>
+                <li><i class="fas fa-lightbulb"></i> Include a mix of strength and cardio</li>
+                <li><i class="fas fa-lightbulb"></i> Allow for rest periods between sets</li>
+                <li><i class="fas fa-lightbulb"></i> End with a proper cool-down and stretch</li>
+                <li><i class="fas fa-lightbulb"></i> Balance exercises across muscle groups</li>
+                <li><i class="fas fa-lightbulb"></i> Consider adding progressive overload</li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', path='/js/workouts.js') }}"></script>
+{% endblock %}

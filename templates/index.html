@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <h1>Forge Your Legacy at Olympus Strength</h1>
+    <p>Where gods train. Where legends are made. Your journey to greatness begins here.</p>
+    <a href="#classes" class="btn">Start Your Journey</a>
+</section>
+
+<section id="classes" class="classes">
+    <h2>OUR ELITE PROGRAMS</h2>
+    <div class="class-grid">
+        <!-- This will be populated by JavaScript -->
+    </div>
+    <div id="loading">Loading elite training programs...</div>
+</section>
+
+<section class="features">
+    <h2>WHY CHOOSE OLYMPUS STRENGTH</h2>
+    <div class="features-grid">
+        <div class="feature">
+            <i class="fas fa-dumbbell"></i>
+            <h3>State-of-the-Art Equipment</h3>
+            <p>Train with the latest fitness technology and premium equipment for maximum results.</p>
+        </div>
+        <div class="feature">
+            <i class="fas fa-users"></i>
+            <h3>Expert Trainers</h3>
+            <p>Our certified professionals create personalized programs to help you reach your goals.</p>
+        </div>
+        <div class="feature">
+            <i class="fas fa-clock"></i>
+            <h3>Flexible Hours</h3>
+            <p>Open 24/7 to accommodate your schedule, because dedication knows no time.</p>
+        </div>
+        <div class="feature">
+            <i class="fas fa-heart"></i>
+            <h3>Community Support</h3>
+            <p>Join a passionate community that will motivate and inspire your fitness journey.</p>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <div class="cta-content">
+        <h2>Ready to Transform Your Life?</h2>
+        <p>Join Olympus Strength today and start your journey towards a stronger, godlike physique.</p>
+        <a href="#" class="btn join-now-btn">Join Now</a>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', path='/js/home.js') }}"></script>
+{% endblock %}
