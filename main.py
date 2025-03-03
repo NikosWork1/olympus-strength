@@ -108,7 +108,7 @@ async def home(request: Request, db: Session = Depends(get_db)):
                 <div class="program-content">
                     <p>{cls.description}</p>
                     <div class="program-details">
-                        <span>🧑‍🏫 {cls.trainer}</span>
+                        <span>🧑‍🏫 {cls.instructor}</span>
                         <span>📅 {cls.schedule}</span>
                     </div>
                     <a href="/classes/{cls.id}" class="btn">Book Class</a>
