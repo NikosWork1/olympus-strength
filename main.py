@@ -96,8 +96,12 @@ async def get_optional_user(request: Request, db: Session = Depends(get_db)):
 # Home page
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    with open("templates/index.html", "r") as file:
-        return HTMLResponse(content=file.read())
+    try:
+        # Just serve the index.html file directly
+        return templates.TemplateResponse("index.html", {"request": request})
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        return HTMLResponse(f"Error: {str(e)}")
         
         # Generate classes HTML
         classes_html = ""
