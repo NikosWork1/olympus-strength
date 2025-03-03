@@ -3,22 +3,19 @@
 
 // Helper function to make API requests
 async function apiRequest(url, method = 'GET', data = null) {
-    // Ensure full URL is HTTPS
-    const fullUrl = url.startsWith('http') ? url : `https://${window.location.host}${url}`;
-    
-    const options = {
-        method,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-
-    if (data && (method === 'POST' || method === 'PUT')) {
-        options.body = JSON.stringify(data);
-    }
-
     try {
-        const response = await fetch(fullUrl, options);
+        const options = {
+            method,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        if (data && (method === 'POST' || method === 'PUT')) {
+            options.body = JSON.stringify(data);
+        }
+
+        const response = await fetch(url, options);
         
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -34,14 +31,6 @@ async function apiRequest(url, method = 'GET', data = null) {
 
 // Simple notification function
 function showNotification(message, type = 'success') {
-    // Ensure HTTPS for any resource loading
-    const ensureHttps = (url) => {
-        if (url && url.startsWith('http://')) {
-            return url.replace('http://', 'https://');
-        }
-        return url;
-    };
-
     // Check if notification container exists, if not create it
     let notificationContainer = document.querySelector('.notification-container');
     
@@ -76,75 +65,13 @@ function showNotification(message, type = 'success') {
 
 // Create and initialize modals if they don't exist
 function createModals() {
-    // Ensure no duplicate modals
-    if (document.getElementById('login-modal') && document.getElementById('booking-modal')) {
-        return;
-    }
-    
-    // Create login modal
-    const loginModal = document.createElement('div');
-    loginModal.id = 'login-modal';
-    loginModal.className = 'modal';
-    loginModal.innerHTML = `
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Login to Olympus Strength</h2>
-            <form id="login-form" class="form">
-                <div class="form-group">
-                    <label for="login-email">Email</label>
-                    <input type="email" id="login-email" required>
-                </div>
-                <div class="form-group">
-                    <label for="login-password">Password</label>
-                    <input type="password" id="login-password" required>
-                </div>
-                <div class="form-check">
-                    <input type="checkbox" id="remember-me">
-                    <label for="remember-me">Remember me</label>
-                </div>
-                <button type="submit" class="btn">Login</button>
-                <p class="form-footer">Don't have an account? <a href="/members" class="link">Join now</a></p>
-            </form>
-        </div>
-    `;
-    
-    // Create booking modal
-    const bookingModal = document.createElement('div');
-    bookingModal.id = 'booking-modal';
-    bookingModal.className = 'modal';
-    bookingModal.innerHTML = `
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Book Your Class</h2>
-            <div id="booking-details"></div>
-            <form id="booking-form" class="form">
-                <div class="form-group">
-                    <label for="booking-name">Full Name</label>
-                    <input type="text" id="booking-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="booking-email">Email</label>
-                    <input type="email" id="booking-email" required>
-                </div>
-                <div class="form-group">
-                    <label for="booking-phone">Phone Number</label>
-                    <input type="tel" id="booking-phone" required>
-                </div>
-                <button type="submit" class="btn">Confirm Booking</button>
-            </form>
-        </div>
-    `;
-    
-    // Add modals to the body
-    document.body.appendChild(loginModal);
-    document.body.appendChild(bookingModal);
+    // This function is now unnecessary since we have the modals in the HTML
+    // We're keeping it for compatibility with existing code that might call it
+    console.log("Modals already exist in HTML");
 }
 
 // Modal functionality
 function setupModals() {
-    // Create modals if they don't exist
-    createModals();
-    
     // Login button functionality
     const loginBtn = document.querySelector('#login-btn');
     if (loginBtn) {
@@ -159,30 +86,23 @@ function setupModals() {
     const joinNowBtns = document.querySelectorAll('.join-now-btn');
     joinNowBtns.forEach(btn => {
         btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            window.location.href = '/members';
+            // Only prevent default if it's not a direct link (href="#")
+            if (btn.getAttribute('href') === '#') {
+                e.preventDefault();
+                window.location.href = '/members';
+            }
         });
     });
     
     // Setup Book Class buttons
     setupBookButtons();
     
-    // Handle login form submission
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            document.getElementById('login-modal').style.display = 'none';
-            showNotification('Login successful! Welcome back to Olympus Strength.', 'success');
-        });
-    }
-    
     // Handle booking form submission
     const bookingForm = document.getElementById('booking-form');
     if (bookingForm) {
         bookingForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            const className = document.querySelector('#booking-details .booking-summary h3').textContent;
+            const className = document.querySelector('#booking-details .booking-summary h3')?.textContent || 'this class';
             document.getElementById('booking-modal').style.display = 'none';
             showNotification(`You've booked ${className}!`, 'success');
         });
@@ -213,12 +133,16 @@ function setupBookButtons() {
     bookClassBtns.forEach(btn => {
         // Remove existing event listeners by cloning and replacing
         const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
+        if (btn.parentNode) {
+            btn.parentNode.replaceChild(newBtn, btn);
+        }
         
         // Add new event listener
         newBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            e.stopPropagation();
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
             
             // Get class info
             let className = '';
@@ -269,154 +193,37 @@ function setupBookButtons() {
     });
 }
 
-// Add styles
-function addStyles() {
-    // Add notification styles
-    let styleElement = document.getElementById('notification-styles');
-    if (!styleElement) {
-        styleElement = document.createElement('style');
-        styleElement.id = 'notification-styles';
-        styleElement.textContent = `
-            .notification-container {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 1000;
-            }
-            
-            .notification {
-                margin-bottom: 10px;
-                padding: 15px 20px;
-                border-radius: 4px;
-                color: white;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                position: relative;
-                min-width: 250px;
-            }
-            
-            .notification.success {
-                background-color: #4CAF50;
-            }
-            
-            .notification.error {
-                background-color: #F44336;
-            }
-            
-            .notification.info {
-                background-color: #2196F3;
-            }
-            
-            .notification-close {
-                position: absolute;
-                top: 5px;
-                right: 10px;
-                background: transparent;
-                border: none;
-                color: white;
-                font-size: 18px;
-                cursor: pointer;
-            }
-        `;
-        document.head.appendChild(styleElement);
-    }
-    
-    // Add modal styles (same as before)
-    styleElement = document.getElementById('modal-styles');
-    if (!styleElement) {
-        styleElement = document.createElement('style');
-        styleElement.id = 'modal-styles';
-        styleElement.textContent = `
-            .modal {
-                display: none;
-                position: fixed;
-                z-index: 1050;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                overflow: auto;
-                background-color: rgba(0, 0, 0, 0.7);
-            }
-            
-            .modal-content {
-                background-color: white;
-                margin: 10% auto;
-                padding: 2rem;
-                border-radius: 8px;
-                max-width: 500px;
-                position: relative;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-                animation: modalFadeIn 0.3s;
-            }
-            
-            @keyframes modalFadeIn {
-                from { opacity: 0; transform: translateY(-50px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            
-            .close-modal {
-                position: absolute;
-                top: 15px;
-                right: 15px;
-                font-size: 24px;
-                font-weight: bold;
-                color: #aaa;
-                cursor: pointer;
-                background: none;
-                border: none;
-                padding: 0;
-            }
-            
-            .close-modal:hover {
-                color: #333;
-            }
-            
-            .booking-summary {
-                background-color: #f5f5f5;
-                padding: 1.5rem;
-                border-radius: 8px;
-                margin-bottom: 1.5rem;
-            }
-            
-            .booking-summary h3 {
-                margin-bottom: 1rem;
-                color: #212121;
-                border-bottom: 2px solid #4CAF50;
-                padding-bottom: 0.5rem;
-            }
-            
-            .form-footer {
-                text-align: center;
-                margin-top: 1.5rem;
-                font-size: 0.9rem;
-            }
-            
-            .form-footer a {
-                color: #4CAF50;
-                text-decoration: none;
-            }
-            
-            .form-footer a:hover {
-                text-decoration: underline;
-            }
-        `;
-        document.head.appendChild(styleElement);
-    }
-}
-
 // Initialize on DOM content loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Add styles
-    addStyles();
+    // Check for logged in user
+    const userJson = localStorage.getItem('user');
+    if (userJson) {
+        try {
+            const user = JSON.parse(userJson);
+            if (user && user.isLoggedIn) {
+                // Update UI for logged-in user
+                const loginBtn = document.querySelector('#login-btn');
+                if (loginBtn) {
+                    loginBtn.textContent = user.name || 'MY ACCOUNT';
+                    // Update login button to go to profile page instead
+                    loginBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showNotification('Profile page coming soon!', 'info');
+                    }, { once: true });
+                }
+            }
+        } catch (e) {
+            console.error('Error parsing user data', e);
+            localStorage.removeItem('user');
+        }
+    }
     
     // Setup modals
     setupModals();
 });
 
 // For pages loaded via AJAX or other methods
-// We need to ensure the setup happens
 function initializePage() {
-    addStyles();
     setupModals();
 }
 

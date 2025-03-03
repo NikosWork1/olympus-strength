@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; default-src https:; script-src https: 'self'; style-src https: 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' https:; style-src 'self' https:; font-src 'self' https: data:;">
     <title>{{ title }} - Olympus Strength</title>
     <link rel="stylesheet" href="{{ url_for('static', path='/css/styles.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
                 <li><a href="/members">MEMBERS</a></li>
                 <li><a href="/workouts">WORKOUTS</a></li>
                 <li><a href="#" id="login-btn">LOGIN</a></li>
-                <li><a href="#" class="btn join-now-btn" style="padding: 0.5rem 1.5rem; margin-top: -0.5rem;">JOIN NOW</a></li>
+                <li><a href="/members" class="btn join-now-btn">JOIN NOW</a></li>
             </ul>
         </nav>
     </header>
