@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from typing import List, Optional
 import uvicorn
 import os
@@ -20,6 +21,9 @@ models.Base.metadata.create_all(bind=engine)
 
 # Create FastAPI app
 app = FastAPI(title="Olympus Strength")
+
+# Add HTTPS redirect middleware
+app.add_middleware(HTTPSRedirectMiddleware)
 
 # Add CORS middleware
 app.add_middleware(

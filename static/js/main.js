@@ -3,6 +3,9 @@
 
 // Helper function to make API requests
 async function apiRequest(url, method = 'GET', data = null) {
+    // Ensure full URL is HTTPS
+    const fullUrl = url.startsWith('http') ? url : `https://${window.location.host}${url}`;
+    
     const options = {
         method,
         headers: {
@@ -15,7 +18,7 @@ async function apiRequest(url, method = 'GET', data = null) {
     }
 
     try {
-        const response = await fetch(url, options);
+        const response = await fetch(fullUrl, options);
         
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -31,6 +34,14 @@ async function apiRequest(url, method = 'GET', data = null) {
 
 // Simple notification function
 function showNotification(message, type = 'success') {
+    // Ensure HTTPS for any resource loading
+    const ensureHttps = (url) => {
+        if (url && url.startsWith('http://')) {
+            return url.replace('http://', 'https://');
+        }
+        return url;
+    };
+
     // Check if notification container exists, if not create it
     let notificationContainer = document.querySelector('.notification-container');
     
@@ -65,7 +76,7 @@ function showNotification(message, type = 'success') {
 
 // Create and initialize modals if they don't exist
 function createModals() {
-    // Check if modals already exist
+    // Ensure no duplicate modals
     if (document.getElementById('login-modal') && document.getElementById('booking-modal')) {
         return;
     }
@@ -309,7 +320,7 @@ function addStyles() {
         document.head.appendChild(styleElement);
     }
     
-    // Add modal styles
+    // Add modal styles (same as before)
     styleElement = document.getElementById('modal-styles');
     if (!styleElement) {
         styleElement = document.createElement('style');

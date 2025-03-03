@@ -52,7 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Attempting to send API request');
                 console.log('Form Data:', formData);
                 
-                const newMember = await apiRequest('/api/members', 'POST', formData);
+                // Ensure full HTTPS URL
+                const apiUrl = `https://${window.location.host}/api/members`;
+                const newMember = await apiRequest(apiUrl, 'POST', formData);
                 console.log('API Response:', newMember);
                 
                 if (newMember) {

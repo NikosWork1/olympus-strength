@@ -59,8 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
         submitButton.disabled = true;
         
         try {
+            // Ensure full HTTPS URL for API request
+            const apiUrl = `https://${window.location.host}/api/workouts`;
+            
             // Make API request to add workout
-            const newWorkout = await apiRequest('/api/workouts', 'POST', formData);
+            const newWorkout = await apiRequest(apiUrl, 'POST', formData);
             
             if (newWorkout) {
                 // Create new workout card
