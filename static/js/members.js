@@ -1,3 +1,4 @@
+// static/js/members.js
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM fully loaded and parsed');
     
@@ -12,11 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Form submission intercepted');
             
             // Form validation
-            const nameInput = e.target.name;
-            const emailInput = e.target.email;
-            const passwordInput = e.target.password;
-            const membershipInput = e.target.membership_type;
-            const termsCheckbox = e.target.terms;
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const membershipInput = document.getElementById('membership');
+            const termsCheckbox = document.getElementById('terms');
             
             // Detailed logging
             console.log('Form elements:', {
@@ -38,8 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 email: emailInput.value,
                 password: passwordInput.value,
                 membership_type: membershipInput.value,
-                phone: e.target.phone ? e.target.phone.value : '', // Optional
-                message: e.target.message ? e.target.message.value : '' // Optional fitness goals
+                phone: document.getElementById('phone') ? document.getElementById('phone').value : ''
             };
             
             // Show loading state
@@ -50,14 +50,20 @@ document.addEventListener('DOMContentLoaded', () => {
             
             try {
                 console.log('Attempting to send API request');
-                console.log('Form Data:', formData);
                 
-                // Ensure full HTTPS URL
-                const apiUrl = `https://${window.location.host}/api/members`;
-                const newMember = await apiRequest(apiUrl, 'POST', formData);
-                console.log('API Response:', newMember);
+                const response = await fetch('/api/members', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
                 
-                if (newMember) {
+                const data = await response.json();
+                
+                if (response.ok) {
+                    console.log('API Response:', data);
+                    
                     // Create new member card with animation
                     const memberCard = document.createElement('div');
                     memberCard.className = 'member-card';
@@ -68,9 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="member-avatar">
                             <i class="fas fa-user-circle"></i>
                         </div>
-                        <h3>${newMember.name}</h3>
-                        <p><i class="fas fa-envelope"></i> ${newMember.email}</p>
-                        <p><i class="fas fa-award"></i> ${newMember.membership_type} Membership</p>
+                        <h3>${data.name}</h3>
+                        <p><i class="fas fa-envelope"></i> ${data.email}</p>
+                        <p><i class="fas fa-award"></i> ${data.membership_type} Membership</p>
                         <p><i class="fas fa-calendar-alt"></i> Joined: ${new Date().toISOString().split('T')[0]}</p>
                         <div class="member-actions">
                             <button class="btn-small"><i class="fas fa-envelope"></i> Message</button>
@@ -79,25 +85,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                     
                     // Add to the list
-                    memberList.appendChild(memberCard);
-                    
-                    // Animate the new card
-                    setTimeout(() => {
-                        memberCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                        memberCard.style.opacity = '1';
-                        memberCard.style.transform = 'translateY(0)';
-                    }, 10);
+                    if (memberList) {
+                        memberList.appendChild(memberCard);
+                        
+                        // Animate the new card
+                        setTimeout(() => {
+                            memberCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                            memberCard.style.opacity = '1';
+                            memberCard.style.transform = 'translateY(0)';
+                        }, 10);
+                        
+                        // Scroll to the new member card
+                        setTimeout(() => {
+                            memberCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 300);
+                    }
                     
                     // Show success message
                     showNotification('Welcome to Olympus Strength! Your membership has been successfully created.', 'success');
                     
                     // Reset form
                     memberForm.reset();
-                    
-                    // Scroll to the new member card
-                    setTimeout(() => {
-                        memberCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 300);
+                } else {
+                    // Handle API errors
+                    showNotification(data.detail || 'Error creating membership. Please try again.', 'error');
                 }
             } catch (error) {
                 console.error('Complete error details:', error);
