@@ -3,153 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Remove CSP meta tag completely for now -->
-    <title>Olympus Strength</title>
-    
-    <!-- Include styles directly in the head to avoid CSP issues -->
+    <title>Olympus Strength - Forge Your Legacy</title>
     <style>
-        * {
+        /* Modern CSS Reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
-
+        
+        /* Modern Variables */
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --primary-light: #C8E6C9;
+            --secondary: #212121;
+            --text-dark: #212121;
+            --text-light: #757575;
+            --background: #f8f9fa;
+            --white: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --accent: #FFC107;
+            --success: #28a745;
+            --danger: #dc3545;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        /* Base Styles */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Inter', 'Segoe UI', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background-color: #f9f9f9;
+            color: var(--text-dark);
+            background-color: var(--background);
         }
-
-        /* Header & Navigation */
+        
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        p {
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        /* Header */
         header {
-            background-color: rgba(33, 33, 33, 0.95);
-            color: white;
+            background-color: var(--secondary);
+            color: var(--white);
+            padding: 1rem 0;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-
-        nav {
+        
+        .header-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
         }
-
+        
         .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
             display: flex;
             align-items: center;
-        }
-
-        .logo-icon {
-            width: 40px;
-            margin-right: 10px;
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-        }
-
-        nav ul li {
-            margin-left: 2rem;
-        }
-
-        nav a {
-            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
             text-decoration: none;
+        }
+        
+        .logo svg {
+            margin-right: 0.75rem;
+        }
+        
+        /* Navigation */
+        .nav {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: var(--transition);
             text-transform: uppercase;
             font-size: 0.9rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            transition: color 0.3s;
+            letter-spacing: 0.5px;
         }
-
-        nav a:hover {
-            color: #4CAF50;
+        
+        .nav-link:hover {
+            color: var(--primary);
         }
-
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
         /* Hero Section */
         .hero {
             height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80');
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80');
             background-size: cover;
             background-position: center;
-            color: white;
-            margin-bottom: 0;
-            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--white);
+            margin-top: 70px;
         }
-
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
         .hero h1 {
             font-size: 3.5rem;
             font-weight: 800;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             text-transform: uppercase;
             letter-spacing: 2px;
+            line-height: 1.1;
         }
-
+        
         .hero p {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             margin-bottom: 2rem;
-            max-width: 600px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
-
+        
+        /* Buttons */
         .btn {
             display: inline-block;
-            background-color: #4CAF50;
-            color: white;
-            padding: 0.8rem 2.5rem;
-            border: none;
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 0.75rem 2rem;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            border: none;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
         }
-
+        
         .btn:hover {
-            background-color: #388E3C;
+            background-color: var(--primary-dark);
             transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
         }
-
-        /* Main Content */
-        main {
-            padding-top: 80px; /* To account for fixed header */
+        
+        .btn:active {
+            transform: translateY(-1px);
         }
-
-        section {
-            padding: 5rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
         }
-
-        section h2 {
-            font-size: 2.5rem;
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        .btn-lg {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .btn-cta {
+            background-image: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 5rem 0;
+            background-color: var(--white);
+        }
+        
+        .section-title {
             text-align: center;
             margin-bottom: 3rem;
             position: relative;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #212121;
+            color: var(--text-dark);
         }
-
-        section h2:after {
+        
+        .section-title:after {
             content: "";
             position: absolute;
             bottom: -15px;
@@ -157,156 +242,514 @@
             transform: translateX(-50%);
             width: 80px;
             height: 4px;
-            background-color: #4CAF50;
+            background-color: var(--primary);
         }
-
-        /* Classes Section */
-        .classes {
-            background-color: white;
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
         }
-
-        .class-grid {
+        
+        .feature-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        /* Programs Section */
+        .programs {
+            padding: 5rem 0;
+            background-color: var(--gray-100);
+        }
+        
+        .program-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 2rem;
-            margin-bottom: 2rem;
         }
-
-        .class-card {
-            border-radius: 8px;
+        
+        .program-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            background-color: white;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
         }
-
-        .class-card:hover {
+        
+        .program-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
         }
-
-        .class-card h3 {
+        
+        .program-header {
+            background-color: var(--secondary);
+            color: var(--white);
+            padding: 1.5rem;
+            position: relative;
+        }
+        
+        .program-header h3 {
+            margin-bottom: 0.5rem;
             font-size: 1.3rem;
-            padding: 1.5rem;
-            margin: 0;
-            background-color: #212121;
-            color: white;
         }
-
-        .class-card-content {
+        
+        .program-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .program-content {
             padding: 1.5rem;
         }
-
-        .class-card p {
+        
+        .program-content p {
             margin-bottom: 1rem;
         }
-
-        .book-class-btn {
-            margin-top: 1rem;
-            padding: 0.6rem 1.2rem;
+        
+        .program-details {
+            display: flex;
+            justify-content: space-between;
+            margin: 1.5rem 0;
             font-size: 0.9rem;
+            color: var(--text-light);
         }
-
+        
+        .program-details i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+        
+        /* Call to Action */
+        .cta {
+            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--white);
+            text-align: center;
+            padding: 6rem 0;
+        }
+        
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
         /* Footer */
         footer {
-            text-align: center;
-            padding: 3rem 0;
-            background-color: #212121;
-            color: white;
+            background-color: var(--secondary);
+            color: var(--white);
+            padding: 4rem 0 2rem;
         }
-
-        footer p {
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
             margin-bottom: 1rem;
+            display: inline-block;
         }
-
-        .join-now-btn {
-            padding: 0.5rem 1.5rem;
-            margin-top: -0.5rem;
+        
+        .footer-logo svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 0.5rem;
+        }
+        
+        .footer-links h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+        
+        .footer-links h4::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            transition: var(--transition);
+        }
+        
+        .social-link:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: var(--gray-400);
+        }
+        
+        /* Modern Hamburger Menu for Mobile */
+        .mobile-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nav {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background-color: var(--secondary);
+                padding: 1rem;
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            }
+            
+            .nav.active {
+                display: flex;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .features-grid, .program-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <header>
-        <nav>
-            <div class="logo">
-                <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="30" height="30">
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
                     <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
                 </svg>
                 OLYMPUS STRENGTH
-            </div>
-            <ul>
-                <li><a href="/">HOME</a></li>
-                <li><a href="/members">MEMBERS</a></li>
-                <li><a href="/workouts">WORKOUTS</a></li>
-                <li><a href="/login">LOGIN</a></li>
-                <li><a href="/members" class="btn join-now-btn">JOIN NOW</a></li>
-            </ul>
-        </nav>
+            </a>
+            
+            <button class="mobile-toggle">☰</button>
+            
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/members" class="nav-link">Members</a>
+                <a href="/workouts" class="nav-link">Workouts</a>
+                <a href="/login" class="nav-link">Login</a>
+                <a href="/members" class="btn">Join Now</a>
+            </nav>
+        </div>
     </header>
 
-    <main>
-        <section class="hero">
-            <h1>Forge Your Legacy at Olympus Strength</h1>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>FORGE YOUR LEGACY AT OLYMPUS STRENGTH</h1>
             <p>Where gods train. Where legends are made. Your journey to greatness begins here.</p>
-            <a href="#classes" class="btn">Start Your Journey</a>
-        </section>
+            <a href="#programs" class="btn btn-cta btn-lg">START YOUR JOURNEY</a>
+        </div>
+    </section>
 
-        <section id="classes" class="classes">
-            <h2>OUR ELITE PROGRAMS</h2>
-            <div class="class-grid">
-                <div class="class-card">
-                    <h3>Olympic Weightlifting</h3>
-                    <div class="class-card-content">
-                        <p><strong>Instructor:</strong> Alex Hermes</p>
-                        <p><strong>Schedule:</strong> Mon, Wed, Fri - 7:00 AM</p>
-                        <p><strong>Level:</strong> All Levels</p>
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">WHY CHOOSE OLYMPUS STRENGTH</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💪</div>
+                    <h3>State-of-the-Art Equipment</h3>
+                    <p>Train with the latest fitness technology and premium equipment for maximum results.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍🏫</div>
+                    <h3>Expert Trainers</h3>
+                    <p>Our certified professionals create personalized programs to help you reach your goals.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🕒</div>
+                    <h3>Flexible Hours</h3>
+                    <p>Open 24/7 to accommodate your schedule, because dedication knows no time.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Community Support</h3>
+                    <p>Join a passionate community that will motivate and inspire your fitness journey.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="programs" class="programs">
+        <div class="container">
+            <h2 class="section-title">OUR ELITE PROGRAMS</h2>
+            
+            <div class="program-grid">
+                <div class="program-card">
+                    <div class="program-header">
+                        <h3>Olympic Weightlifting</h3>
+                        <span class="program-badge">All Levels</span>
+                    </div>
+                    <div class="program-content">
                         <p>Master the snatch and clean & jerk with expert technique coaching for maximum power development.</p>
-                        <button class="btn book-class-btn">Book Class</button>
+                        <div class="program-details">
+                            <span>🧑‍🏫 Alex Hermes</span>
+                            <span>📅 Mon, Wed, Fri</span>
+                        </div>
+                        <a href="#" class="btn">Book Class</a>
                     </div>
                 </div>
-                <div class="class-card">
-                    <h3>Spartan HIIT</h3>
-                    <div class="class-card-content">
-                        <p><strong>Instructor:</strong> Marcus Leonidas</p>
-                        <p><strong>Schedule:</strong> Tue, Thu - 6:00 PM</p>
-                        <p><strong>Level:</strong> Intermediate</p>
+                
+                <div class="program-card">
+                    <div class="program-header">
+                        <h3>Spartan HIIT</h3>
+                        <span class="program-badge">Intermediate</span>
+                    </div>
+                    <div class="program-content">
                         <p>High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.</p>
-                        <button class="btn book-class-btn">Book Class</button>
+                        <div class="program-details">
+                            <span>🧑‍🏫 Marcus Leonidas</span>
+                            <span>📅 Tue, Thu</span>
+                        </div>
+                        <a href="#" class="btn">Book Class</a>
+                    </div>
+                </div>
+                
+                <div class="program-card">
+                    <div class="program-header">
+                        <h3>Strength Foundations</h3>
+                        <span class="program-badge">Beginner</span>
+                    </div>
+                    <div class="program-content">
+                        <p>Master fundamental lifts with expert coaching to build the foundation for legendary strength.</p>
+                        <div class="program-details">
+                            <span>🧑‍🏫 Helena Troy</span>
+                            <span>📅 Mon, Wed</span>
+                        </div>
+                        <a href="#" class="btn">Book Class</a>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Transform Your Life?</h2>
+                <p>Join Olympus Strength today and start your journey towards a stronger, godlike physique.</p>
+                <a href="/members" class="btn btn-lg">Join Now</a>
+            </div>
+        </div>
+    </section>
 
     <footer>
-        <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                        </svg>
+                        OLYMPUS STRENGTH
+                    </a>
+                    <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">f</a>
+                        <a href="#" class="social-link">t</a>
+                        <a href="#" class="social-link">in</a>
+                        <a href="#" class="social-link">ig</a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/members">Members</a></li>
+                        <li><a href="/workouts">Workouts</a></li>
+                        <li><a href="/login">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="#">Olympic Weightlifting</a></li>
+                        <li><a href="#">Spartan HIIT</a></li>
+                        <li><a href="#">Strength Foundations</a></li>
+                        <li><a href="#">All Programs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li>📞 (555) 123-4567</li>
+                        <li>📧 info@olympusstrength.com</li>
+                        <li>📍 123 Fitness Ave, Olympia</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
+            </div>
+        </div>
     </footer>
 
-    <!-- Script added inline for simplicity -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Smooth scroll for hero button
-            const heroButton = document.querySelector('.hero .btn');
-            if (heroButton) {
-                heroButton.addEventListener('click', function(e) {
+            // Mobile menu toggle
+            const mobileToggle = document.querySelector('.mobile-toggle');
+            const nav = document.querySelector('.nav');
+            
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                });
+            }
+            
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
                     e.preventDefault();
+                    
                     const targetId = this.getAttribute('href');
-                    const targetSection = document.querySelector(targetId);
-                    if (targetSection) {
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
                         window.scrollTo({
-                            top: targetSection.offsetTop - 80,
+                            top: targetElement.offsetTop - 80,
                             behavior: 'smooth'
                         });
                     }
                 });
-            }
+            });
             
-            // Book Class buttons functionality
-            const bookButtons = document.querySelectorAll('.book-class-btn');
-            bookButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    alert('Class booking functionality will be available soon!');
-                });
+            // Book class button functionality
+            document.querySelectorAll('.btn').forEach(button => {
+                if (button.textContent.includes('Book Class')) {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        alert('Class booking functionality will be available soon!');
+                    });
+                }
             });
         });
     </script>

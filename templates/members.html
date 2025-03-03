@@ -1,91 +1,761 @@
-{% extends "base.html" %}
-
-{% block content %}
-<section class="page-header">
-    <div class="page-header-content">
-        <h1>Our Elite Members</h1>
-        <p>Join our community of dedicated fitness enthusiasts</p>
-    </div>
-</section>
-
-<section class="members">
-    <h2>Current Members</h2>
-    
-    <div class="member-list">
-        {% for member in members %}
-        <div class="member-card">
-            <div class="member-avatar">
-                <i class="fas fa-user-circle"></i>
-            </div>
-            <h3>{{ member.name }}</h3>
-            <p><i class="fas fa-envelope"></i> {{ member.email }}</p>
-            <p><i class="fas fa-award"></i> {{ member.membership_type }} Membership</p>
-            <p><i class="fas fa-calendar-alt"></i> Joined: {{ member.join_date.strftime('%Y-%m-%d') }}</p>
-            <div class="member-actions">
-                <button class="btn-small"><i class="fas fa-envelope"></i> Message</button>
-                <button class="btn-small"><i class="fas fa-user-plus"></i> Follow</button>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <div class="membership-form-container">
-        <form id="add-member-form" class="form">
-            <h2>Join Our Community</h2>
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email address" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Create a password" required>
-            </div>
-            <div class="form-group">
-                <label for="membership">Membership Type</label>
-                <select id="membership" name="membership_type" required>
-                    <option value="" disabled selected>Choose your membership</option>
-                    <option value="Basic">Basic - $29.99/month</option>
-                    <option value="Standard">Standard - $49.99/month</option>
-                    <option value="Premium">Premium - $79.99/month</option>
-                    <option value="Elite">Elite - $99.99/month</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="phone">Phone Number (Optional)</label>
-                <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
-            </div>
-            <div class="form-group">
-                <label for="message">Fitness Goals</label>
-                <textarea id="message" name="message" placeholder="Tell us about your fitness goals" rows="4"></textarea>
-            </div>
-            <div class="form-check">
-                <input type="checkbox" id="terms" name="terms" required>
-                <label for="terms">I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a></label>
-            </div>
-            <button type="submit" class="btn">Become a Member</button>
-        </form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Members - Olympus Strength</title>
+    <style>
+        /* Modern CSS Reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         
-        <div class="membership-benefits">
-            <h3>Membership Benefits</h3>
-            <ul>
-                <li><i class="fas fa-check-circle"></i> Access to state-of-the-art equipment</li>
-                <li><i class="fas fa-check-circle"></i> Group fitness classes included</li>
-                <li><i class="fas fa-check-circle"></i> Personal training sessions (Premium & Elite)</li>
-                <li><i class="fas fa-check-circle"></i> Nutrition planning (Elite only)</li>
-                <li><i class="fas fa-check-circle"></i> 24/7 gym access</li>
-                <li><i class="fas fa-check-circle"></i> Mobile app with workout tracking</li>
-                <li><i class="fas fa-check-circle"></i> Guest passes (quantity varies by tier)</li>
-                <li><i class="fas fa-check-circle"></i> Locker rental included (Premium & Elite)</li>
-            </ul>
-        </div>
-    </div>
-</section>
-{% endblock %}
+        /* Modern Variables */
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --primary-light: #C8E6C9;
+            --secondary: #212121;
+            --text-dark: #212121;
+            --text-light: #757575;
+            --background: #f8f9fa;
+            --white: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --accent: #FFC107;
+            --success: #28a745;
+            --danger: #dc3545;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        /* Base Styles */
+        body {
+            font-family: 'Inter', 'Segoe UI', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--background);
+        }
+        
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--secondary);
+            color: var(--white);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+        }
+        
+        .logo svg {
+            margin-right: 0.75rem;
+        }
+        
+        /* Navigation */
+        .nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: var(--transition);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
 
-{% block scripts %}
-<script src="{{ url_for('static', path='/js/members.js') }}"></script>
-{% endblock %}
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1594381898411-846e7d193883?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80');
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            text-align: center;
+            padding: 7rem 0 4rem;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary);
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 2rem auto 0;
+        }
+        
+        /* Members Section */
+        .members-section {
+            padding: 3rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            color: var(--text-dark);
+        }
+        
+        .section-title:after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary);
+        }
+        
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .member-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+        
+        .member-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .member-avatar {
+            width: 120px;
+            height: 120px;
+            background-color: var(--gray-200);
+            border-radius: 50%;
+            margin: 2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--gray-400);
+        }
+        
+        .member-info {
+            padding: 0 1.5rem 2rem;
+        }
+        
+        .member-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .member-detail {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+        
+        .member-detail i {
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .member-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        /* Membership Form */
+        .membership-section {
+            padding: 4rem 0;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 4rem;
+        }
+        
+        .membership-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        
+        .membership-form {
+            padding-right: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+        
+        .membership-benefits {
+            background-color: var(--gray-100);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+        }
+        
+        .benefits-title {
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+        
+        .benefits-title:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+        
+        .benefits-list {
+            list-style: none;
+        }
+        
+        .benefits-item {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .benefits-icon {
+            color: var(--primary);
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--secondary);
+            color: var(--white);
+            padding: 4rem 0 2rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: inline-block;
+            color: var(--white);
+            text-decoration: none;
+        }
+        
+        .footer-logo svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 0.5rem;
+        }
+        
+        .footer-links h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+        
+        .footer-links h4::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        
+        .social-link:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: var(--gray-400);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .membership-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .membership-form {
+                padding-right: 0;
+                margin-bottom: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            .nav {
+                margin-top: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .page-title {
+                font-size: 2.5rem;
+            }
+            
+            .members-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                    <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                </svg>
+                OLYMPUS STRENGTH
+            </a>
+            
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/members" class="nav-link">Members</a>
+                <a href="/workouts" class="nav-link">Workouts</a>
+                <a href="/login" class="nav-link">Login</a>
+                <a href="/members" class="btn btn-sm">Join Now</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">Our Members</h1>
+            <p class="page-subtitle">Join our community of dedicated fitness enthusiasts</p>
+        </div>
+    </section>
+
+    <section class="members-section">
+        <div class="container">
+            <h2 class="section-title">Current Members</h2>
+            
+            <div class="members-grid">
+                <div class="member-card">
+                    <div class="member-avatar">
+                        <i>👤</i>
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Test User</h3>
+                        <div class="member-detail">
+                            <i>📧</i> test@olympusstrength.com
+                        </div>
+                        <div class="member-detail">
+                            <i>🏅</i> Premium Membership
+                        </div>
+                        <div class="member-actions">
+                            <button class="btn btn-sm btn-outline">Message</button>
+                            <button class="btn btn-sm">Follow</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- More member cards would be generated here dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <section class="membership-section">
+        <div class="container">
+            <h2 class="section-title">Join Our Community</h2>
+            
+            <div class="membership-container">
+                <div class="membership-form">
+                    <form id="member-form">
+                        <div class="form-group">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" id="name" name="name" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" id="email" name="email" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="membership" class="form-label">Membership Type</label>
+                            <select id="membership" name="membership_type" class="form-control" required>
+                                <option value="" disabled selected>Choose your membership</option>
+                                <option value="Basic">Basic - $29.99/month</option>
+                                <option value="Standard">Standard - $49.99/month</option>
+                                <option value="Premium">Premium - $79.99/month</option>
+                                <option value="Elite">Elite - $99.99/month</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn">Become a Member</button>
+                    </form>
+                </div>
+                
+                <div class="membership-benefits">
+                    <h3 class="benefits-title">Membership Benefits</h3>
+                    <ul class="benefits-list">
+                        <li class="benefits-item">
+                            <span class="benefits-icon">✓</span>
+                            <span>Access to state-of-the-art equipment</span>
+                        </li>
+                        <li class="benefits-item">
+                            <span class="benefits-icon">✓</span>
+                            <span>Group fitness classes included</span>
+                        </li>
+                        <li class="benefits-item">
+                            <span class="benefits-icon">✓</span>
+                            <span>Personal training sessions (Premium & Elite)</span>
+                        </li>
+                        <li class="benefits-item">
+                            <span class="benefits-icon">✓</span>
+                            <span>Nutrition planning (Elite only)</span>
+                        </li>
+                        <li class="benefits-item">
+                            <span class="benefits-icon">✓</span>
+                            <span>24/7 gym access</span>
+                        </li>
+                        <li class="benefits-item">
+                            <span class="benefits-icon">✓</span>
+                            <span>Mobile app with workout tracking</span>
+                        </li>
+                        <li class="benefits-item">
+                            <span class="benefits-icon">✓</span>
+                            <span>Guest passes (quantity varies by tier)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                        </svg>
+                        OLYMPUS STRENGTH
+                    </a>
+                    <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">f</a>
+                        <a href="#" class="social-link">t</a>
+                        <a href="#" class="social-link">in</a>
+                        <a href="#" class="social-link">ig</a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/members">Members</a></li>
+                        <li><a href="/workouts">Workouts</a></li>
+                        <li><a href="/login">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="#">Olympic Weightlifting</a></li>
+                        <li><a href="#">Spartan HIIT</a></li>
+                        <li><a href="#">Strength Foundations</a></li>
+                        <li><a href="#">All Programs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li>📞 (555) 123-4567</li>
+                        <li>📧 info@olympusstrength.com</li>
+                        <li>📍 123 Fitness Ave, Olympia</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form submission handler
+            const memberForm = document.getElementById('member-form');
+            if (memberForm) {
+                memberForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const formData = {
+                        name: document.getElementById('name').value,
+                        email: document.getElementById('email').value,
+                        password: document.getElementById('password').value,
+                        membership_type: document.getElementById('membership').value
+                    };
+                    
+                    try {
+                        // Show loading state or spinner here if desired
+                        
+                        const response = await fetch('/api/members', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(formData)
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            alert('Membership created successfully! Welcome to Olympus Strength.');
+                            window.location.reload();
+                        } else {
+                            alert('Error: ' + (data.detail || 'Failed to create membership'));
+                        }
+                    } catch (error) {
+                        alert('Error: ' + error.message);
+                    }
+                });
+            }
+            
+            // Button actions
+            document.querySelectorAll('.btn-outline').forEach(button => {
+                if (button.textContent.includes('Message')) {
+                    button.addEventListener('click', function() {
+                        alert('Messaging feature coming soon!');
+                    });
+                }
+            });
+            
+            document.querySelectorAll('.btn:not(.btn-outline)').forEach(button => {
+                if (button.textContent.includes('Follow')) {
+                    button.addEventListener('click', function() {
+                        this.textContent = 'Following';
+                        this.classList.add('following');
+                        alert('You are now following this member!');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
