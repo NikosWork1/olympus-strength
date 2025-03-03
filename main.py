@@ -12,6 +12,7 @@ from typing import Optional, List, Union
 from passlib.context import CryptContext
 import secrets
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.templating import Jinja2Templates
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -22,6 +23,9 @@ app = FastAPI(title="Olympus Strength")
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Initialize templates
+templates = Jinja2Templates(directory="templates")
 
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
@@ -93,8 +97,27 @@ async def get_optional_user(request: Request, db: Session = Depends(get_db)):
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request, db: Session = Depends(get_db)):
     try:
-        classes = crud.get_classes(db)
+        # Read the HTML file directly
+        with open("templates/index.html", "r") as file:
+            html_content = file.read()
+        
+        # Get current user (for navigation)
         current_user = await get_optional_user(request, db)
+        
+        # Generate auth buttons HTML
+        auth_buttons_html = '<a href="/login" class="nav-link">Login</a><a href="/signup" class="btn">Join Now</a>'
+        if current_user:
+            auth_buttons_html = f'<a href="/profile" class="nav-link">Profile</a><a href="/logout" class="nav-link">Logout</a>'
+        
+        # Replace the auth buttons placeholder in your HTML
+        # You'll need to add a placeholder like <!-- AUTH_BUTTONS --> in your index.html
+        html_content = html_content.replace('<a href="/login" class="nav-link">Login</a><a href="/members" class="btn">Join Now</a>', auth_buttons_html)
+        
+        # Return the modified HTML content
+        return HTMLResponse(content=html_content)
+    except Exception as e:
+        logger.error(f"Error rendering home page: {e}")
+        return HTMLResponse(content=f"Error: {str(e)}")
         
         # Generate classes HTML
         classes_html = ""
