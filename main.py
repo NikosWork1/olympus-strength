@@ -1,17 +1,10 @@
-from fastapi import FastAPI, Request, Depends, HTTPException, status, Form
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import FastAPI, Request, Depends, HTTPException, Response
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from sqlalchemy.orm import Session
 import models, schemas, crud
 from database import engine, get_db
-from typing import List
 import os
 import logging
-from datetime import timedelta, datetime
-import jwt
-from jwt.exceptions import PyJWTError
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -20,177 +13,266 @@ logger = logging.getLogger(__name__)
 # Create FastAPI app
 app = FastAPI(title="Olympus Strength")
 
-# Secret key for JWT token
-SECRET_KEY = os.getenv("SECRET_KEY", "olympusstrength2025secretkey")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 1 day
-
-# Create necessary directories
-os.makedirs("templates", exist_ok=True)
-os.makedirs("static/css", exist_ok=True)
-os.makedirs("static/js", exist_ok=True)
-os.makedirs("static/img", exist_ok=True)
-
-# Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# Set up Jinja2 templates
-templates = Jinja2Templates(directory="templates")
-
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
 
-# OAuth2 scheme for token authentication
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-# Token generation function
-def create_access_token(data: dict, expires_delta: timedelta = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-# Get current user from token
-async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+# Serve the simple HTML page directly
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-    except PyJWTError:
-        raise credentials_exception
-    user = crud.get_member_by_email(db, email=email)
-    if user is None:
-        raise credentials_exception
-    return user
-
-# --- API Endpoints ---
-
-# Login API endpoint
-@app.post("/api/login")
-async def login(form_data: schemas.Login, db: Session = Depends(get_db)):
-    user = crud.authenticate_member(db, form_data.email, form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        # Read the HTML file content
+        html_file_path = os.path.join(os.path.dirname(__file__), "templates", "index.html")
+        
+        if os.path.exists(html_file_path):
+            with open(html_file_path, "r") as file:
+                html_content = file.read()
+            return HTMLResponse(content=html_content)
+        else:
+            # If file doesn't exist, return a simple HTML
+            return HTMLResponse(content="""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olympus Strength</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        .nav {
+            margin-bottom: 20px;
+        }
+        .nav a {
+            margin-right: 10px;
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/members">Members</a>
+        <a href="/workouts">Workouts</a>
+        <a href="/login">Login</a>
+    </div>
     
-    # Create access token
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.email}, expires_delta=access_token_expires
-    )
-    
-    return {
-        "id": user.id,
-        "name": user.name,
-        "email": user.email,
-        "access_token": access_token,
-        "token_type": "bearer"
-    }
+    <h1>Olympus Strength</h1>
+    <p>Welcome to Olympus Strength. Our main application is being updated.</p>
+    <p>Please check back soon for our fully functioning fitness platform.</p>
+    <a href="/members" class="btn">Join Now</a>
+</body>
+</html>
+            """)
+    except Exception as e:
+        logger.error(f"Error rendering home page: {e}")
+        return HTMLResponse(content=f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .error {
+            color: #F44336;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="error">Internal Server Error</h1>
+    <p>We're sorry, something went wrong on our end. Please try again later.</p>
+    <p>Error details: {str(e)}</p>
+</body>
+</html>
+        """)
 
-# Create member API endpoint
+# Members page (simple version)
+@app.get("/members", response_class=HTMLResponse)
+async def get_members_page(request: Request, db: Session = Depends(get_db)):
+    try:
+        members = crud.get_members(db)
+        return HTMLResponse(content=f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Members - Olympus Strength</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }}
+        h1 {{
+            color: #4CAF50;
+        }}
+        .nav {{
+            margin-bottom: 20px;
+        }}
+        .nav a {{
+            margin-right: 10px;
+            color: #4CAF50;
+            text-decoration: none;
+        }}
+        .member-card {{
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }}
+        form {{
+            margin-top: 30px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 4px;
+        }}
+        label {{
+            display: block;
+            margin-bottom: 5px;
+        }}
+        input, select {{
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }}
+        button {{
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }}
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/members">Members</a>
+        <a href="/workouts">Workouts</a>
+        <a href="/login">Login</a>
+    </div>
+    
+    <h1>Our Members</h1>
+    
+    <div class="members-list">
+        {
+            ''.join([f"""
+            <div class="member-card">
+                <h3>{member.name}</h3>
+                <p>Email: {member.email}</p>
+                <p>Membership: {member.membership_type}</p>
+            </div>
+            """ for member in members]) if members else '<p>No members found.</p>'
+        }
+    </div>
+    
+    <form id="member-form">
+        <h2>Join Our Community</h2>
+        <div>
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div>
+            <label for="membership">Membership Type</label>
+            <select id="membership" name="membership_type" required>
+                <option value="" disabled selected>Choose your membership</option>
+                <option value="Basic">Basic - $29.99/month</option>
+                <option value="Standard">Standard - $49.99/month</option>
+                <option value="Premium">Premium - $79.99/month</option>
+                <option value="Elite">Elite - $99.99/month</option>
+            </select>
+        </div>
+        <button type="submit">Become a Member</button>
+    </form>
+    
+    <script>
+        document.getElementById('member-form').addEventListener('submit', async (e) => {{
+            e.preventDefault();
+            
+            const formData = {{
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                membership_type: document.getElementById('membership').value
+            }};
+            
+            try {{
+                const response = await fetch('/api/members', {{
+                    method: 'POST',
+                    headers: {{
+                        'Content-Type': 'application/json'
+                    }},
+                    body: JSON.stringify(formData)
+                }});
+                
+                const data = await response.json();
+                
+                if (response.ok) {{
+                    alert('Membership created successfully!');
+                    window.location.reload();
+                }} else {{
+                    alert('Error: ' + (data.detail || 'Failed to create membership'));
+                }}
+            }} catch (error) {{
+                alert('Error: ' + error.message);
+            }}
+        }});
+    </script>
+</body>
+</html>
+        """)
+    except Exception as e:
+        logger.error(f"Error rendering members page: {e}")
+        return HTMLResponse(content="<p>Error loading members page</p>")
+
+# API endpoint for creating members
 @app.post("/api/members", response_model=schemas.Member)
 def create_member_api(member: schemas.MemberCreate, db: Session = Depends(get_db)):
     db_member = crud.get_member_by_email(db, email=member.email)
     if db_member:
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_member(db=db, member=member)
-
-# Delete member API endpoint
-@app.delete("/api/members/{member_id}")
-def delete_member_api(member_id: int, db: Session = Depends(get_db)):
-    if crud.delete_member(db, member_id):
-        return {"detail": "Member deleted successfully"}
-    raise HTTPException(status_code=404, detail="Member not found")
-
-# Get all members API endpoint
-@app.get("/api/members", response_model=List[schemas.Member])
-def read_members(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    members = crud.get_members(db, skip=skip, limit=limit)
-    return members
-
-# Get member by ID API endpoint
-@app.get("/api/members/{member_id}", response_model=schemas.Member)
-def read_member(member_id: int, db: Session = Depends(get_db)):
-    db_member = crud.get_member(db, member_id=member_id)
-    if db_member is None:
-        raise HTTPException(status_code=404, detail="Member not found")
-    return db_member
-
-# --- Page Routes ---
-
-# Home page
-@app.get("/", response_class=HTMLResponse)
-async def home(request: Request, db: Session = Depends(get_db)):
-    try:
-        classes = crud.get_classes(db)
-        return templates.TemplateResponse(
-            "index.html", 
-            {
-                "request": request, 
-                "title": "Home", 
-                "classes": classes
-            }
-        )
-    except Exception as e:
-        logger.error(f"Error rendering home page: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
-
-# Members page
-@app.get("/members", response_class=HTMLResponse)
-async def get_members_page(request: Request, db: Session = Depends(get_db)):
-    try:
-        members = crud.get_members(db)
-        return templates.TemplateResponse(
-            "members.html", 
-            {"request": request, "title": "Members", "members": members}
-        )
-    except Exception as e:
-        logger.error(f"Error rendering members page: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
-
-# Workouts page
-@app.get("/workouts", response_class=HTMLResponse)
-async def get_workouts_page(request: Request, db: Session = Depends(get_db)):
-    try:
-        workouts = crud.get_workouts(db)
-        return templates.TemplateResponse(
-            "workouts.html", 
-            {"request": request, "title": "Workouts", "workouts": workouts}
-        )
-    except Exception as e:
-        logger.error(f"Error rendering workouts page: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
-
-# User management page (protected, requires login)
-@app.get("/admin/users", response_class=HTMLResponse)
-async def get_user_management_page(
-    request: Request, 
-    db: Session = Depends(get_db),
-    current_user: models.Member = Depends(get_current_user)
-):
-    try:
-        # Only allow access if user has a special role (could check if admin)
-        members = crud.get_members(db)
-        return templates.TemplateResponse(
-            "user_management.html", 
-            {"request": request, "title": "User Management", "members": members}
-        )
-    except Exception as e:
-        logger.error(f"Error rendering user management page: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 # Initial data seeding function
 def seed_initial_data():
