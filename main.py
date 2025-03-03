@@ -95,25 +95,12 @@ async def get_optional_user(request: Request, db: Session = Depends(get_db)):
 
 # Home page
 @app.get("/", response_class=HTMLResponse)
-async def home(request: Request, db: Session = Depends(get_db)):
+async def home(request: Request):
     try:
-        # Read the HTML file directly
+        # No need for complex logic just to serve the homepage
+        # This directly serves your HTML file with inline styles
         with open("templates/index.html", "r") as file:
             html_content = file.read()
-        
-        # Get current user (for navigation)
-        current_user = await get_optional_user(request, db)
-        
-        # Generate auth buttons HTML
-        auth_buttons_html = '<a href="/login" class="nav-link">Login</a><a href="/signup" class="btn">Join Now</a>'
-        if current_user:
-            auth_buttons_html = f'<a href="/profile" class="nav-link">Profile</a><a href="/logout" class="nav-link">Logout</a>'
-        
-        # Replace the auth buttons placeholder in your HTML
-        # You'll need to add a placeholder like <!-- AUTH_BUTTONS --> in your index.html
-        html_content = html_content.replace('<a href="/login" class="nav-link">Login</a><a href="/members" class="btn">Join Now</a>', auth_buttons_html)
-        
-        # Return the modified HTML content
         return HTMLResponse(content=html_content)
     except Exception as e:
         logger.error(f"Error rendering home page: {e}")

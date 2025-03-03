@@ -51,6 +51,8 @@ class Workout(Base):
     description = Column(Text)
     difficulty = Column(String(50))
     category = Column(String(50))
+    duration = Column(Integer, default=45)  # Add this line
+    calories = Column(Integer, default=300)  # Add this line
     
     # Relationships
     member_workouts = relationship("MemberWorkout", back_populates="workout")
