@@ -63,131 +63,34 @@ function showNotification(message, type = 'success') {
     }, 5000);
 }
 
-// Create and initialize modals if they don't exist
-function createModals() {
-    // This function is now unnecessary since we have the modals in the HTML
-    // We're keeping it for compatibility with existing code that might call it
-    console.log("Modals already exist in HTML");
-}
-
-// Modal functionality
-function setupModals() {
-    // Login button functionality
-    const loginBtn = document.querySelector('#login-btn');
-    if (loginBtn) {
-        loginBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const loginModal = document.getElementById('login-modal');
-            loginModal.style.display = 'block';
+// Setup mobile navigation
+function setupMobileNav() {
+    const mobileToggle = document.querySelector('.mobile-toggle');
+    const nav = document.querySelector('.nav');
+    
+    if (mobileToggle && nav) {
+        mobileToggle.addEventListener('click', function() {
+            nav.classList.toggle('active');
         });
     }
-    
-    // Join Now buttons redirect to members page
-    const joinNowBtns = document.querySelectorAll('.join-now-btn');
-    joinNowBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            // Only prevent default if it's not a direct link (href="#")
-            if (btn.getAttribute('href') === '#') {
+}
+
+// Setup smooth scrolling for anchor links
+function setupSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const targetId = this.getAttribute('href');
+            
+            // Skip if it's just "#" or if it's a button with other actions
+            if (targetId === '#' || this.classList.contains('btn-sm')) return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
                 e.preventDefault();
-                window.location.href = '/members';
-            }
-        });
-    });
-    
-    // Setup Book Class buttons
-    setupBookButtons();
-    
-    // Handle booking form submission
-    const bookingForm = document.getElementById('booking-form');
-    if (bookingForm) {
-        bookingForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const className = document.querySelector('#booking-details .booking-summary h3')?.textContent || 'this class';
-            document.getElementById('booking-modal').style.display = 'none';
-            showNotification(`You've booked ${className}!`, 'success');
-        });
-    }
-    
-    // Close buttons for modals
-    const closeButtons = document.querySelectorAll('.close-modal');
-    closeButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const modal = this.closest('.modal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        });
-    });
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', function(e) {
-        if (e.target.classList.contains('modal')) {
-            e.target.style.display = 'none';
-        }
-    });
-}
-
-// Setup Book Class buttons
-function setupBookButtons() {
-    const bookClassBtns = document.querySelectorAll('.book-class-btn');
-    bookClassBtns.forEach(btn => {
-        // Remove existing event listeners by cloning and replacing
-        const newBtn = btn.cloneNode(true);
-        if (btn.parentNode) {
-            btn.parentNode.replaceChild(newBtn, btn);
-        }
-        
-        // Add new event listener
-        newBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (e.stopPropagation) {
-                e.stopPropagation();
-            }
-            
-            // Get class info
-            let className = '';
-            let instructor = '';
-            let schedule = '';
-            
-            // Try to find parent card
-            const card = this.closest('div');
-            if (card) {
-                const h3 = card.closest('.class-card') ? 
-                    card.closest('.class-card').querySelector('h3') : 
-                    card.parentElement.querySelector('h3');
-                
-                if (h3) {
-                    className = h3.textContent.trim();
-                }
-                
-                // Try to get instructor and schedule
-                const paragraphs = card.querySelectorAll('p');
-                paragraphs.forEach(p => {
-                    const text = p.textContent;
-                    if (text.includes('Instructor:')) {
-                        instructor = text.replace('Instructor:', '').trim();
-                    } else if (text.includes('Schedule:')) {
-                        schedule = text.replace('Schedule:', '').trim();
-                    }
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
                 });
-            }
-            
-            // Set booking details
-            const bookingDetails = document.getElementById('booking-details');
-            if (bookingDetails) {
-                bookingDetails.innerHTML = `
-                    <div class="booking-summary">
-                        <h3>${className}</h3>
-                        <p><strong>Instructor:</strong> ${instructor}</p>
-                        <p><strong>Schedule:</strong> ${schedule}</p>
-                    </div>
-                `;
-            }
-            
-            // Show modal
-            const bookingModal = document.getElementById('booking-modal');
-            if (bookingModal) {
-                bookingModal.style.display = 'block';
             }
         });
     });
@@ -195,37 +98,87 @@ function setupBookButtons() {
 
 // Initialize on DOM content loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Check for logged in user
-    const userJson = localStorage.getItem('user');
-    if (userJson) {
-        try {
-            const user = JSON.parse(userJson);
-            if (user && user.isLoggedIn) {
-                // Update UI for logged-in user
-                const loginBtn = document.querySelector('#login-btn');
-                if (loginBtn) {
-                    loginBtn.textContent = user.name || 'MY ACCOUNT';
-                    // Update login button to go to profile page instead
-                    loginBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        showNotification('Profile page coming soon!', 'info');
-                    }, { once: true });
-                }
-            }
-        } catch (e) {
-            console.error('Error parsing user data', e);
-            localStorage.removeItem('user');
-        }
-    }
+    // Setup mobile navigation
+    setupMobileNav();
     
-    // Setup modals
-    setupModals();
+    // Setup smooth scrolling
+    setupSmoothScroll();
+    
+    // Setup form validations
+    setupFormValidations();
 });
 
-// For pages loaded via AJAX or other methods
-function initializePage() {
-    setupModals();
+// Setup form validations
+function setupFormValidations() {
+    const forms = document.querySelectorAll('form');
+    
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            const requiredInputs = form.querySelectorAll('[required]');
+            
+            requiredInputs.forEach(input => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('error');
+                    
+                    // Create error message if not exists
+                    let errorMsg = input.parentNode.querySelector('.error-text');
+                    if (!errorMsg) {
+                        errorMsg = document.createElement('div');
+                        errorMsg.className = 'error-text';
+                        errorMsg.textContent = 'This field is required';
+                        input.parentNode.appendChild(errorMsg);
+                    }
+                } else {
+                    input.classList.remove('error');
+                    const errorMsg = input.parentNode.querySelector('.error-text');
+                    if (errorMsg) errorMsg.remove();
+                }
+            });
+            
+            // Check password matching for signup form
+            const password = form.querySelector('#password');
+            const confirmPassword = form.querySelector('#confirm_password');
+            
+            if (password && confirmPassword && password.value && confirmPassword.value) {
+                if (password.value !== confirmPassword.value) {
+                    isValid = false;
+                    confirmPassword.classList.add('error');
+                    
+                    let errorMsg = confirmPassword.parentNode.querySelector('.error-text');
+                    if (!errorMsg) {
+                        errorMsg = document.createElement('div');
+                        errorMsg.className = 'error-text';
+                        errorMsg.textContent = 'Passwords do not match';
+                        confirmPassword.parentNode.appendChild(errorMsg);
+                    } else {
+                        errorMsg.textContent = 'Passwords do not match';
+                    }
+                }
+            }
+            
+            // If form is invalid, prevent submission
+            if (!isValid) {
+                e.preventDefault();
+                showNotification('Please correct the errors in the form', 'error');
+            }
+        });
+    });
 }
 
-// Call initialization function for immediate loading
-initializePage();
+// General utility function for booking classes or handling other button actions
+function setupActionButtons() {
+    // Book class button functionality
+    document.querySelectorAll('.btn').forEach(button => {
+        if (button.textContent.includes('Book Class')) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                showNotification('Class booking functionality will be available soon!', 'info');
+            });
+        }
+    });
+}
+
+// Call initialization
+setupActionButtons();

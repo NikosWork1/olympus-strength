@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Olympus Strength</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                    <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                </svg>
+                OLYMPUS STRENGTH
+            </a>
+            
+            <button class="mobile-toggle">☰</button>
+            
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/members" class="nav-link">Members</a>
+                <a href="/workouts" class="nav-link">Workouts</a>
+                <a href="/profile" class="nav-link">Profile</a>
+                <a href="/logout" class="nav-link">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="profile-container">
+        <div class="container">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    👤
+                </div>
+            </div>
+            
+            <div class="profile-grid">
+                <div class="profile-stats">
+                    <h2 class="section-title">Stats</h2>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value">{{ workouts|length }}</div>
+                        <div class="stat-label">Workouts Completed</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value">{% if workouts %}{{ workouts|sum(attribute='duration') }}{% else %}0{% endif %}</div>
+                        <div class="stat-label">Total Minutes</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value">{% if workouts %}{{ workouts|sum(attribute='calories') }}{% else %}0{% endif %}</div>
+                        <div class="stat-label">Calories Burned</div>
+                    </div>
+                </div>
+                
+                <div class="profile-activity">
+                    <h2 class="section-title">Recent Activity</h2>
+                    
+                    <div class="recent-workouts">
+                        {% if workouts %}
+                            {% for workout in workouts %}
+                            <div class="completed-workout">
+                                <div class="workout-info">
+                                    <h4>{{ workout.workout.name }}</h4>
+                                    <p>Completed: {{ workout.date_assigned.strftime('%Y-%m-%d') }}</p>
+                                </div>
+                                <div class="workout-stats">
+                                    <span><i>⏱️</i> {{ workout.workout.duration }} min</span>
+                                    <span><i>🔥</i> {{ workout.workout.calories }} cal</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-data">No completed workouts yet. Start your fitness journey today!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                        </svg>
+                        OLYMPUS STRENGTH
+                    </a>
+                    <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/members">Members</a></li>
+                        <li><a href="/workouts">Workouts</a></li>
+                        <li><a href="/login">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="#">Olympic Weightlifting</a></li>
+                        <li><a href="#">Spartan HIIT</a></li>
+                        <li><a href="#">Strength Foundations</a></li>
+                        <li><a href="#">All Programs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li>📞 (555) 123-4567</li>
+                        <li>📧 info@olympusstrength.com</li>
+                        <li>📍 123 Fitness Ave, Olympia</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
+                
+                <div class="profile-info">
+                    <h1 class="profile-name">{{ current_user.name }}</h1>
+                    <p class="profile-detail"><i>📧</i> {{ current_user.email }}</p>
+                    <p class="profile-detail"><i>📅</i> Member since {{ current_user.join_date.strftime('%B %Y') }}</p>
+                    <span class="profile-membership">{{ current_user.membership_type }} Membership</span>
+                    
+                    <div class="profile-actions">
+                        <a href="#" class="btn btn-outline btn-sm">Edit Profile</a>
+                        <a href="/workouts" class="btn btn-sm">Track Workout</a>
+                    </div>

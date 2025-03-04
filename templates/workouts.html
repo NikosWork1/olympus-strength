@@ -1,97 +1,218 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workouts - Olympus Strength</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                    <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                </svg>
+                OLYMPUS STRENGTH
+            </a>
+            
+            <button class="mobile-toggle">☰</button>
+            
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/members" class="nav-link">Members</a>
+                <a href="/workouts" class="nav-link">Workouts</a>
+                {% if current_user %}
+                <a href="/profile" class="nav-link">Profile</a>
+                <a href="/logout" class="nav-link">Logout</a>
+                {% else %}
+                <a href="/login" class="nav-link">Login</a>
+                <a href="/signup" class="btn btn-sm">Join Now</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
 
-{% block content %}
-<section class="page-header">
-    <div class="page-header-content">
-        <h1>Elite Training Programs</h1>
-        <p>Discover our professional workout programs designed for maximum results</p>
-    </div>
-</section>
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">Workouts</h1>
+            <p class="page-subtitle">Find your perfect training program to forge your legacy</p>
+        </div>
+    </section>
 
-<section class="workouts">
-    <h2>Featured Workouts</h2>
-    
-    <div class="workout-filters">
-        <button class="filter-btn active" data-filter="all">All Programs</button>
-        <button class="filter-btn" data-filter="Beginner">Beginner</button>
-        <button class="filter-btn" data-filter="Intermediate">Intermediate</button>
-        <button class="filter-btn" data-filter="Advanced">Advanced</button>
-    </div>
-    
-    <div class="workout-grid">
-        {% for workout in workouts %}
-        <div class="workout-card" data-difficulty="{{ workout.difficulty }}">
-            <div class="workout-card-header" style="background-color: {% if workout.difficulty == 'Beginner' %}#4CAF50{% elif workout.difficulty == 'Intermediate' %}#FF9800{% else %}#F44336{% endif %};">
-                <h3>{{ workout.name }}</h3>
-                <span class="difficulty-badge {{ workout.difficulty.lower() }}">
-                    {{ workout.difficulty }}
-                </span>
+    <section class="workouts-container">
+        <div class="container">
+            <div class="workout-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="Beginner">Beginner</button>
+                <button class="filter-btn" data-filter="Intermediate">Intermediate</button>
+                <button class="filter-btn" data-filter="Advanced">Advanced</button>
+                <button class="filter-btn" data-filter="Strength">Strength</button>
+                <button class="filter-btn" data-filter="Cardio">Cardio</button>
+                <button class="filter-btn" data-filter="Flexibility">Flexibility</button>
             </div>
-            <div class="workout-card-content">
-                <p>{{ workout.description }}</p>
-                <div class="workout-details">
-                    <span><i class="fas fa-clock"></i> 45-60 min</span>
-                    <span><i class="fas fa-fire"></i> 400-600 cal</span>
+            
+            <div class="workouts-list">
+                {% if workouts %}
+                    {% for workout in workouts %}
+                    <div class="workout-card" data-difficulty="{{ workout.difficulty }}">
+                        <div class="workout-header">
+                            <h3>{{ workout.name }}</h3>
+                            <span class="workout-badge">{{ workout.difficulty }}</span>
+                        </div>
+                        <div class="workout-content">
+                            <p>{{ workout.description }}</p>
+                            <div class="workout-meta">
+                                <span><i>⏱️</i> {{ workout.duration }} min</span>
+                                <span><i>🔥</i> {{ workout.calories }} calories</span>
+                            </div>
+                            <a href="/workouts/{{ workout.id }}" class="btn">View Details</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="workout-card">
+                        <div class="workout-header">
+                            <h3>Olympian Strength Circuit</h3>
+                            <span class="workout-badge">Advanced</span>
+                        </div>
+                        <div class="workout-content">
+                            <p>Build strength like a god with this challenging full-body circuit designed to push your limits.</p>
+                            <div class="workout-meta">
+                                <span><i>⏱️</i> 45 min</span>
+                                <span><i>🔥</i> 550 calories</span>
+                            </div>
+                            <a href="#" class="btn">View Details</a>
+                        </div>
+                    </div>
+                    
+                    <div class="workout-card">
+                        <div class="workout-header">
+                            <h3>Spartan Warrior HIIT</h3>
+                            <span class="workout-badge">Intermediate</span>
+                        </div>
+                        <div class="workout-content">
+                            <p>High-intensity interval training inspired by warrior conditioning to maximize calorie burn and improve conditioning.</p>
+                            <div class="workout-meta">
+                                <span><i>⏱️</i> 30 min</span>
+                                <span><i>🔥</i> 400 calories</span>
+                            </div>
+                            <a href="#" class="btn">View Details</a>
+                        </div>
+                    </div>
+                    
+                    <div class="workout-card">
+                        <div class="workout-header">
+                            <h3>Foundations of Power</h3>
+                            <span class="workout-badge">Beginner</span>
+                        </div>
+                        <div class="workout-content">
+                            <p>Master the fundamental movements that build the foundation for legendary strength and power.</p>
+                            <div class="workout-meta">
+                                <span><i>⏱️</i> 40 min</span>
+                                <span><i>🔥</i> 320 calories</span>
+                            </div>
+                            <a href="#" class="btn">View Details</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            
+            {% if current_user %}
+            <div class="add-workout-container">
+                <form id="add-workout-form" class="form">
+                    <h2>Create Your Own Workout</h2>
+                    <div class="form-group">
+                        <label for="workout-name">Workout Name</label>
+                        <input type="text" id="workout-name" name="name" placeholder="Enter workout name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" placeholder="Describe the workout routine" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="difficulty">Difficulty Level</label>
+                        <select id="difficulty" name="difficulty" required>
+                            <option value="" disabled selected>Select difficulty level</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="duration">Estimated Duration (minutes)</label>
+                        <input type="number" id="duration" name="duration" min="5" max="120" placeholder="e.g., 45">
+                    </div>
+                    <div class="form-group">
+                        <label for="target-area">Primary Target Area</label>
+                        <select id="target-area" name="target_area">
+                            <option value="" disabled selected>Select primary muscle group</option>
+                            <option value="Full Body">Full Body</option>
+                            <option value="Upper Body">Upper Body</option>
+                            <option value="Lower Body">Lower Body</option>
+                            <option value="Core">Core</option>
+                            <option value="Cardio">Cardio</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Create Workout</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                        </svg>
+                        OLYMPUS STRENGTH
+                    </a>
+                    <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
                 </div>
-                <button class="btn view-workout-btn">View Details</button>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/members">Members</a></li>
+                        <li><a href="/workouts">Workouts</a></li>
+                        <li><a href="/login">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="#">Olympic Weightlifting</a></li>
+                        <li><a href="#">Spartan HIIT</a></li>
+                        <li><a href="#">Strength Foundations</a></li>
+                        <li><a href="#">All Programs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li>📞 (555) 123-4567</li>
+                        <li>📧 info@olympusstrength.com</li>
+                        <li>📍 123 Fitness Ave, Olympia</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
             </div>
         </div>
-        {% endfor %}
-    </div>
+    </footer>
 
-    <div class="add-workout-container">
-        <form id="add-workout-form" class="form">
-            <h2>Create Your Own Workout</h2>
-            <div class="form-group">
-                <label for="workout-name">Workout Name</label>
-                <input type="text" id="workout-name" name="name" placeholder="Enter workout name" required>
-            </div>
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea id="description" name="description" placeholder="Describe the workout routine" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="difficulty">Difficulty Level</label>
-                <select id="difficulty" name="difficulty" required>
-                    <option value="" disabled selected>Select difficulty level</option>
-                    <option value="Beginner">Beginner</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Advanced">Advanced</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="duration">Estimated Duration (minutes)</label>
-                <input type="number" id="duration" name="duration" min="5" max="120" placeholder="e.g., 45">
-            </div>
-            <div class="form-group">
-                <label for="target-area">Primary Target Area</label>
-                <select id="target-area" name="target_area">
-                    <option value="" disabled selected>Select primary muscle group</option>
-                    <option value="Full Body">Full Body</option>
-                    <option value="Upper Body">Upper Body</option>
-                    <option value="Lower Body">Lower Body</option>
-                    <option value="Core">Core</option>
-                    <option value="Cardio">Cardio</option>
-                </select>
-            </div>
-            <button type="submit" class="btn">Create Workout</button>
-        </form>
-        
-        <div class="workout-tips">
-            <h3>Workout Creation Tips</h3>
-            <ul>
-                <li><i class="fas fa-lightbulb"></i> Start with a 5-10 minute warm-up</li>
-                <li><i class="fas fa-lightbulb"></i> Include a mix of strength and cardio</li>
-                <li><i class="fas fa-lightbulb"></i> Allow for rest periods between sets</li>
-                <li><i class="fas fa-lightbulb"></i> End with a proper cool-down and stretch</li>
-                <li><i class="fas fa-lightbulb"></i> Balance exercises across muscle groups</li>
-                <li><i class="fas fa-lightbulb"></i> Consider adding progressive overload</li>
-            </ul>
-        </div>
-    </div>
-</section>
-{% endblock %}
+    <div class="notification-container"></div>
 
-{% block scripts %}
-<script src="{{ url_for('static', path='/js/workouts.js') }}"></script>
-{% endblock %}
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/workouts.js"></script>
+</body>
+</html>
