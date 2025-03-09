@@ -914,6 +914,119 @@ async def contact_form_submit(
             "error_message": "There was an error processing your message. Please try again."
         })
 
+# Maps page
+@app.get("/maps", response_class=HTMLResponse)
+async def maps_page(request: Request, db: Session = Depends(get_db)):
+    try:
+        current_user = await get_optional_user(request, db)
+        return templates.TemplateResponse("maps.html", {
+            "request": request,
+            "current_user": current_user,
+            "title": "Find Us"
+        })
+    except Exception as e:
+        logger.error(f"Error rendering maps page: {e}")
+        return HTMLResponse(content=f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        body {{
+            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }}
+        .error {{
+            color: #F44336;
+        }}
+    </style>
+</head>
+<body>
+    <h1 class="error">Internal Server Error</h1>
+    <p>We're sorry, something went wrong on our end. Please try again later.</p>
+    <p>Error details: {str(e)}</p>
+</body>
+</html>
+        """)
+
+# Contact page
+@app.get("/contact", response_class=HTMLResponse)
+async def contact_page(request: Request, db: Session = Depends(get_db)):
+    try:
+        current_user = await get_optional_user(request, db)
+        return templates.TemplateResponse("contact.html", {
+            "request": request,
+            "current_user": current_user,
+            "title": "Contact Us"
+        })
+    except Exception as e:
+        logger.error(f"Error rendering contact page: {e}")
+        return HTMLResponse(content=f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        body {{
+            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }}
+        .error {{
+            color: #F44336;
+        }}
+    </style>
+</head>
+<body>
+    <h1 class="error">Internal Server Error</h1>
+    <p>We're sorry, something went wrong on our end. Please try again later.</p>
+    <p>Error details: {str(e)}</p>
+</body>
+</html>
+        """)
+
+# Contact form submission handler
+@app.post("/contact", response_class=HTMLResponse)
+async def contact_form_submit(
+    request: Request,
+    name: str = Form(...),
+    email: str = Form(...),
+    subject: str = Form(...),
+    message: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    try:
+        current_user = await get_optional_user(request, db)
+        
+        # In a real application, you would send an email or store the message
+        # For now, we'll just show a success message
+        
+        return templates.TemplateResponse("contact.html", {
+            "request": request,
+            "current_user": current_user,
+            "title": "Contact Us",
+            "success_message": "Thank you for your message! We will get back to you soon."
+        })
+    except Exception as e:
+        logger.error(f"Error processing contact form: {e}")
+        return templates.TemplateResponse("contact.html", {
+            "request": request,
+            "current_user": current_user,
+            "title": "Contact Us",
+            "error_message": "There was an error processing your message. Please try again."
+        })
+
 # Run the app
 if __name__ == "__main__":
     import uvicorn
