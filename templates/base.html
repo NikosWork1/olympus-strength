@@ -25,8 +25,20 @@
                 <a href="/" class="nav-link">Home</a>
                 <a href="/members" class="nav-link">Members</a>
                 <a href="/workouts" class="nav-link">Workouts</a>
-                <a href="/login" class="nav-link">Login</a>
-                <a href="/members" class="btn btn-sm">Join Now</a>
+                
+                {% if current_user %}
+                    <a href="/profile" class="nav-link">Profile</a>
+                    {% if current_user.role == 'admin' %}
+                        <a href="/admin/dashboard" class="nav-link">Admin Dashboard</a>
+                    {% endif %}
+                    {% if current_user.role == 'coach' %}
+                        <a href="/coach/dashboard" class="nav-link">Coach Dashboard</a>
+                    {% endif %}
+                    <a href="/logout" class="nav-link">Logout ({{ current_user.role }})</a>
+                {% else %}
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/signup" class="btn btn-sm">Join Now</a>
+                {% endif %}
             </nav>
         </div>
     </header>

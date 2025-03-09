@@ -63,6 +63,24 @@
                     </div>
                 </div>
                 
+                <div class="form-group">
+                    <label class="form-label">Account Type</label>
+                    <div class="role-options">
+                        <div class="role-option">
+                            <input type="radio" id="customer" name="role" value="customer" {% if form_data and form_data.role == 'customer' %}checked{% endif %} checked>
+                            <label for="customer">Customer - Regular gym member</label>
+                        </div>
+                        <div class="role-option">
+                            <input type="radio" id="coach" name="role" value="coach" {% if form_data and form_data.role == 'coach' %}checked{% endif %}>
+                            <label for="coach">Coach - Fitness trainer</label>
+                        </div>
+                        <div class="role-option">
+                            <input type="radio" id="admin" name="role" value="admin" {% if form_data and form_data.role == 'admin' %}checked{% endif %}>
+                            <label for="admin">Admin - Gym management</label>
+                        </div>
+                    </div>
+                </div>
+                
                 <button type="submit" class="btn">Sign Up</button>
             </form>
             

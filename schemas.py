@@ -8,6 +8,7 @@ class MemberBase(BaseModel):
     email: EmailStr
     phone: Optional[str] = None
     membership_type: str
+    role: Optional[str] = "customer"
 
 class MemberCreate(MemberBase):
     password: str

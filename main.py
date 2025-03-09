@@ -39,6 +39,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
 # Create access token
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
@@ -155,6 +156,163 @@ async def get_members_page(request: Request, db: Session = Depends(get_db)):
 </html>
         """)
 
+# Admin dashboard
+@app.get("/admin/dashboard", response_class=HTMLResponse)
+async def admin_dashboard(request: Request, db: Session = Depends(get_db)):
+    try:
+        # Get current user and verify they are an admin
+        current_user = await get_optional_user(request, db)
+        if not current_user:
+            return RedirectResponse(url="/login", status_code=303)
+        
+        if current_user.role != "admin":
+            return HTMLResponse(content=f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied</title>
+    <style>
+        body {{
+            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }}
+        .error {{
+            color: #F44336;
+        }}
+    </style>
+</head>
+<body>
+    <h1 class="error">Access Denied</h1>
+    <p>You do not have permission to access this page. This area is restricted to administrators only.</p>
+    <p><a href="/">Return to Home</a></p>
+</body>
+</html>
+            """, status_code=403)
+        
+        # Get data for the dashboard
+        members = crud.get_members(db)
+        workouts = crud.get_workouts(db)
+        classes = crud.get_classes(db)
+        
+        return templates.TemplateResponse("admin_dashboard.html", {
+            "request": request,
+            "current_user": current_user,
+            "members": members,
+            "workouts": workouts,
+            "classes": classes
+        })
+    except Exception as e:
+        logger.error(f"Error rendering admin dashboard: {e}")
+        return HTMLResponse(content=f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        body {{
+            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }}
+        .error {{
+            color: #F44336;
+        }}
+    </style>
+</head>
+<body>
+    <h1 class="error">Internal Server Error</h1>
+    <p>We're sorry, something went wrong on our end. Please try again later.</p>
+    <p>Error details: {str(e)}</p>
+</body>
+</html>
+        """)
+
+# Coach dashboard
+@app.get("/coach/dashboard", response_class=HTMLResponse)
+async def coach_dashboard(request: Request, db: Session = Depends(get_db)):
+    try:
+        # Get current user and verify they are a coach
+        current_user = await get_optional_user(request, db)
+        if not current_user:
+            return RedirectResponse(url="/login", status_code=303)
+        
+        if current_user.role != "coach":
+            return HTMLResponse(content=f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied</title>
+    <style>
+        body {{
+            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }}
+        .error {{
+            color: #F44336;
+        }}
+    </style>
+</head>
+<body>
+    <h1 class="error">Access Denied</h1>
+    <p>You do not have permission to access this page. This area is restricted to coaches only.</p>
+    <p><a href="/">Return to Home</a></p>
+</body>
+</html>
+            """, status_code=403)
+        
+        return templates.TemplateResponse("coach_dashboard.html", {
+            "request": request,
+            "current_user": current_user
+        })
+    except Exception as e:
+        logger.error(f"Error rendering coach dashboard: {e}")
+        return HTMLResponse(content=f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        body {{
+            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }}
+        .error {{
+            color: #F44336;
+        }}
+    </style>
+</head>
+<body>
+    <h1 class="error">Internal Server Error</h1>
+    <p>We're sorry, something went wrong on our end. Please try again later.</p>
+    <p>Error details: {str(e)}</p>
+</body>
+</html>
+        """)
+
+
 # Workouts page
 @app.get("/workouts", response_class=HTMLResponse)
 async def get_workouts_page(request: Request, db: Session = Depends(get_db)):
@@ -267,10 +425,10 @@ async def login(
             status_code=401
         )
     
-    # Create access token
+   # Create access token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": member.email}, expires_delta=access_token_expires
+        data={"sub": member.email, "role": member.role}, expires_delta=access_token_expires
     )
     
     # Set cookie
@@ -290,7 +448,6 @@ async def login(
 async def signup_page(request: Request):
     return templates.TemplateResponse("signup.html", {"request": request})
 
-# Signup post
 @app.post("/signup")
 async def signup(
     response: Response,
@@ -299,6 +456,7 @@ async def signup(
     password: str = Form(...),
     confirm_password: str = Form(...),
     membership_type: str = Form(...),
+    role: str = Form(...),
     db: Session = Depends(get_db)
 ):
     # Check if passwords match
@@ -311,7 +469,8 @@ async def signup(
                 "form_data": {
                     "name": name,
                     "email": email,
-                    "membership_type": membership_type
+                    "membership_type": membership_type,
+                    "role": role
                 }
             },
             status_code=400
@@ -327,7 +486,8 @@ async def signup(
                 "error": "Email already registered",
                 "form_data": {
                     "name": name,
-                    "membership_type": membership_type
+                    "membership_type": membership_type,
+                    "role": role
                 }
             },
             status_code=400
@@ -339,7 +499,8 @@ async def signup(
         email=email,
         password=password,
         phone="",
-        membership_type=membership_type
+        membership_type=membership_type,
+        role=role
     ))
     
     # Create access token

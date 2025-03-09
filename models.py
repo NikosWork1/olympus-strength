@@ -20,6 +20,7 @@ class Member(Base):
     password_hash = Column(String(255))  # Hashed password
     phone = Column(String(20))
     membership_type = Column(String(50), nullable=False)
+    role = Column(String(20), default="customer")  # New role field with default value
     join_date = Column(DateTime, default=datetime.datetime.now)
     is_active = Column(Boolean, default=True)
     
@@ -84,3 +85,5 @@ class MemberWorkout(Base):
     # Relationships
     member = relationship("Member", back_populates="workouts")
     workout = relationship("Workout", back_populates="member_workouts")
+
+    

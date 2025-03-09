@@ -23,7 +23,8 @@ def create_member(db: Session, member: schemas.MemberCreate):
         email=member.email,
         password_hash=hashed_password,
         phone=member.phone,
-        membership_type=member.membership_type
+        membership_type=member.membership_type,
+        role=member.role
     )
     db.add(db_member)
     db.commit()
