@@ -1,14 +1,10 @@
-/* Add these new styles to the end of your existing styles.css file */
-
 /* Navigation buttons */
 .join-now-btn {
     padding: 0.5rem 1.5rem;
     margin-top: -0.5rem;
 }
 
-/* Any other inline styles you had in your HTML should be added here */
-
-/* Make sure your notification container is properly styled */
+/* Notification container styling */
 .notification-container {
     position: fixed;
     top: 20px;
@@ -463,91 +459,7 @@
     color: var(--text-light);
 }
 
-/* Add these styles to your main.css or styles.css file */
-
-/* Dropdown Menu Styles */
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-toggle {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-}
-
-.dropdown-icon {
-    font-size: 0.7rem;
-    margin-left: 5px;
-    transition: transform 0.3s ease;
-}
-
-.dropdown:hover .dropdown-icon {
-    transform: rotate(180deg);
-}
-
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: var(--secondary);
-    border-radius: var(--border-radius);
-    min-width: 180px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(10px);
-    transition: all 0.3s ease;
-    z-index: 1000;
-}
-
-.dropdown:hover .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.dropdown-item {
-    display: block;
-    padding: 0.75rem 1rem;
-    color: var(--white);
-    text-decoration: none;
-    transition: all 0.2s ease;
-}
-
-.dropdown-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: var(--primary);
-}
-
-/* Mobile adjustments */
-@media (max-width: 992px) {
-    .dropdown-menu {
-        position: static;
-        background-color: rgba(255, 255, 255, 0.05);
-        box-shadow: none;
-        opacity: 0;
-        max-height: 0;
-        overflow: hidden;
-        visibility: visible;
-        transform: none;
-        transition: max-height 0.3s ease, opacity 0.3s ease;
-    }
-    
-    .dropdown.active .dropdown-menu {
-        opacity: 1;
-        max-height: 500px;
-    }
-    
-    .dropdown-toggle {
-        width: 100%;
-        justify-content: space-between;
-    }
-}
-
-
-/* Enhanced Dropdown Menu Styles */
+/* Enhanced Dropdown Menu Styles - Updated to use click instead of hover */
 .dropdown {
     position: relative;
     display: inline-block;
@@ -563,10 +475,6 @@
 .dropdown-icon {
     font-size: 0.7rem;
     transition: transform 0.3s ease;
-}
-
-.dropdown:hover .dropdown-icon {
-    transform: rotate(180deg);
 }
 
 .dropdown-menu {
@@ -587,10 +495,15 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.dropdown:hover .dropdown-menu {
+/* Changed from hover to active class */
+.dropdown.active .dropdown-menu {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+}
+
+.dropdown.active .dropdown-icon {
+    transform: rotate(180deg);
 }
 
 .dropdown-item {
