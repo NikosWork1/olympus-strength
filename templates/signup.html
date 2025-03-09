@@ -46,24 +46,6 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">Membership Type</label>
-                    <div class="membership-options">
-                        <div class="membership-option">
-                            <input type="radio" id="bronze" name="membership_type" value="Bronze" {% if form_data and form_data.membership_type == 'Bronze' %}checked{% endif %} checked>
-                            <label for="bronze">Bronze - $29.99/month</label>
-                        </div>
-                        <div class="membership-option">
-                            <input type="radio" id="silver" name="membership_type" value="Silver" {% if form_data and form_data.membership_type == 'Silver' %}checked{% endif %}>
-                            <label for="silver">Silver - $49.99/month</label>
-                        </div>
-                        <div class="membership-option">
-                            <input type="radio" id="gold" name="membership_type" value="Gold" {% if form_data and form_data.membership_type == 'Gold' %}checked{% endif %}>
-                            <label for="gold">Gold - $79.99/month</label>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
                     <label class="form-label">Account Type</label>
                     <div class="role-options">
                         <div class="role-option">
@@ -81,6 +63,25 @@
                     </div>
                 </div>
                 
+                <!-- Membership options - only shown when Customer is selected -->
+                <div id="membership-section" class="form-group">
+                    <label class="form-label">Membership Type</label>
+                    <div class="membership-options">
+                        <div class="membership-option">
+                            <input type="radio" id="bronze" name="membership_type" value="Bronze" {% if form_data and form_data.membership_type == 'Bronze' %}checked{% endif %} checked>
+                            <label for="bronze">Bronze - $29.99/month</label>
+                        </div>
+                        <div class="membership-option">
+                            <input type="radio" id="silver" name="membership_type" value="Silver" {% if form_data and form_data.membership_type == 'Silver' %}checked{% endif %}>
+                            <label for="silver">Silver - $49.99/month</label>
+                        </div>
+                        <div class="membership-option">
+                            <input type="radio" id="gold" name="membership_type" value="Gold" {% if form_data and form_data.membership_type == 'Gold' %}checked{% endif %}>
+                            <label for="gold">Gold - $79.99/month</label>
+                        </div>
+                    </div>
+                </div>
+                
                 <button type="submit" class="btn">Sign Up</button>
             </form>
             
@@ -91,5 +92,32 @@
     </div>
 
     <script src="/static/js/main.js"></script>
+    <script>
+        // Handle showing/hiding membership section based on role selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleInputs = document.querySelectorAll('input[name="role"]');
+            const membershipSection = document.getElementById('membership-section');
+            
+            // Function to toggle membership section visibility
+            function toggleMembershipSection() {
+                const selectedRole = document.querySelector('input[name="role"]:checked').value;
+                if (selectedRole === 'customer') {
+                    membershipSection.style.display = 'block';
+                } else {
+                    membershipSection.style.display = 'none';
+                    // Set a default value for non-customer roles
+                    document.getElementById('bronze').checked = true;
+                }
+            }
+            
+            // Add event listeners to all role radio buttons
+            roleInputs.forEach(input => {
+                input.addEventListener('change', toggleMembershipSection);
+            });
+            
+            // Initialize on page load
+            toggleMembershipSection();
+        });
+    </script>
 </body>
 </html>

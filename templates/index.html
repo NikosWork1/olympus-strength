@@ -548,8 +548,13 @@
                 <a href="/" class="nav-link">Home</a>
                 <a href="/members" class="nav-link">Members</a>
                 <a href="/workouts" class="nav-link">Workouts</a>
+                {% if current_user %}
+                <a href="/profile" class="nav-link">Profile</a>
+                <a href="/logout" class="nav-link">Logout</a>
+                {% else %}
                 <a href="/login" class="nav-link">Login</a>
-                <a href="/members" class="btn">Join Now</a>
+                <a href="/signup" class="btn btn-sm">Join Now</a>
+                {% endif %}
             </nav>
         </div>
     </header>
@@ -558,7 +563,7 @@
         <div class="hero-content">
             <h1>FORGE YOUR LEGACY AT OLYMPUS STRENGTH</h1>
             <p>Where gods train. Where legends are made. Your journey to greatness begins here.</p>
-            <a href="#programs" class="btn btn-cta btn-lg">START YOUR JOURNEY</a>
+            <a href="/signup" class="btn btn-cta btn-lg">START YOUR JOURNEY</a>
         </div>
     </section>
 
@@ -648,12 +653,11 @@
     </section>
 
     <section class="cta">
-        <div class="container">
-            <div class="cta-content">
-                <h2>Ready to Transform Your Life?</h2>
-                <p>Join Olympus Strength today and start your journey towards a stronger, godlike physique.</p>
-                <a href="/members" class="btn btn-lg">Join Now</a>
-            </div>
+        <div class="cta-content">
+            <h2>Ready to Transform Your Life?</h2>
+            <p>Join Olympus Strength today and start your journey towards a stronger, godlike physique.</p>
+            <a href="/signup" class="btn btn-lg">Join Now</a>
+        </div>
         </div>
     </section>
 

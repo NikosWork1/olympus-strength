@@ -448,6 +448,8 @@ async def login(
 async def signup_page(request: Request):
     return templates.TemplateResponse("signup.html", {"request": request})
 
+# Update to the signup route in main.py
+
 @app.post("/signup")
 async def signup(
     response: Response,
@@ -493,6 +495,10 @@ async def signup(
             status_code=400
         )
     
+    # For non-customer roles, set a default membership type
+    if role != "customer":
+        membership_type = "None"
+    
     # Create member
     member = crud.create_member(db, schemas.MemberCreate(
         name=name,
@@ -506,7 +512,7 @@ async def signup(
     # Create access token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": member.email}, expires_delta=access_token_expires
+        data={"sub": member.email, "role": member.role}, expires_delta=access_token_expires
     )
     
     # Set cookie and redirect

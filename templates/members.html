@@ -22,12 +22,19 @@
                 <a href="/" class="nav-link">Home</a>
                 <a href="/members" class="nav-link">Members</a>
                 <a href="/workouts" class="nav-link">Workouts</a>
+                
                 {% if current_user %}
-                <a href="/profile" class="nav-link">Profile</a>
-                <a href="/logout" class="nav-link">Logout</a>
+                    <a href="/profile" class="nav-link">Profile</a>
+                    {% if current_user.role == 'admin' %}
+                        <a href="/admin/dashboard" class="nav-link">Admin Dashboard</a>
+                    {% endif %}
+                    {% if current_user.role == 'coach' %}
+                        <a href="/coach/dashboard" class="nav-link">Coach Dashboard</a>
+                    {% endif %}
+                    <a href="/logout" class="nav-link">Logout ({{ current_user.role }})</a>
                 {% else %}
-                <a href="/login" class="nav-link">Login</a>
-                <a href="/signup" class="btn btn-sm">Join Now</a>
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/signup" class="btn btn-sm">Join Now</a>
                 {% endif %}
             </nav>
         </div>
@@ -61,9 +68,11 @@
                             <div class="member-detail">
                                 <i>📧</i> {{ member.email }}
                             </div>
+                            {% if member.membership_type %}
                             <div class="member-detail">
                                 <i>🏅</i> {{ member.membership_type }} Membership
                             </div>
+                            {% endif %}
                             <div class="member-actions">
                                 <button class="btn btn-sm btn-outline">Message</button>
                                 <button class="btn btn-sm">Follow</button>
@@ -78,23 +87,56 @@
         </div>
     </section>
 
-    <section class="membership-section">
+    <footer>
         <div class="container">
-            <h2 class="section-title">Join Our Community</h2>
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                        </svg>
+                        OLYMPUS STRENGTH
+                    </a>
+                    <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/members">Members</a></li>
+                        <li><a href="/workouts">Workouts</a></li>
+                        <li><a href="/login">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="#">Olympic Weightlifting</a></li>
+                        <li><a href="#">Spartan HIIT</a></li>
+                        <li><a href="#">Strength Foundations</a></li>
+                        <li><a href="#">All Programs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li>📞 (555) 123-4567</li>
+                        <li>📧 info@olympusstrength.com</li>
+                        <li>📍 123 Fitness Ave, Olympia</li>
+                    </ul>
+                </div>
+            </div>
             
-            <div class="membership-container">
-                <div class="membership-form">
-                    <form id="member-form">
-                        <div class="form-group">
-                            <label for="name" class="form-label">Full Name</label>
-                            <input type="text" id="name" name="name" class="form-control" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input type="email" id="email" name="email" class="form-control" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" id="password" name="password" class="
+            <div class="footer-bottom">
+                <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/members.js"></script>
+</body>
+</html>
