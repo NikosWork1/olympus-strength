@@ -1,0 +1,73 @@
+// static/js/login.js
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('login-form');
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const emailInput = document.getElementById('login-email');
+            const passwordInput = document.getElementById('login-password');
+            
+            if (!emailInput.value || !passwordInput.value) {
+                showNotification('Please enter both email and password', 'error');
+                return;
+            }
+            
+            const formData = {
+                email: emailInput.value,
+                password: passwordInput.value
+            };
+            
+            // Show loading state
+            const submitButton = loginForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+            submitButton.disabled = true;
+            
+            try {
+                // Make the API request to login
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Close the modal
+                    document.getElementById('login-modal').style.display = 'none';
+                    
+                    // Store user info (optional, for frontend state)
+                    localStorage.setItem('user', JSON.stringify({
+                        id: data.id,
+                        name: data.name,
+                        email: data.email,
+                        isLoggedIn: true
+                    }));
+                    
+                    // Show success message
+                    showNotification(`Welcome back, ${data.name}!`, 'success');
+                    
+                    // Reload the page to update UI with logged-in state
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    // Show error message
+                    showNotification(data.detail || 'Login failed. Please check your credentials.', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showNotification('An error occurred during login. Please try again.', 'error');
+            } finally {
+                // Restore button state
+                submitButton.innerHTML = originalButtonText;
+                submitButton.disabled = false;
+            }
+        });
+    }
+});
