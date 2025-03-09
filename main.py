@@ -79,6 +79,7 @@ async def get_optional_user(request: Request, db: Session = Depends(get_db)):
 async def home(request: Request, db: Session = Depends(get_db)):
     try:
         current_user = await get_optional_user(request, db)
+        print(f"User role: {current_user.role if current_user else 'None'}")  # Debug print
         return templates.TemplateResponse("index.html", {
             "request": request,
             "current_user": current_user
@@ -425,7 +426,7 @@ async def login(
             status_code=401
         )
     
-   # Create access token
+    # Create access token - MAKE SURE TO INCLUDE THE ROLE
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": member.email, "role": member.role}, expires_delta=access_token_expires
