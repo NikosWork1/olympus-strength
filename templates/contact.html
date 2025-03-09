@@ -269,9 +269,136 @@
                     <div class="contact-methods">
                         <div class="contact-method">
                             <div class="contact-icon">📞</div>
-                            <div class="contact-details">
+                        
+                        <div class="form-group">
+                            <label for="message">Your Message</label>
+                            <textarea id="message" name="message" rows="5" required class="form-control"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                        </svg>
+                        OLYMPUS STRENGTH
+                    </a>
+                    <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/maps">Find Us</a></li>
+                        <li><a href="/contact">Contact Us</a></li>
+                        <li><a href="/login">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="#">Olympic Weightlifting</a></li>
+                        <li><a href="#">Spartan HIIT</a></li>
+                        <li><a href="#">Strength Foundations</a></li>
+                        <li><a href="#">All Programs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li>📞 +30 210 810 3410</li>
+                        <li>📧 info@olympusstrength.gr</li>
+                        <li>📍 Patision 223, Athens 112 53, Greece</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Include common JavaScript files -->
+    <script src="{{ url_for('static', path='/js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fade out success/error messages after 5 seconds
+            const messages = document.querySelectorAll('.message');
+            if (messages.length > 0) {
+                setTimeout(() => {
+                    messages.forEach(message => {
+                        message.style.opacity = '0';
+                        setTimeout(() => {
+                            message.style.display = 'none';
+                        }, 500);
+                    });
+                }, 5000);
+            }
+            
+            // Mobile menu toggle
+            const mobileToggle = document.querySelector('.mobile-toggle');
+            const nav = document.querySelector('.nav');
+            
+            if (mobileToggle && nav) {
+                mobileToggle.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+            
+            <div class="faq-section">
+                <h2>Frequently Asked Questions</h2>
+                
+                <div class="faq-items">
+                    <div class="faq-item">
+                        <h3>What are your membership options?</h3>
+                        <p>We offer Bronze ($29.99/month), Silver ($49.99/month), and Gold ($79.99/month) memberships, each with different benefits and access levels.</p>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3>Do you offer a free trial?</h3>
+                        <p>Yes! We offer a 3-day free trial so you can experience our facilities and classes before committing to a membership.</p>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3>Are personal trainers available?</h3>
+                        <p>Absolutely. Our certified personal trainers are available for one-on-one sessions, tailored to your specific fitness goals.</p>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3>What amenities do you offer?</h3>
+                        <p>Our main facility offers state-of-the-art equipment, group fitness classes, a pool, sauna, locker rooms with showers, and a nutrition bar.</p>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3>Can I freeze my membership?</h3>
+                        <p>Yes, memberships can be frozen for up to 3 months per year for medical reasons or extended travel.</p>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3>What is your cancellation policy?</h3>
+                        <p>Members can cancel with 30 days' notice. Please contact our membership services for more details.</p>
+                    </div>
+                </div>
+            </div>    <div class="contact-details">
                                 <h3>Phone</h3>
-                                <p>(555) 123-4567</p>
+                                <p>+30 210 810 3410</p>
                                 <p class="contact-note">Available Mon-Fri, 8am-8pm</p>
                             </div>
                         </div>
@@ -289,7 +416,7 @@
                             <div class="contact-icon">📍</div>
                             <div class="contact-details">
                                 <h3>Main Location</h3>
-                                <p>123 Fitness Ave, Olympia, WA 98501</p>
+                                <p>Patision 223, Athens 112 53, Greece</p>
                                 <p class="contact-note">Open 24/7</p>
                             </div>
                         </div>
