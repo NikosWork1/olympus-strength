@@ -8,10 +8,10 @@
     </div>
 </section>
 
-<section class="container">
-    <div class="classes-container">
+<section class="programs">
+    <div class="container">
         {% if classes %}
-            <div class="classes-grid">
+            <div class="program-grid">
                 {% for class in classes %}
                 <div class="program-card">
                     <div class="program-header">
@@ -30,7 +30,7 @@
                 {% endfor %}
             </div>
         {% else %}
-            <div class="no-data">
+            <div class="no-data" style="text-align: center; padding: 3rem 1rem;">
                 <h3>No classes available at the moment</h3>
                 <p>Check back soon for new class offerings.</p>
             </div>
