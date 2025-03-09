@@ -548,13 +548,12 @@
                 <a href="/" class="nav-link">Home</a>
                 <a href="/members" class="nav-link">Members</a>
                 <a href="/workouts" class="nav-link">Workouts</a>
-                {% if current_user %}
-                <a href="/profile" class="nav-link">Profile</a>
-                <a href="/logout" class="nav-link">Logout</a>
-                {% else %}
-                <a href="/login" class="nav-link">Login</a>
-                <a href="/signup" class="btn btn-sm">Join Now</a>
-                {% endif %}
+                    <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/admin/dashboard" class="nav-link">Admin Dashboard</a>
+                        <a href="/coach/dashboard" class="nav-link">Coach Dashboard</a>
+                    <a href="/logout" class="nav-link">Logout ({{ current_user.role }})</a>
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/signup" class="btn btn-sm">Join Now</a>
             </nav>
         </div>
     </header>
@@ -651,7 +650,7 @@
             </div>
         </div>
     </section>
-
+    
     <section class="cta">
         <div class="cta-content">
             <h2>Ready to Transform Your Life?</h2>
