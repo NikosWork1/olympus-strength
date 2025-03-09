@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="page-title">Book a Class</h1>
+        <p class="page-subtitle">Join our expert-led fitness classes</p>
+    </div>
+</section>
+
+<section class="container">
+    <div class="classes-container">
+        {% if classes %}
+            <div class="classes-grid">
+                {% for class in classes %}
+                <div class="program-card">
+                    <div class="program-header">
+                        <h3>{{ class.name }}</h3>
+                        <span class="program-badge">{{ class.level }}</span>
+                    </div>
+                    <div class="program-content">
+                        <p>{{ class.description }}</p>
+                        <div class="program-details">
+                            <span>🧑‍🏫 {{ class.instructor }}</span>
+                            <span>📅 {{ class.schedule }}</span>
+                        </div>
+                        <button class="btn book-btn" data-class-id="{{ class.id }}">Book Now</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-data">
+                <h3>No classes available at the moment</h3>
+                <p>Check back soon for new class offerings.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Booking Modal -->
+<div id="booking-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Confirm Booking</h2>
+        <div class="booking-summary">
+            <h3>Class Details</h3>
+            <p id="class-name"></p>
+            <p id="class-instructor"></p>
+            <p id="class-schedule"></p>
+        </div>
+        <form id="booking-form">
+            <input type="hidden" id="class-id" name="class_id">
+            <button type="submit" class="btn">Confirm Booking</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Modal functionality
+        const modal = document.getElementById('booking-modal');
+        const closeModal = document.querySelector('.close-modal');
+        const bookButtons = document.querySelectorAll('.book-btn');
+        
+        // Close modal when clicking X
+        if (closeModal) {
+            closeModal.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+        }
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // Open modal when book button is clicked
+        bookButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const classId = this.getAttribute('data-class-id');
+                const classCard = this.closest('.program-card');
+                const className = classCard.querySelector('h3').textContent;
+                const instructorText = classCard.querySelector('.program-details span:first-child').textContent;
+                const scheduleText = classCard.querySelector('.program-details span:last-child').textContent;
+                
+                // Populate modal
+                document.getElementById('class-id').value = classId;
+                document.getElementById('class-name').textContent = 'Class: ' + className;
+                document.getElementById('class-instructor').textContent = instructorText;
+                document.getElementById('class-schedule').textContent = scheduleText;
+                
+                // Show modal
+                modal.style.display = 'block';
+            });
+        });
+        
+        // Handle booking form submission
+        const bookingForm = document.getElementById('booking-form');
+        if (bookingForm) {
+            bookingForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const classId = document.getElementById('class-id').value;
+                
+                try {
+                    const response = await fetch('/api/bookings', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            class_id: parseInt(classId),
+                            member_id: {{ current_user.id }}
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        // Close modal
+                        modal.style.display = 'none';
+                        
+                        // Show success message
+                        alert('Class booked successfully!');
+                        
+                        // Reload page after short delay
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        alert('Error booking class. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Booking error:', error);
+                    alert('Error booking class. Please try again.');
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

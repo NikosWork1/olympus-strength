@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="page-title">My Workouts</h1>
+        <p class="page-subtitle">Track your fitness journey and progress</p>
+    </div>
+</section>
+
+<section class="container">
+    <div class="workouts-container">
+        {% if workouts %}
+            <div class="workouts-list">
+                {% for workout in workouts %}
+                <div class="workout-card">
+                    <div class="workout-header">
+                        <h3>{{ workout.workout.name }}</h3>
+                        <span class="workout-badge">{{ workout.workout.difficulty }}</span>
+                    </div>
+                    <div class="workout-content">
+                        <p>{{ workout.workout.description }}</p>
+                        <div class="workout-meta">
+                            <span><i>⏱️</i> {{ workout.workout.duration }} min</span>
+                            <span><i>🔥</i> {{ workout.workout.calories }} calories</span>
+                        </div>
+                        <p class="workout-status">Status: {{ workout.completion_status }}</p>
+                        <a href="/workouts/{{ workout.workout.id }}" class="btn">View Details</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-data">
+                <h3>No workouts assigned yet</h3>
+                <p>Explore our programs to find workouts that match your fitness goals.</p>
+                <a href="/workouts" class="btn">Browse Workouts</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
