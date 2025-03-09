@@ -138,15 +138,21 @@ def get_class_bookings(db: Session, class_id: int, skip: int = 0, limit: int = 1
     return db.query(models.Booking).filter(models.Booking.class_id == class_id).offset(skip).limit(limit).all()
 
 def create_booking(db: Session, booking: schemas.BookingCreate):
-    if booking.class_date is None:
-        # If no specific date, use current date/time
-        booking.class_date = datetime.now()
-        
-    db_booking = models.Booking(**booking.dict())
-    db.add(db_booking)
-    db.commit()
-    db.refresh(db_booking)
-    return db_booking
+    try:
+        db_booking = models.Booking(
+            member_id=booking.member_id,
+            class_id=booking.class_id,
+            class_date=booking.class_date,
+            status="confirmed"
+        )
+        db.add(db_booking)
+        db.commit()
+        db.refresh(db_booking)
+        return db_booking
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Database error creating booking: {e}")
+        raise e
 
 def update_booking(db: Session, booking_id: int, booking: schemas.BookingUpdate):
     db_booking = db.query(models.Booking).filter(models.Booking.id == booking_id).first()
