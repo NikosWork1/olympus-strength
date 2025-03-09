@@ -1,144 +1,103 @@
-{% extends "base.html" %}
-
-{% block content %}
-<section class="page-header">
-    <div class="container">
-        <h1 class="page-title">Book a Class</h1>
-        <p class="page-subtitle">Join our expert-led fitness classes</p>
-    </div>
-</section>
-
-<section class="programs">
-    <div class="container">
-        {% if classes %}
-            <div class="program-grid">
-                {% for class in classes %}
-                <div class="program-card">
-                    <div class="program-header">
-                        <h3>{{ class.name }}</h3>
-                        <span class="program-badge">{{ class.level }}</span>
-                    </div>
-                    <div class="program-content">
-                        <p>{{ class.description }}</p>
-                        <div class="program-details">
-                            <span>🧑‍🏫 {{ class.instructor }}</span>
-                            <span>📅 {{ class.schedule }}</span>
-                        </div>
-                        <button class="btn book-btn" data-class-id="{{ class.id }}">Book Now</button>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="no-data" style="text-align: center; padding: 3rem 1rem;">
-                <h3>No classes available at the moment</h3>
-                <p>Check back soon for new class offerings.</p>
-            </div>
-        {% endif %}
-    </div>
-</section>
-
-<!-- Booking Modal -->
-<div id="booking-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal">&times;</span>
-        <h2>Confirm Booking</h2>
-        <div class="booking-summary">
-            <h3>Class Details</h3>
-            <p id="class-name"></p>
-            <p id="class-instructor"></p>
-            <p id="class-schedule"></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Class - Olympus Strength</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                    <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                </svg>
+                OLYMPUS STRENGTH
+            </a>
+            
+            <button class="mobile-toggle">☰</button>
+            
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                
+                {% if current_user %}
+                    {% if current_user.role == 'admin' %}
+                        <!-- Admin-specific navigation -->
+                        <a href="/members" class="nav-link">Members</a>
+                        <a href="/workouts" class="nav-link">Workouts</a>
+                        <a href="/admin/dashboard" class="nav-link">Admin Dashboard</a>
+                        <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/logout" class="nav-link">Logout (Admin)</a>
+                        
+                    {% elif current_user.role == 'coach' %}
+                        <!-- Coach-specific navigation -->
+                        <a href="/members" class="nav-link">Members</a>
+                        <a href="/workouts" class="nav-link">Workouts</a>
+                        <a href="/coach/dashboard" class="nav-link">Coach Dashboard</a>
+                        <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/logout" class="nav-link">Logout (Coach)</a>
+                        
+                    {% else %}
+                        <!-- Customer-specific navigation -->
+                        <a href="/members" class="nav-link">Community</a>
+                        <a href="/workouts" class="nav-link">Programs</a>
+                        <a href="/workouts/personal" class="nav-link">My Workouts</a>
+                        <a href="/classes" class="nav-link">Book Class</a>
+                        <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/logout" class="nav-link">Logout (Member)</a>
+                    {% endif %}
+                {% else %}
+                    <!-- Visitor navigation -->
+                    <a href="/members" class="nav-link">Members</a>
+                    <a href="/workouts" class="nav-link">Workouts</a>
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/signup" class="btn btn-sm">Join Now</a>
+                {% endif %}
+            </nav>
         </div>
-        <form id="booking-form">
-            <input type="hidden" id="class-id" name="class_id">
-            <button type="submit" class="btn">Confirm Booking</button>
-        </form>
-    </div>
-</div>
-{% endblock %}
+    </header>
 
-{% block scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Modal functionality
-        const modal = document.getElementById('booking-modal');
-        const closeModal = document.querySelector('.close-modal');
-        const bookButtons = document.querySelectorAll('.book-btn');
-        
-        // Close modal when clicking X
-        if (closeModal) {
-            closeModal.addEventListener('click', function() {
-                modal.style.display = 'none';
-            });
-        }
-        
-        // Close modal when clicking outside
-        window.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-        
-        // Open modal when book button is clicked
-        bookButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const classId = this.getAttribute('data-class-id');
-                const classCard = this.closest('.program-card');
-                const className = classCard.querySelector('h3').textContent;
-                const instructorText = classCard.querySelector('.program-details span:first-child').textContent;
-                const scheduleText = classCard.querySelector('.program-details span:last-child').textContent;
-                
-                // Populate modal
-                document.getElementById('class-id').value = classId;
-                document.getElementById('class-name').textContent = 'Class: ' + className;
-                document.getElementById('class-instructor').textContent = instructorText;
-                document.getElementById('class-schedule').textContent = scheduleText;
-                
-                // Show modal
-                modal.style.display = 'block';
-            });
-        });
-        
-        // Handle booking form submission
-        const bookingForm = document.getElementById('booking-form');
-        if (bookingForm) {
-            bookingForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const classId = document.getElementById('class-id').value;
-                
-                try {
-                    const response = await fetch('/api/bookings', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            class_id: parseInt(classId),
-                            member_id: {{ current_user.id }}
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        // Close modal
-                        modal.style.display = 'none';
-                        
-                        // Show success message
-                        alert('Class booked successfully!');
-                        
-                        // Reload page after short delay
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1000);
-                    } else {
-                        alert('Error booking class. Please try again.');
-                    }
-                } catch (error) {
-                    console.error('Booking error:', error);
-                    alert('Error booking class. Please try again.');
-                }
-            });
-        }
-    });
-</script>
-{% endblock %}
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">Book a Class</h1>
+            <p class="page-subtitle">Join our expert-led fitness classes</p>
+        </div>
+    </section>
+
+    <section class="programs">
+        <div class="container">
+            {% if classes %}
+                <div class="program-grid">
+                    {% for class in classes %}
+                    <div class="program-card">
+                        <div class="program-header">
+                            <h3>{{ class.name }}</h3>
+                            <span class="program-badge">{{ class.level }}</span>
+                        </div>
+                        <div class="program-content">
+                            <p>{{ class.description }}</p>
+                            <div class="program-details">
+                                <span>🧑‍🏫 {{ class.instructor }}</span>
+                                <span>📅 {{ class.schedule }}</span>
+                            </div>
+                            <button class="btn book-btn" data-class-id="{{ class.id }}">Book Now</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-data">
+                    <h3>No classes available at the moment</h3>
+                    <p>Check back soon for new class offerings.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Rest of your content -->
+
+    <!-- Footer, scripts, etc. -->
+</body>
+</html>
