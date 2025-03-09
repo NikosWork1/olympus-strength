@@ -296,4 +296,191 @@
                             <span class="workout-badge {{ workout.completion_status }}">{{ workout.completion_status|title }}</span>
                         </div>
                         <div class="workout-content">
-                            <p>{{ workout.workout.description }}</p
+                            <p>{{ workout.workout.description }}</p>
+                            
+                            <div class="workout-meta">
+                                <span><i>⏱️</i> {{ workout.workout.duration|default(45) }} min</span>
+                                <span><i>🔥</i> {{ workout.workout.calories|default(300) }} calories</span>
+                                <span><i>📅</i> Assigned: {{ workout.date_assigned.strftime('%Y-%m-%d') }}</span>
+                            </div>
+                            
+                            {% if workout.completion_status == 'in_progress' %}
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 50%;"></div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if workout.notes %}
+                            <div class="workout-notes">
+                                <p>{{ workout.notes }}</p>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="workout-actions">
+                                <a href="/workouts/{{ workout.workout.id }}" class="btn">View Details</a>
+                                
+                                {% if workout.completion_status == 'assigned' %}
+                                <button class="btn btn-outline start-workout" data-id="{{ workout.id }}">Start Workout</button>
+                                {% elif workout.completion_status == 'in_progress' %}
+                                <button class="btn btn-outline complete-workout" data-id="{{ workout.id }}">Mark Completed</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-data">
+                    <h3>No workouts assigned yet</h3>
+                    <p>Explore our programs to find workouts that match your fitness goals.</p>
+                    <a href="/workouts" class="btn btn-lg">Browse Workouts</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                        </svg>
+                        OLYMPUS STRENGTH
+                    </a>
+                    <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">f</a>
+                        <a href="#" class="social-link">t</a>
+                        <a href="#" class="social-link">in</a>
+                        <a href="#" class="social-link">ig</a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/members">Members</a></li>
+                        <li><a href="/workouts">Workouts</a></li>
+                        <li><a href="/login">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="#">Olympic Weightlifting</a></li>
+                        <li><a href="#">Spartan HIIT</a></li>
+                        <li><a href="#">Strength Foundations</a></li>
+                        <li><a href="#">All Programs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li>📞 (555) 123-4567</li>
+                        <li>📧 info@olympusstrength.com</li>
+                        <li>📍 123 Fitness Ave, Olympia</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const workoutCards = document.querySelectorAll('.workout-card');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active button
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Get filter value
+                const filter = this.getAttribute('data-filter');
+                
+                // Show/hide workouts based on filter
+                workoutCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-status') === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Start workout button functionality
+        const startButtons = document.querySelectorAll('.start-workout');
+        startButtons.forEach(button => {
+            button.addEventListener('click', async function() {
+                const workoutId = this.getAttribute('data-id');
+                
+                try {
+                    const response = await fetch(`/api/member-workouts/${workoutId}/start`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        // Show success message
+                        alert('Workout started!');
+                        
+                        // Reload page to update status
+                        window.location.reload();
+                    } else {
+                        alert('Error updating workout status.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred.');
+                }
+            });
+        });
+        
+        // Complete workout button functionality
+        const completeButtons = document.querySelectorAll('.complete-workout');
+        completeButtons.forEach(button => {
+            button.addEventListener('click', async function() {
+                const workoutId = this.getAttribute('data-id');
+                
+                try {
+                    const response = await fetch(`/api/member-workouts/${workoutId}/complete`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        // Show success message
+                        alert('Congratulations! Workout completed!');
+                        
+                        // Reload page to update status
+                        window.location.reload();
+                    } else {
+                        alert('Error updating workout status.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred.');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
