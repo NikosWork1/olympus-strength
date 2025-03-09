@@ -39,6 +39,36 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+#Create route handlers
+@app.get("/workouts/personal", response_class=HTMLResponse)
+async def my_workouts(request: Request, db: Session = Depends(get_db)):
+    current_user = await get_optional_user(request, db)
+    if not current_user:
+        return RedirectResponse(url="/login", status_code=303)
+    
+    # Get the user's workouts
+    user_workouts = crud.get_member_workouts(db, current_user.id)
+    
+    return templates.TemplateResponse("my_workouts.html", {
+        "request": request,
+        "current_user": current_user,
+        "workouts": user_workouts
+    })
+
+@app.get("/classes", response_class=HTMLResponse)
+async def book_class(request: Request, db: Session = Depends(get_db)):
+    current_user = await get_optional_user(request, db)
+    if not current_user:
+        return RedirectResponse(url="/login", status_code=303)
+    
+    # Get available classes
+    classes = crud.get_classes(db)
+    
+    return templates.TemplateResponse("book_class.html", {
+        "request": request,
+        "current_user": current_user,
+        "classes": classes
+    })
 
 # Create access token
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
