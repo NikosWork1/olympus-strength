@@ -690,6 +690,37 @@ async def not_found_exception_handler(request: Request, exc: HTTPException):
         status_code=404
     )
 
+# API endpoint for creating new class bookings
+# This endpoint handles POST requests to create a new booking
+# It validates request data, authenticates the user, and saves the booking to the database
+# Returns the created booking object or an error message
+@app.post("/api/bookings", response_model=schemas.Booking)
+async def create_booking_api(request: Request, 
+                            booking_data: dict, 
+                            db: Session = Depends(get_db)):
+    try:
+        logger.info(f"Received booking data: {booking_data}")
+        
+        # Get current user
+        current_user = await get_optional_user(request, db)
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        # Create booking object
+        booking = schemas.BookingCreate(
+            class_id=booking_data["class_id"],
+            member_id=current_user.id,
+            class_date=booking_data["class_date"]
+        )
+        
+        # Create the booking
+        db_booking = crud.create_booking(db=db, booking=booking)
+        
+        return db_booking
+    except Exception as e:
+        logger.error(f"Error creating booking: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Error booking class: {str(e)}")
+
 # Run the app
 if __name__ == "__main__":
     import uvicorn
