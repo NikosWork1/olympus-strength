@@ -553,20 +553,35 @@
         {% if current_user.role == 'admin' %}
             <!-- Admin-specific navigation (most powerful role) -->
             <a href="/members" class="nav-link">Members</a>
-            <a href="/workouts" class="nav-link">Workouts</a>
+            
+            <div class="dropdown">
+                <a href="#" class="nav-link dropdown-toggle">Workouts <span class="dropdown-icon">▼</span></a>
+                <div class="dropdown-menu">
+                    <a href="/workouts" class="dropdown-item">All Workouts</a>
+                    <a href="/classes" class="dropdown-item">Book a Class</a>
+                    <a href="/workouts/personal" class="dropdown-item">My Workouts</a>
+                    <a href="/my-bookings" class="dropdown-item">Upcoming Classes</a>
+                </div>
+            </div>
+            
             <a href="/admin/dashboard" class="nav-link">Admin Dashboard</a>
-            {% if 'reports' in request.url.path %}
-                <a href="/admin/reports" class="nav-link active">Reports</a>
-            {% else %}
-                <a href="/admin/reports" class="nav-link">Reports</a>
-            {% endif %}
             <a href="/profile" class="nav-link">Profile</a>
             <a href="/logout" class="nav-link">Logout (Admin)</a>
             
         {% elif current_user.role == 'coach' %}
             <!-- Coach-specific navigation (intermediate role) -->
             <a href="/members" class="nav-link">Members</a>
-            <a href="/workouts" class="nav-link">Workouts</a>
+            
+            <div class="dropdown">
+                <a href="#" class="nav-link dropdown-toggle">Workouts <span class="dropdown-icon">▼</span></a>
+                <div class="dropdown-menu">
+                    <a href="/workouts" class="dropdown-item">All Workouts</a>
+                    <a href="/classes" class="dropdown-item">Book a Class</a>
+                    <a href="/workouts/personal" class="dropdown-item">My Workouts</a>
+                    <a href="/my-bookings" class="dropdown-item">Upcoming Classes</a>
+                </div>
+            </div>
+            
             <a href="/coach/dashboard" class="nav-link">Coach Dashboard</a>
             <a href="/profile" class="nav-link">Profile</a>
             <a href="/logout" class="nav-link">Logout (Coach)</a>
@@ -574,7 +589,17 @@
         {% else %}
             <!-- Customer-specific navigation (most common role) -->
             <a href="/members" class="nav-link">Members</a>
-            <a href="/workouts" class="nav-link">Workouts</a>
+            
+            <div class="dropdown">
+                <a href="#" class="nav-link dropdown-toggle">Workouts <span class="dropdown-icon">▼</span></a>
+                <div class="dropdown-menu">
+                    <a href="/workouts" class="dropdown-item">All Workouts</a>
+                    <a href="/classes" class="dropdown-item">Book a Class</a>
+                    <a href="/workouts/personal" class="dropdown-item">My Workouts</a>
+                    <a href="/my-bookings" class="dropdown-item">Upcoming Classes</a>
+                </div>
+            </div>
+            
             <a href="/profile" class="nav-link">Profile</a>
             <a href="/logout" class="nav-link">Logout (Member)</a>
         {% endif %}
