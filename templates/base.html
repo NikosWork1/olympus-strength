@@ -811,5 +811,43 @@
             });
         });
     </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Dropdown functionality for mobile
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                // Only prevent default on mobile screens
+                if (window.innerWidth <= 992) {
+                    e.preventDefault();
+                    const dropdown = this.parentElement;
+                    dropdown.classList.toggle('active');
+                    
+                    // Update the dropdown icon
+                    const icon = this.querySelector('.dropdown-icon');
+                    if (icon) {
+                        icon.textContent = dropdown.classList.contains('active') ? '▲' : '▼';
+                    }
+                }
+            });
+        });
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown').forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                    const icon = dropdown.querySelector('.dropdown-icon');
+                    if (icon) {
+                        icon.textContent = '▼';
+                    }
+                });
+            }
+        });
+    });
+</script>
+    
 </body>
 </html>
