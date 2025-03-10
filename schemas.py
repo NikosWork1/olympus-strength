@@ -122,3 +122,33 @@ class MemberWorkout(MemberWorkoutBase):
 class Login(BaseModel):
     email: EmailStr
     password: str
+
+
+class CoachWorkoutBase(BaseModel):
+    coach_id: int
+    workout_id: int
+
+class CoachWorkoutCreate(CoachWorkoutBase):
+    pass
+
+class CoachWorkout(CoachWorkoutBase):
+    id: int
+    date_created: datetime
+    
+    class Config:
+        orm_mode = True
+
+# Update the WorkoutCreate and Workout classes
+
+class WorkoutCreate(WorkoutBase):
+    duration: Optional[int] = 45
+    calories: Optional[int] = 300
+
+class Workout(WorkoutBase):
+    id: int
+    duration: Optional[int] = 45
+    calories: Optional[int] = 300
+    coach_id: Optional[int] = None  # This will be populated from the relationship
+    
+    class Config:
+        orm_mode = True
