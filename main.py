@@ -475,12 +475,6 @@ async def login(
     return response
 
 # Signup page
-@app.get("/signup", response_class=HTMLResponse)
-async def signup_page(request: Request):
-    return templates.TemplateResponse("signup.html", {"request": request})
-
-# Update to the signup route in main.py
-
 @app.post("/signup")
 async def signup(
     response: Response,
@@ -489,9 +483,12 @@ async def signup(
     password: str = Form(...),
     confirm_password: str = Form(...),
     membership_type: str = Form(...),
-    role: str = Form(...),
+    role: str = Form("customer"),  # Default to customer role
     db: Session = Depends(get_db)
 ):
+    # Force role to be customer for public signups
+    role = "customer"
+    
     # Check if passwords match
     if password != confirm_password:
         return templates.TemplateResponse(
@@ -502,8 +499,7 @@ async def signup(
                 "form_data": {
                     "name": name,
                     "email": email,
-                    "membership_type": membership_type,
-                    "role": role
+                    "membership_type": membership_type
                 }
             },
             status_code=400
@@ -519,18 +515,13 @@ async def signup(
                 "error": "Email already registered",
                 "form_data": {
                     "name": name,
-                    "membership_type": membership_type,
-                    "role": role
+                    "membership_type": membership_type
                 }
             },
             status_code=400
         )
     
-    # For non-customer roles, set a default membership type
-    if role != "customer":
-        membership_type = "None"
-    
-    # Create member
+    # Create member (always with customer role)
     member = crud.create_member(db, schemas.MemberCreate(
         name=name,
         email=email,
@@ -557,7 +548,6 @@ async def signup(
     )
     
     return response
-
 # Logout
 @app.get("/logout")
 async def logout(response: Response):
