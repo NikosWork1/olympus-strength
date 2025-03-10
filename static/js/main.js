@@ -75,6 +75,51 @@ function setupMobileNav() {
     }
 }
 
+// Setup dropdown menus - uses click instead of hover
+function setupDropdowns() {
+    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+    
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Close all other dropdowns first
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                if (dropdown !== this.parentElement) {
+                    dropdown.classList.remove('active');
+                    const icon = dropdown.querySelector('.dropdown-icon');
+                    if (icon) {
+                        icon.textContent = '▼';
+                    }
+                }
+            });
+            
+            // Toggle current dropdown
+            const dropdown = this.parentElement;
+            dropdown.classList.toggle('active');
+            
+            // Update the dropdown icon
+            const icon = this.querySelector('.dropdown-icon');
+            if (icon) {
+                icon.textContent = dropdown.classList.contains('active') ? '▲' : '▼';
+            }
+        });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown-toggle')) {
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                dropdown.classList.remove('active');
+                const icon = dropdown.querySelector('.dropdown-icon');
+                if (icon) {
+                    icon.textContent = '▼';
+                }
+            });
+        }
+    });
+}
+
 // Setup smooth scrolling for anchor links
 function setupSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -82,7 +127,7 @@ function setupSmoothScroll() {
             const targetId = this.getAttribute('href');
             
             // Skip if it's just "#" or if it's a button with other actions
-            if (targetId === '#' || this.classList.contains('btn-sm')) return;
+            if (targetId === '#' || this.classList.contains('btn-sm') || this.classList.contains('dropdown-toggle')) return;
             
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
@@ -95,18 +140,6 @@ function setupSmoothScroll() {
         });
     });
 }
-
-// Initialize on DOM content loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Setup mobile navigation
-    setupMobileNav();
-    
-    // Setup smooth scrolling
-    setupSmoothScroll();
-    
-    // Setup form validations
-    setupFormValidations();
-});
 
 // Setup form validations
 function setupFormValidations() {
@@ -167,6 +200,45 @@ function setupFormValidations() {
     });
 }
 
+// Setup modals
+function setupModals() {
+    // Get all modal triggers and modals
+    const modalTriggers = document.querySelectorAll('[data-modal]');
+    const modals = document.querySelectorAll('.modal');
+    
+    // Setup modal open triggers
+    modalTriggers.forEach(trigger => {
+        trigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            const modalId = this.getAttribute('data-modal');
+            const modal = document.getElementById(modalId);
+            
+            if (modal) {
+                modal.style.display = 'block';
+            }
+        });
+    });
+    
+    // Setup close buttons
+    document.querySelectorAll('.close-modal').forEach(closeBtn => {
+        closeBtn.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+    
+    // Close modal when clicking outside content
+    window.addEventListener('click', function(event) {
+        modals.forEach(modal => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+}
+
 // General utility function for booking classes or handling other button actions
 function setupActionButtons() {
     // Book class button functionality
@@ -180,5 +252,23 @@ function setupActionButtons() {
     });
 }
 
-// Call initialization
-setupActionButtons();
+// Initialize on DOM content loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup mobile navigation
+    setupMobileNav();
+    
+    // Setup dropdown menus
+    setupDropdowns();
+    
+    // Setup smooth scrolling
+    setupSmoothScroll();
+    
+    // Setup form validations
+    setupFormValidations();
+    
+    // Setup modals
+    setupModals();
+    
+    // Setup action buttons
+    setupActionButtons();
+});
