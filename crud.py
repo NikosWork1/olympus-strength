@@ -203,3 +203,34 @@ def delete_member_workout(db: Session, member_workout_id: int):
         db.commit()
         return True
     return False
+
+
+def assign_workout_to_coach(db: Session, workout_id: int, coach_id: int):
+    """
+    Assign a workout to a specific coach.
+    This creates an association between the workout and the coach.
+    """
+    # First check if the workout exists
+    workout = db.query(models.Workout).filter(models.Workout.id == workout_id).first()
+    if not workout:
+        return False
+    
+    # Then check if the user is a coach
+    coach = db.query(models.Member).filter(
+        models.Member.id == coach_id,
+        models.Member.role == "coach"
+    ).first()
+    if not coach:
+        return False
+    
+    # Create coach_workout association (you'll need to add this table to models.py)
+    coach_workout = models.CoachWorkout(
+        coach_id=coach_id,
+        workout_id=workout_id
+    )
+    
+    db.add(coach_workout)
+    db.commit()
+    db.refresh(coach_workout)
+    return coach_workout
+
