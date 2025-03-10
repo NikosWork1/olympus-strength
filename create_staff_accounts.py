@@ -18,35 +18,35 @@ coaches = [
     {
         "name": "Alex Hermes",
         "email": "alex@olympusstrength.com",
-        "password": "1234",
+        "password": "olympus2025",
         "phone": "+30 210 5555 101",
         "role": "coach"
     },
     {
         "name": "Marcus Leonidas",
         "email": "marcus@olympusstrength.com",
-        "password": "1234",
+        "password": "olympus2025",
         "phone": "+30 210 5555 102",
         "role": "coach"
     },
     {
         "name": "Helena Troy",
         "email": "helena@olympusstrength.com", 
-        "password": "1234",
+        "password": "olympus2025",
         "phone": "+30 210 5555 103",
         "role": "coach"
     },
     {
         "name": "Diana Artemis",
         "email": "diana@olympusstrength.com",
-        "password": "1234",
+        "password": "olympus2025",
         "phone": "+30 210 5555 104", 
         "role": "coach"
     },
     {
         "name": "Jason Argos",
         "email": "jason@olympusstrength.com",
-        "password": "1234",
+        "password": "olympus2025",
         "phone": "+30 210 5555 105",
         "role": "coach"
     }
@@ -55,7 +55,7 @@ coaches = [
 admin = {
     "name": "Zeus Olympian",
     "email": "admin@olympusstrength.com",
-    "password": "adminadmin",
+    "password": "admin2025",
     "phone": "+30 210 5555 100",
     "role": "admin"
 }
