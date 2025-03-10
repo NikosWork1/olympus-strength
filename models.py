@@ -28,6 +28,7 @@ class Member(Base):
     bookings = relationship("Booking", back_populates="member")
     classes = relationship("GymClass", secondary=class_member_association, back_populates="members")
     workouts = relationship("MemberWorkout", back_populates="member")
+    created_workouts = relationship("CoachWorkout", back_populates="coach")
 
 class GymClass(Base):
     __tablename__ = "classes"
@@ -57,6 +58,7 @@ class Workout(Base):
     
     # Relationships
     member_workouts = relationship("MemberWorkout", back_populates="workout")
+    creator = relationship("CoachWorkout", back_populates="workout")
 
 class Booking(Base):
     __tablename__ = "bookings"
@@ -87,3 +89,15 @@ class MemberWorkout(Base):
     workout = relationship("Workout", back_populates="member_workouts")
 
     
+class CoachWorkout(Base):
+    __tablename__ = "coach_workouts"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    coach_id = Column(Integer, ForeignKey("members.id"), nullable=False)
+    workout_id = Column(Integer, ForeignKey("workouts.id"), nullable=False)
+    date_created = Column(DateTime, default=datetime.datetime.now)
+    
+    # Relationships
+    coach = relationship("Member", back_populates="created_workouts")
+    workout = relationship("Workout", back_populates="creator")
+
