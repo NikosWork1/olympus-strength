@@ -12,6 +12,13 @@
             background-color: #212121 !important;
         }
         
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 2rem;
+        }
+        
         .logo {
             display: flex;
             align-items: center;
@@ -23,20 +30,25 @@
             letter-spacing: 1px;
         }
         
+        .nav {
+            display: flex;
+            align-items: center;
+        }
+        
         .nav-link {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            text-transform: uppercase;
-            position: relative;
-            transition: color 0.3s;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            margin-left: 2rem;
+            color: white !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            text-transform: uppercase !important;
+            position: relative !important;
+            transition: color 0.3s !important;
+            font-size: 0.9rem !important;
+            letter-spacing: 0.5px !important;
+            margin-left: 2rem !important;
         }
         
         .nav-link:hover {
-            color: #4CAF50;
+            color: #4CAF50 !important;
         }
         
         .nav-link::after {
@@ -288,9 +300,11 @@
                 <a href="/" class="nav-link">HOME</a>
                 <a href="/members" class="nav-link">MEMBERS</a>
                 <a href="/workouts" class="nav-link">WORKOUTS</a>
-                <!-- Replace text with profile icon -->
-                <a href="/profile" class="profile-icon" title="My Profile">👤</a>
+                <a href="/workouts/personal" class="nav-link">MY WORKOUTS</a>
+                <a href="/classes" class="nav-link">BOOK CLASS</a>
                 <a href="/logout" class="nav-link">LOGOUT</a>
+                <!-- Profile icon is now positioned after logout -->
+                <a href="/profile" class="profile-icon" title="My Profile">👤</a>
             </nav>
         </div>
     </header>
