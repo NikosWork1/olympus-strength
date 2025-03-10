@@ -910,6 +910,107 @@ async def contact_form_submit(
             "error_message": "There was an error processing your message. Please try again."
         })
 
+# Temporary route to create staff accounts
+@app.get("/create-staff-accounts")
+async def create_staff_accounts_route(db: Session = Depends(get_db)):
+    # Staff account data
+    coaches = [
+        {
+            "name": "Alex Hermes",
+            "email": "alex@olympusstrength.com",
+            "password": "olympus2025",
+            "phone": "+30 210 5555 101",
+            "role": "coach"
+        },
+        {
+            "name": "Marcus Leonidas",
+            "email": "marcus@olympusstrength.com",
+            "password": "olympus2025",
+            "phone": "+30 210 5555 102",
+            "role": "coach"
+        },
+        {
+            "name": "Helena Troy",
+            "email": "helena@olympusstrength.com", 
+            "password": "olympus2025",
+            "phone": "+30 210 5555 103",
+            "role": "coach"
+        },
+        {
+            "name": "Diana Artemis",
+            "email": "diana@olympusstrength.com",
+            "password": "olympus2025",
+            "phone": "+30 210 5555 104", 
+            "role": "coach"
+        },
+        {
+            "name": "Jason Argos",
+            "email": "jason@olympusstrength.com",
+            "password": "olympus2025",
+            "phone": "+30 210 5555 105",
+            "role": "coach"
+        }
+    ]
+
+    admin = {
+        "name": "Zeus Olympian",
+        "email": "admin@olympusstrength.com",
+        "password": "admin2025",
+        "phone": "+30 210 5555 100",
+        "role": "admin"
+    }
+    
+    created_accounts = []
+
+    try:
+        # Create coach accounts
+        for coach_data in coaches:
+            # Check if account already exists
+            existing_coach = crud.get_member_by_email(db, coach_data["email"])
+            if existing_coach:
+                created_accounts.append(f"Coach {coach_data['name']} already exists.")
+                continue
+                
+            # Create coach account
+            coach = schemas.MemberCreate(
+                name=coach_data["name"],
+                email=coach_data["email"],
+                password=coach_data["password"],
+                phone=coach_data["phone"],
+                membership_type="None",
+                role=coach_data["role"]
+            )
+            db_coach = crud.create_member(db, coach)
+            created_accounts.append(f"Created coach account: {db_coach.name} ({db_coach.email})")
+        
+        # Create admin account
+        existing_admin = crud.get_member_by_email(db, admin["email"])
+        if existing_admin:
+            created_accounts.append(f"Admin {admin['name']} already exists.")
+        else:
+            admin_user = schemas.MemberCreate(
+                name=admin["name"],
+                email=admin["email"],
+                password=admin["password"],
+                phone=admin["phone"],
+                membership_type="None",
+                role=admin["role"]
+            )
+            db_admin = crud.create_member(db, admin_user)
+            created_accounts.append(f"Created admin account: {db_admin.name} ({db_admin.email})")
+            
+        return {
+            "message": "Staff accounts created successfully",
+            "details": created_accounts,
+            "login_credentials": {
+                "coaches": [{"name": coach["name"], "email": coach["email"], "password": coach["password"]} for coach in coaches],
+                "admin": {"name": admin["name"], "email": admin["email"], "password": admin["password"]}
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error creating staff accounts: {e}")
+        raise HTTPException(status_code=500, detail=f"Error creating staff accounts: {str(e)}")
+
 # Run the app
 if __name__ == "__main__":
     import uvicorn
