@@ -48,46 +48,6 @@
             font-size: 0.9rem;
             margin-bottom: 1rem;
         }
-        
-        .staff-toggle {
-            margin-top: 0.5rem;
-        }
-        
-        .staff-credentials {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background-color: #e8f5e9;
-            border-radius: 6px;
-            border-left: 4px solid #4CAF50;
-        }
-        
-        .credentials-section {
-            margin-bottom: 1rem;
-        }
-        
-        .credentials-section h4 {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-            color: #2E7D32;
-        }
-        
-        .credentials-section ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        
-        .credentials-section li {
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .credentials-note {
-            font-size: 0.8rem;
-            font-style: italic;
-            color: #757575;
-            margin-top: 1rem;
-            margin-bottom: 0;
-        }
     </style>
 </head>
 <body>
@@ -134,56 +94,11 @@
             <div class="staff-login">
                 <h3>Staff Login</h3>
                 <p>For coaches and administrators only. Please use your assigned credentials.</p>
-                <a href="#staff-credentials" class="btn btn-outline staff-toggle">Show Staff Credentials</a>
-                
-                <div id="staff-credentials" class="staff-credentials" style="display: none;">
-                    <div class="credentials-section">
-                        <h4>Coach Credentials</h4>
-                        <ul>
-                            <li><strong>Alex Hermes:</strong> alex@olympusstrength.com / olympus2025</li>
-                            <li><strong>Marcus Leonidas:</strong> marcus@olympusstrength.com / olympus2025</li>
-                            <li><strong>Helena Troy:</strong> helena@olympusstrength.com / olympus2025</li>
-                            <li><strong>Diana Artemis:</strong> diana@olympusstrength.com / olympus2025</li>
-                            <li><strong>Jason Argos:</strong> jason@olympusstrength.com / olympus2025</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="credentials-section">
-                        <h4>Admin Credentials</h4>
-                        <ul>
-                            <li><strong>Zeus Olympian:</strong> admin@olympusstrength.com / admin2025</li>
-                        </ul>
-                    </div>
-                    
-                    <p class="credentials-note">These credentials are for demonstration purposes only.</p>
-                </div>
+                <p>Contact the administrator if you need assistance with your account.</p>
             </div>
         </div>
     </div>
 
     <script src="/static/js/main.js"></script>
-    <script>
-        // Toggle staff credentials visibility
-        document.addEventListener('DOMContentLoaded', function() {
-            const staffToggle = document.querySelector('.staff-toggle');
-            const staffCredentials = document.getElementById('staff-credentials');
-            
-            if (staffToggle && staffCredentials) {
-                staffToggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    const isVisible = staffCredentials.style.display !== 'none';
-                    
-                    if (isVisible) {
-                        staffCredentials.style.display = 'none';
-                        staffToggle.textContent = 'Show Staff Credentials';
-                    } else {
-                        staffCredentials.style.display = 'block';
-                        staffToggle.textContent = 'Hide Staff Credentials';
-                    }
-                });
-            }
-        });
-    </script>
 </body>
 </html>
