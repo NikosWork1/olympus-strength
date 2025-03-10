@@ -7,7 +7,160 @@
     <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="stylesheet" href="/static/css/styles.css">
-    <link rel="stylesheet" href="/static/css/header-fix.css">
+    <style>
+        /* Header styling fixes */
+        header {
+            background-color: #212121 !important;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif !important;
+            font-size: 1.5rem;
+            font-weight: 700 !important;
+            color: white;
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            position: relative;
+            transition: color 0.3s;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            margin-left: 2rem;
+        }
+        
+        .nav-link:hover {
+            color: #4CAF50;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #4CAF50;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1.5rem;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            margin-left: 2rem;
+        }
+        
+        .btn-sm:hover {
+            background-color: #389e3c;
+        }
+
+        /* Dropdown menu styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-toggle {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .dropdown-icon {
+            font-size: 0.7rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #212121;
+            border-radius: 6px;
+            min-width: 200px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-top: 5px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown.active .dropdown-icon {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-item {
+            display: block;
+            padding: 12px 16px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.95rem;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #4CAF50;
+            color: white;
+            padding-left: 20px;
+        }
+        
+        /* Staff Login Section */
+        .staff-login-section {
+            background-color: #f5f5f5;
+            padding: 3rem 0;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .staff-login-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .staff-login-content h2 {
+            color: #212121;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+        
+        .staff-login-content p {
+            color: #757575;
+            margin-bottom: 1.5rem;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -19,16 +172,327 @@
                 OLYMPUS STRENGTH
             </a>
             
+            <button class="mobile-toggle">☰</button>
+            
             <nav class="nav">
-                <a href="/" class="nav-link">HOME</a>
-                <a href="/maps" class="nav-link">FIND US</a>
-                <a href="/contact" class="nav-link">CONTACT US</a>
-                <a href="/login" class="nav-link">LOGIN</a>
-                <a href="/signup" class="btn btn-sm">Join Now</a>
+                {% if current_user %}
+                    {% if current_user.role == 'admin' %}
+                        <!-- Admin-specific navigation (most powerful role) -->
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/admin/dashboard" class="nav-link">ADMIN DASHBOARD</a>
+                        <a href="/profile" class="nav-link">PROFILE</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        
+                    {% elif current_user.role == 'coach' %}
+                        <!-- Coach-specific navigation (intermediate role) -->
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/coach/dashboard" class="nav-link">COACH DASHBOARD</a>
+                        <a href="/profile" class="nav-link">PROFILE</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        
+                    {% else %}
+                        <!-- Customer-specific navigation (most common role) -->
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/workouts/personal" class="nav-link">MY WORKOUTS</a>
+                        <a href="/classes" class="nav-link">BOOK CLASS</a>
+                        <a href="/profile" class="nav-link">PROFILE</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                    {% endif %}
+                {% else %}
+                    <!-- Visitor navigation (unauthenticated state) -->
+                    <a href="/" class="nav-link">HOME</a>
+                    <a href="/maps" class="nav-link">FIND US</a>
+                    <a href="/contact" class="nav-link">CONTACT US</a>
+                    <a href="/login" class="nav-link">LOGIN</a>
+                    <a href="/signup" class="btn btn-sm">Join Now</a>
+                {% endif %}
             </nav>
         </div>
     </header>
 
-    <!-- Rest of your page content continues here -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>FORGE YOUR LEGACY AT OLYMPUS STRENGTH</h1>
+            <p>Where gods train. Where legends are made. Your journey to greatness begins here.</p>
+            <a href="/signup" class="btn btn-cta btn-lg">START YOUR JOURNEY</a>
+        </div>
+    </section>
+    
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">WHY CHOOSE OLYMPUS STRENGTH</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💪</div>
+                    <h3>State-of-the-Art Equipment</h3>
+                    <p>Train with the latest fitness technology and premium equipment for maximum results.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍🏫</div>
+                    <h3>Expert Trainers</h3>
+                    <p>Our certified professionals create personalized programs to help you reach your goals.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🕒</div>
+                    <h3>Flexible Hours</h3>
+                    <p>Open 24/7 to accommodate your schedule, because dedication knows no time.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Community Support</h3>
+                    <p>Join a passionate community that will motivate and inspire your fitness journey.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="programs" class="programs">
+        <div class="container">
+            <h2 class="section-title">OUR ELITE PROGRAMS</h2>
+            
+            <div class="program-grid">
+                <div class="program-card">
+                    <div class="program-header">
+                        <h3>Olympic Weightlifting</h3>
+                        <span class="program-badge">All Levels</span>
+                    </div>
+                    <div class="program-content">
+                        <p>Master the snatch and clean & jerk with expert technique coaching for maximum power development.</p>
+                        <div class="program-details">
+                            <span>🧑‍🏫 Alex Hermes</span>
+                            <span>📅 Mon, Wed, Fri</span>
+                        </div>
+                        <a href="#" class="btn">Book Class</a>
+                    </div>
+                </div>
+                
+                <div class="program-card">
+                    <div class="program-header">
+                        <h3>Spartan HIIT</h3>
+                        <span class="program-badge">Intermediate</span>
+                    </div>
+                    <div class="program-content">
+                        <p>High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.</p>
+                        <div class="program-details">
+                            <span>🧑‍🏫 Marcus Leonidas</span>
+                            <span>📅 Tue, Thu</span>
+                        </div>
+                        <a href="#" class="btn">Book Class</a>
+                    </div>
+                </div>
+                
+                <div class="program-card">
+                    <div class="program-header">
+                        <h3>Strength Foundations</h3>
+                        <span class="program-badge">Beginner</span>
+                    </div>
+                    <div class="program-content">
+                        <p>Master fundamental lifts with expert coaching to build the foundation for legendary strength.</p>
+                        <div class="program-details">
+                            <span>🧑‍🏫 Helena Troy</span>
+                            <span>📅 Mon, Wed</span>
+                        </div>
+                        <a href="#" class="btn">Book Class</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Staff Login Section -->
+    <section class="cta staff-login-section">
+        <div class="container">
+            <div class="staff-login-container">
+                <div class="staff-login-content cta-content">
+                    <h2>Staff Access</h2>
+                    <p>Coaches and administrators, access your dashboards and management tools here.</p>
+                    <a href="/login" class="btn btn-outline">Staff Login</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="cta">
+        <div class="cta-content">
+            <h2>Ready to Transform Your Life?</h2>
+            <p>Join Olympus Strength today and start your journey towards a stronger, godlike physique.</p>
+            <a href="/signup" class="btn btn-lg">Join Now</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                        </svg>
+                        OLYMPUS STRENGTH
+                    </a>
+                    <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">f</a>
+                        <a href="#" class="social-link">t</a>
+                        <a href="#" class="social-link">in</a>
+                        <a href="#" class="social-link">ig</a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/members">Members</a></li>
+                        <li><a href="/workouts">Workouts</a></li>
+                        <li><a href="/login">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="#">Olympic Weightlifting</a></li>
+                        <li><a href="#">Spartan HIIT</a></li>
+                        <li><a href="#">Strength Foundations</a></li>
+                        <li><a href="#">All Programs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li>📞 (555) 123-4567</li>
+                        <li>📧 info@olympusstrength.com</li>
+                        <li>📍 123 Fitness Ave, Olympia</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="notification-container"></div>
+
+    <script src="/static/js/main.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mobile menu toggle
+        const mobileToggle = document.querySelector('.mobile-toggle');
+        const nav = document.querySelector('.nav');
+        
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', function() {
+                nav.classList.toggle('active');
+            });
+        }
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                
+                // Skip if it's just "#" or if it's a button with other actions
+                if (targetId === '#' || this.classList.contains('btn-sm')) return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    e.preventDefault();
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Book class button functionality
+        document.querySelectorAll('.btn').forEach(button => {
+            if (button.textContent.includes('Book Class')) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showNotification('Class booking functionality will be available soon!', 'info');
+                });
+            }
+        });
+
+        // Dropdown functionality for mobile
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const dropdown = this.parentElement;
+                dropdown.classList.toggle('active');
+                
+                // Update the dropdown icon
+                const icon = this.querySelector('.dropdown-icon');
+                if (icon) {
+                    icon.textContent = dropdown.classList.contains('active') ? '▲' : '▼';
+                }
+            });
+        });
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown').forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                    const icon = dropdown.querySelector('.dropdown-icon');
+                    if (icon) {
+                        icon.textContent = '▼';
+                    }
+                });
+            }
+        });
+
+        // Simple notification function
+        window.showNotification = function(message, type = 'success') {
+            // Check if notification container exists, if not create it
+            let notificationContainer = document.querySelector('.notification-container');
+            
+            if (!notificationContainer) {
+                notificationContainer = document.createElement('div');
+                notificationContainer.className = 'notification-container';
+                document.body.appendChild(notificationContainer);
+            }
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            // Add close button
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'notification-close';
+            closeBtn.innerHTML = '&times;';
+            closeBtn.onclick = () => notification.remove();
+            notification.appendChild(closeBtn);
+            
+            // Add to container
+            notificationContainer.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        };
+    });
+    </script>
 </body>
 </html>
