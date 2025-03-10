@@ -92,32 +92,6 @@
     </div>
 
     <script src="/static/js/main.js"></script>
-    <script>
-        // Handle showing/hiding membership section based on role selection
-        document.addEventListener('DOMContentLoaded', function() {
-            const roleInputs = document.querySelectorAll('input[name="role"]');
-            const membershipSection = document.getElementById('membership-section');
-            
-            // Function to toggle membership section visibility
-            function toggleMembershipSection() {
-                const selectedRole = document.querySelector('input[name="role"]:checked').value;
-                if (selectedRole === 'customer') {
-                    membershipSection.style.display = 'block';
-                } else {
-                    membershipSection.style.display = 'none';
-                    // Set a default value for non-customer roles
-                    document.getElementById('bronze').checked = true;
-                }
-            }
-            
-            // Add event listeners to all role radio buttons
-            roleInputs.forEach(input => {
-                input.addEventListener('change', toggleMembershipSection);
-            });
-            
-            // Initialize on page load
-            toggleMembershipSection();
-        });
-    </script>
+    
 </body>
 </html>
