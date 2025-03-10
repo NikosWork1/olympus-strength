@@ -1185,3 +1185,84 @@ header {
 .profile-icon:hover {
     background-color: #388E3C;
 }
+
+/* Add this to your main.css or create a new CSS file for consistent header styling */
+
+/* Header styling consistency */
+header {
+    background-color: #212121 !important;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 2rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif !important;
+    font-size: 1.5rem;
+    font-weight: 700 !important;
+    color: white;
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    color: white !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    position: relative !important;
+    transition: color 0.3s !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 0.5px !important;
+    margin-left: 2rem !important;
+}
+
+.nav-link:hover {
+    color: #4CAF50 !important;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #4CAF50;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Profile icon in navbar */
+.profile-icon {
+    width: 32px;
+    height: 32px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 2rem;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.profile-icon:hover {
+    background-color: #388E3C;
+}
