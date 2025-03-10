@@ -114,8 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     
                     // Format duration and calories
-                    const duration = formData.duration || 45;
-                    const calories = Math.round(duration * 10); // Simple calculation
+                    const duration = newWorkout.duration || formData.duration || 45;
+                    const calories = newWorkout.calories || Math.round(duration * 10); // Simple calculation
                     
                     workoutCard.innerHTML = `
                         <div class="workout-header" style="background-color: ${headerColor};">
