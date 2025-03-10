@@ -68,7 +68,7 @@ p {
 
 /* Header */
 header {
-    background-color: var(--secondary);
+    background-color: var(--secondary) !important;
     color: var(--white);
     padding: 1rem 0;
     position: fixed;
@@ -76,21 +76,24 @@ header {
     top: 0;
     z-index: 1000;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif !important;
 }
 
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0.5rem 2rem;
 }
 
 .logo {
     display: flex;
     align-items: center;
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 700 !important;
     color: var(--white);
     text-decoration: none;
+    letter-spacing: 1px;
 }
 
 .logo svg {
@@ -100,23 +103,23 @@ header {
 /* Navigation */
 .nav {
     display: flex;
-    gap: 2rem;
     align-items: center;
 }
 
 .nav-link {
-    color: var(--white);
-    text-decoration: none;
-    font-weight: 500;
-    position: relative;
-    transition: var(--transition);
-    text-transform: uppercase;
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
+    color: var(--white) !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    position: relative !important;
+    transition: color 0.3s !important;
+    text-transform: uppercase !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 0.5px !important;
+    margin-left: 2rem !important;
 }
 
 .nav-link:hover {
-    color: var(--primary);
+    color: var(--primary) !important;
 }
 
 .nav-link::after {
@@ -127,11 +130,97 @@ header {
     width: 0;
     height: 2px;
     background-color: var(--primary);
-    transition: var(--transition);
+    transition: width 0.3s ease;
 }
 
 .nav-link:hover::after {
     width: 100%;
+}
+
+/* Profile icon in navbar */
+.profile-icon {
+    width: 32px;
+    height: 32px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 2rem;
+    color: var(--white);
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.profile-icon:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Enhanced Dropdown Menu Styles */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dropdown-icon {
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #212121;
+    border-radius: 6px;
+    min-width: 200px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    margin-top: 5px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dropdown.active .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown.active .dropdown-icon {
+    transform: rotate(180deg);
+}
+
+.dropdown-item {
+    display: block;
+    padding: 12px 16px;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.95rem;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background-color: #4CAF50;
+    color: white;
+    padding-left: 20px;
 }
 
 /* Hero Section */
@@ -216,10 +305,16 @@ header {
 .btn-sm {
     padding: 0.5rem 1.5rem;
     font-size: 0.9rem;
+    margin-left: 2rem;
 }
 
 .btn-cta {
     background-image: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.join-now-btn {
+    padding: 0.5rem 1.5rem;
+    margin-top: -0.5rem;
 }
 
 /* Features Section */
@@ -794,12 +889,6 @@ header {
     gap: 2rem;
 }
 
-@media (max-width: 768px) {
-    .profile-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
 .profile-stats {
     background-color: var(--white);
     padding: 2rem;
@@ -813,6 +902,18 @@ header {
     padding: 1.5rem;
     background-color: var(--gray-100);
     border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--primary);
 }
 
 .stat-value {
@@ -1003,6 +1104,20 @@ footer {
     color: #333;
 }
 
+.booking-summary {
+    background-color: #f5f5f5;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.booking-summary h3 {
+    margin-bottom: 1rem;
+    color: #212121;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 0.5rem;
+}
+
 /* Notification */
 .notification-container {
     position: fixed;
@@ -1054,6 +1169,365 @@ footer {
     cursor: pointer;
 }
 
+/* Admin & Coach Dashboard Styles */
+.admin-container,
+.coach-container {
+    padding: 3rem 0;
+    margin-top: 70px;
+}
+
+.admin-grid,
+.coach-grid {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 2rem;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+    background: linear-gradient(135deg, #212121 0%, #424242 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Sidebar Navigation */
+.admin-sidebar,
+.coach-sidebar {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem;
+}
+
+.admin-menu,
+.coach-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.admin-menu-item,
+.coach-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    color: var(--text-dark);
+    transition: var(--transition);
+}
+
+.admin-menu-item:hover,
+.coach-menu-item:hover,
+.admin-menu-item.active,
+.coach-menu-item.active {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.admin-menu-icon,
+.coach-menu-icon {
+    font-size: 1.25rem;
+}
+
+/* Main Content Area */
+.admin-content,
+.coach-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Stats Cards */
+.admin-stats,
+.coach-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Dashboard Tabs */
+.dashboard-tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.2rem;
+    background-color: #f5f5f5;
+    color: #424242;
+    border-radius: 30px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.dashboard-tab:hover, .dashboard-tab.active {
+    background-color: #4CAF50;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Section Styling */
+.admin-section,
+.coach-section,
+.dashboard-section {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--box-shadow);
+    margin-bottom: 2rem;
+}
+
+.admin-section-title,
+.coach-section-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+/* Activity List */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    background-color: var(--gray-100);
+    transition: var(--transition);
+}
+
+.activity-item:hover {
+    background-color: var(--gray-200);
+}
+
+.activity-icon {
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-light);
+    color: var(--primary);
+    border-radius: 50%;
+}
+
+.activity-details {
+    flex: 1;
+}
+
+.activity-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.activity-meta {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.quick-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    border-radius: var(--border-radius);
+    background-color: var(--gray-100);
+    text-decoration: none;
+    color: var(--text-dark);
+    transition: var(--transition);
+    text-align: center;
+}
+
+.quick-action:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    transform: translateY(-5px);
+}
+
+.quick-action-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.quick-action-text {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Schedule List - Coach Dashboard */
+.schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.schedule-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    background-color: var(--gray-100);
+    transition: var(--transition);
+}
+
+.schedule-item:hover {
+    background-color: var(--gray-200);
+}
+
+.schedule-time {
+    width: 120px;
+    font-weight: 600;
+    padding-right: 1rem;
+    border-right: 2px solid var(--gray-300);
+}
+
+.schedule-details {
+    flex: 1;
+    padding: 0 1rem;
+}
+
+.schedule-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.schedule-meta {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.schedule-status {
+    padding: 0.3rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.schedule-status.completed {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.schedule-status.active {
+    background-color: #fdf2cc;
+    color: #f59f00;
+}
+
+.schedule-status.upcoming {
+    background-color: #e3f2fd;
+    color: #2196f3;
+}
+
+/* Client Progress - Coach Dashboard */
+.clients-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.client-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    background-color: var(--gray-100);
+    transition: var(--transition);
+}
+
+.client-item:hover {
+    background-color: var(--gray-200);
+}
+
+.client-avatar {
+    width: 50px;
+    height: 50px;
+    background-color: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+.client-details {
+    flex: 1;
+}
+
+.client-name {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.client-progress {
+    margin-top: 0.5rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background-color: var(--gray-300);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.25rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary);
+    border-radius: 4px;
+}
+
+.progress-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+/* Error container */
+.error-container {
+    margin-top: 100px; 
+    padding: 2rem;
+}
+
 /* Responsive Design */
 @media (max-width: 992px) {
     .nav {
@@ -1088,6 +1562,40 @@ footer {
     .profile-actions {
         justify-content: center;
     }
+    
+    .admin-grid,
+    .coach-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .dropdown-menu {
+        position: static;
+        background-color: rgba(33, 33, 33, 0.9);
+        box-shadow: none;
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden;
+        visibility: visible;
+        transform: none;
+        transition: max-height 0.3s ease, opacity 0.3s ease;
+        border: none;
+        margin-top: 0;
+        border-left: 3px solid #4CAF50;
+    }
+    
+    .dropdown.active .dropdown-menu {
+        opacity: 1;
+        max-height: 300px;
+    }
+    
+    .dropdown-toggle {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .dropdown-item {
+        padding: 12px 20px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -1113,156 +1621,8 @@ footer {
     .footer-content {
         grid-template-columns: 1fr;
     }
-}
-
-
-/* This code should be added to your main.css or as a separate CSS file */
-
-/* Header styling consistency */
-header {
-    background-color: #212121 !important;
-    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif !important;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif !important;
-    font-size: 1.5rem;
-    font-weight: 700 !important;
-    color: white;
-    text-decoration: none;
-    letter-spacing: 1px;
-}
-
-.nav-link {
-    color: white !important;
-    text-decoration: none !important;
-    font-weight: 500 !important;
-    text-transform: uppercase !important;
-    position: relative !important;
-    transition: color 0.3s !important;
-    font-size: 0.9rem !important;
-    letter-spacing: 0.5px !important;
-    margin-left: 2rem !important;
-}
-
-.nav-link:hover {
-    color: #4CAF50 !important;
-}
-
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: #4CAF50;
-    transition: width 0.3s ease;
-}
-
-.nav-link:hover::after {
-    width: 100%;
-}
-
-/* Profile icon in navbar */
-.profile-icon {
-    width: 32px;
-    height: 32px;
-    background-color: #4CAF50;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 2rem;
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-    transition: background-color 0.3s;
-}
-
-.profile-icon:hover {
-    background-color: #388E3C;
-}
-
-/* Add this to your main.css or create a new CSS file for consistent header styling */
-
-/* Header styling consistency */
-header {
-    background-color: #212121 !important;
-}
-
-.header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 2rem;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif !important;
-    font-size: 1.5rem;
-    font-weight: 700 !important;
-    color: white;
-    text-decoration: none;
-    letter-spacing: 1px;
-}
-
-.nav {
-    display: flex;
-    align-items: center;
-}
-
-.nav-link {
-    color: white !important;
-    text-decoration: none !important;
-    font-weight: 500 !important;
-    text-transform: uppercase !important;
-    position: relative !important;
-    transition: color 0.3s !important;
-    font-size: 0.9rem !important;
-    letter-spacing: 0.5px !important;
-    margin-left: 2rem !important;
-}
-
-.nav-link:hover {
-    color: #4CAF50 !important;
-}
-
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: #4CAF50;
-    transition: width 0.3s ease;
-}
-
-.nav-link:hover::after {
-    width: 100%;
-}
-
-/* Profile icon in navbar */
-.profile-icon {
-    width: 32px;
-    height: 32px;
-    background-color: #4CAF50;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 2rem;
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-    transition: background-color 0.3s;
-}
-
-.profile-icon:hover {
-    background-color: #388E3C;
+    
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
 }
