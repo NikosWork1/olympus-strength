@@ -8,9 +8,7 @@
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
     <style>
-
-
-        
+        /* Dropdown menu styles */
         .dropdown {
             position: relative;
             display: inline-block;
@@ -120,16 +118,7 @@
                         <!-- Admin-specific navigation (most powerful role) -->
                         <a href="/" class="nav-link">HOME</a>
                         <a href="/members" class="nav-link">MEMBERS</a>
-                        
-                        <div class="dropdown">
-                            <a href="#" class="nav-link dropdown-toggle">WORKOUTS <span class="dropdown-icon">▼</span></a>
-                            <div class="dropdown-menu">
-                                <a href="/workouts" class="dropdown-item">All Workouts</a>
-                                <a href="/classes" class="dropdown-item">Book a Class</a>
-                                <a href="/workouts/personal" class="dropdown-item">My Workouts</a>
-                            </div>
-                        </div>
-                        
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
                         <a href="/admin/dashboard" class="nav-link">ADMIN DASHBOARD</a>
                         <a href="/profile" class="nav-link">PROFILE</a>
                         <a href="/logout" class="nav-link">LOGOUT</a>
@@ -138,14 +127,13 @@
                         <!-- Coach-specific navigation (intermediate role) -->
                         <a href="/" class="nav-link">HOME</a>
                         <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
                         
                         <div class="dropdown">
-                            <a href="#" class="nav-link dropdown-toggle">WORKOUTS <span class="dropdown-icon">▼</span></a>
+                            <a href="#" class="nav-link dropdown-toggle">CLASSES <span class="dropdown-icon">▼</span></a>
                             <div class="dropdown-menu">
-                                <a href="/workouts" class="dropdown-item">All Workouts</a>
                                 <a href="/classes" class="dropdown-item">Book a Class</a>
-                                <a href="/workouts/personal" class="dropdown-item">My Workouts</a>
-                                <a href="/my-bookings" class="dropdown-item">Upcoming Classes</a>
+                                <a href="/my-bookings" class="dropdown-item">My Classes</a>
                             </div>
                         </div>
                         
@@ -157,14 +145,13 @@
                         <!-- Customer-specific navigation (most common role) -->
                         <a href="/" class="nav-link">HOME</a>
                         <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
                         
                         <div class="dropdown">
-                            <a href="#" class="nav-link dropdown-toggle">WORKOUTS <span class="dropdown-icon">▼</span></a>
+                            <a href="#" class="nav-link dropdown-toggle">CLASSES <span class="dropdown-icon">▼</span></a>
                             <div class="dropdown-menu">
-                                <a href="/workouts" class="dropdown-item">All Workouts</a>
                                 <a href="/classes" class="dropdown-item">Book a Class</a>
-                                <a href="/workouts/personal" class="dropdown-item">My Workouts</a>
-                                <a href="/my-bookings" class="dropdown-item">Upcoming Classes</a>
+                                <a href="/my-workouts" class="dropdown-item">My Workouts</a>
                             </div>
                         </div>
                         
