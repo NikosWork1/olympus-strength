@@ -1011,6 +1011,75 @@ async def create_staff_accounts_route(db: Session = Depends(get_db)):
         logger.error(f"Error creating staff accounts: {e}")
         raise HTTPException(status_code=500, detail=f"Error creating staff accounts: {str(e)}")
 
+@app.post("/api/workouts/create")
+async def create_workout_with_coach(
+    request: Request,
+    workout_data: dict,
+    db: Session = Depends(get_db)
+):
+    try:
+        # Get current user
+        current_user = await get_optional_user(request, db)
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        # Create workout object
+        workout = schemas.WorkoutCreate(
+            name=workout_data["name"],
+            description=workout_data["description"],
+            difficulty=workout_data["difficulty"],
+            category=workout_data.get("category", ""),
+            duration=workout_data.get("duration", 45),
+            calories=workout_data.get("calories", 300)
+        )
+        
+        # Create the workout
+        db_workout = crud.create_workout(db=db, workout=workout)
+        
+        # If user is a coach, assign workout to them
+        if current_user.role == "coach":
+            crud.assign_workout_to_coach(db, db_workout.id, current_user.id)
+        # If user is admin and workout has a coach_id, assign to that coach
+        elif current_user.role == "admin" and "coach_id" in workout_data:
+            crud.assign_workout_to_coach(db, db_workout.id, workout_data["coach_id"])
+        
+        return db_workout
+    except Exception as e:
+        logger.error(f"Error creating workout: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Error creating workout: {str(e)}")
+
+# Add this route to main.py for getting coach workouts
+
+@app.get("/api/coaches/{coach_id}/workouts")
+async def get_coach_workouts(
+    coach_id: int,
+    db: Session = Depends(get_db)
+):
+    # Get the coach
+    coach = db.query(models.Member).filter(
+        models.Member.id == coach_id,
+        models.Member.role == "coach"
+    ).first()
+    
+    if not coach:
+        raise HTTPException(status_code=404, detail="Coach not found")
+    
+    # Get workouts created by this coach
+    coach_workouts = db.query(models.CoachWorkout).filter(
+        models.CoachWorkout.coach_id == coach_id
+    ).all()
+    
+    # Get the actual workout objects
+    workouts = []
+    for coach_workout in coach_workouts:
+        workout = db.query(models.Workout).filter(
+            models.Workout.id == coach_workout.workout_id
+        ).first()
+        if workout:
+            workouts.append(workout)
+    
+    return workouts
+
 # Run the app
 if __name__ == "__main__":
     import uvicorn
