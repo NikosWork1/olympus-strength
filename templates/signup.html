@@ -45,25 +45,10 @@
                     <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
                 </div>
                 
-                <div class="form-group">
-                    <label class="form-label">Account Type</label>
-                    <div class="role-options">
-                        <div class="role-option">
-                            <input type="radio" id="customer" name="role" value="customer" {% if form_data and form_data.role == 'customer' %}checked{% endif %} checked>
-                            <label for="customer">Customer - Regular gym member</label>
-                        </div>
-                        <div class="role-option">
-                            <input type="radio" id="coach" name="role" value="coach" {% if form_data and form_data.role == 'coach' %}checked{% endif %}>
-                            <label for="coach">Coach - Fitness trainer</label>
-                        </div>
-                        <div class="role-option">
-                            <input type="radio" id="admin" name="role" value="admin" {% if form_data and form_data.role == 'admin' %}checked{% endif %}>
-                            <label for="admin">Admin - Gym management</label>
-                        </div>
-                    </div>
-                </div>
+                <!-- Hidden role input - automatically set to customer -->
+                <input type="hidden" name="role" value="customer">
                 
-                <!-- Membership options - only shown when Customer is selected -->
+                <!-- Membership options -->
                 <div id="membership-section" class="form-group">
                     <label class="form-label">Membership Type</label>
                     <div class="membership-options">
@@ -92,6 +77,6 @@
     </div>
 
     <script src="/static/js/main.js"></script>
-    
+    <!-- No role-related JavaScript needed anymore as all signups are customers -->
 </body>
 </html>
