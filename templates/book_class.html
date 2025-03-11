@@ -148,39 +148,34 @@
             <button class="mobile-toggle">☰</button>
             
             <nav class="nav">
-                <a href="/" class="nav-link">Home</a>
-                
                 {% if current_user %}
-                    {% if current_user.role == 'admin' %}
-                        <!-- Admin-specific navigation -->
-                        <a href="/members" class="nav-link">Members</a>
-                        <a href="/workouts" class="nav-link">Workouts</a>
-                        <a href="/admin/dashboard" class="nav-link">Admin Dashboard</a>
-                        <a href="/profile" class="nav-link">Profile</a>
-                        <a href="/logout" class="nav-link">Logout (Admin)</a>
-                        
+                    {% if current_user.role == 'user' %}
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/classes" class="nav-link">BOOK CLASS</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
+                    {% elif current_user.role == 'admin' %}
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/admin/dashboard" class="nav-link">ADMIN DASHBOARD</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
                     {% elif current_user.role == 'coach' %}
-                        <!-- Coach-specific navigation -->
-                        <a href="/members" class="nav-link">Members</a>
-                        <a href="/workouts" class="nav-link">Workouts</a>
-                        <a href="/coach/dashboard" class="nav-link">Coach Dashboard</a>
-                        <a href="/profile" class="nav-link">Profile</a>
-                        <a href="/logout" class="nav-link">Logout (Coach)</a>
-                        
-                    {% else %}
-                        <!-- Customer-specific navigation -->
-                        <a href="/members" class="nav-link">Community</a>
-                        <a href="/workouts" class="nav-link">Programs</a>
-                        <a href="/workouts/personal" class="nav-link">My Workouts</a>
-                        <a href="/classes" class="nav-link">Book Class</a>
-                        <a href="/profile" class="nav-link">Profile</a>
-                        <a href="/logout" class="nav-link">Logout (Member)</a>
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/coach/dashboard" class="nav-link">COACH DASHBOARD</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
                     {% endif %}
                 {% else %}
-                    <!-- Visitor navigation -->
-                    <a href="/members" class="nav-link">Members</a>
-                    <a href="/workouts" class="nav-link">Workouts</a>
-                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/" class="nav-link">HOME</a>
+                    <a href="/members" class="nav-link">MEMBERS</a>
+                    <a href="/workouts" class="nav-link">WORKOUTS</a>
+                    <a href="/login" class="nav-link">LOGIN</a>
                     <a href="/signup" class="btn btn-sm">Join Now</a>
                 {% endif %}
             </nav>
