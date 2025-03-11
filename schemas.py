@@ -22,7 +22,7 @@ class Transaction(TransactionBase):
     date: datetime = Field(default_factory=datetime.now)
     
     class Config:
-        orm_mode = True
+        from_attributes = True  # Changed from orm_mode for Pydantic v2
 
 # Member Schemas
 class MemberBase(BaseModel):
@@ -49,7 +49,7 @@ class Member(MemberBase):
     transactions: List[Transaction] = []
     
     class Config:
-        orm_mode = True
+        from_attributes = True  # Changed from orm_mode for Pydantic v2
 
 # Workout Schemas
 class WorkoutBase(BaseModel):
@@ -77,7 +77,7 @@ class Workout(WorkoutBase):
     coach_id: Optional[int] = None
     
     class Config:
-        orm_mode = True
+        from_attributes = True  # Changed from orm_mode for Pydantic v2
 
 # GymClass Schemas
 class GymClassBase(BaseModel):
@@ -103,7 +103,7 @@ class GymClass(GymClassBase):
     id: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True  # Changed from orm_mode for Pydantic v2
 
 # Booking Schemas
 class BookingBase(BaseModel):
@@ -124,7 +124,7 @@ class Booking(BookingBase):
     status: str
     
     class Config:
-        orm_mode = True
+        from_attributes = True  # Changed from orm_mode for Pydantic v2
 
 # MemberWorkout Schemas
 class MemberWorkoutBase(BaseModel):
@@ -145,7 +145,7 @@ class MemberWorkout(MemberWorkoutBase):
     completion_status: str
     
     class Config:
-        orm_mode = True
+        from_attributes = True  # Changed from orm_mode for Pydantic v2
 
 # Login Schema
 class Login(BaseModel):
@@ -165,7 +165,7 @@ class CoachWorkout(CoachWorkoutBase):
     date_created: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True  # Changed from orm_mode for Pydantic v2
 
 # Update forward references
 Member.update_forward_refs()
