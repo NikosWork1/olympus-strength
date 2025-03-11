@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 import models, schemas
 from datetime import datetime
 from passlib.context import CryptContext
+from sqlalchemy import func
+import logging
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
