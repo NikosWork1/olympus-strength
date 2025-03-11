@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Workouts - Olympus Strength</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+    <style>
+        /* My Workouts specific styles */
+        .workout-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .workout-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .workout-header {
+            background-color: #212121;
+            color: #fff;
+            padding: 1.25rem;
+            position: relative;
+        }
+        
+        .workout-header h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .workout-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .workout-badge.completed {
+            background-color: #4CAF50;
+        }
+        
+        .workout-badge.in_progress {
+            background-color: #FFC107;
+        }
+        
+        .workout-badge.assigned {
+            background-color: #2196F3;
+        }
+        
+        .workout-content {
+            padding: 1.5rem;
+        }
+        
+        .workout-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin: 1rem 0;
+            color: #757575;
+            font-size: 0.9rem;
+        }
+        
+        .workout-notes {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            font-style: italic;
+            color: #757575;
+        }
+        
+        .workout-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .progress-container {
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            height: 8px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background-color: #4CAF50;
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 3rem 1rem;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+        
+        .no-data h3 {
+            margin-bottom: 1rem;
+            color: #424242;
+        }
+        
+        .no-data p {
+            margin-bottom: 1.5rem;
+            color: #757575;
+        }
+        
+        /* Filter styles */
+        .filter-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background-color: #f5f5f5;
+            border: none;
+            border-radius: 50px;
+            color: #424242;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-btn.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        /* Stats section */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4CAF50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #757575;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                    <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                </svg>
+                OLYMPUS STRENGTH
+            </a>
+            
+            <button class="mobile-toggle">☰</button>
+            
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                
+                {% if current_user %}
+                    {% if current_user.role == 'admin' %}
+                        <!-- Admin-specific navigation -->
+                        <a href="/members" class="nav-link">Members</a>
+                        <a href="/workouts" class="nav-link">Workouts</a>
+                        <a href="/admin/dashboard" class="nav-link">Admin Dashboard</a>
+                        <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/logout" class="nav-link">Logout (Admin)</a>
+                        
+                    {% elif current_user.role == 'coach' %}
+                        <!-- Coach-specific navigation -->
+                        <a href="/members" class="nav-link">Members</a>
+                        <a href="/workouts" class="nav-link">Workouts</a>
+                        <a href="/coach/dashboard" class="nav-link">Coach Dashboard</a>
+                        <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/logout" class="nav-link">Logout (Coach)</a>
+                        
+                    {% else %}
+                        <!-- Customer-specific navigation -->
+                        <a href="/members" class="nav-link">Community</a>
+                        <a href="/workouts" class="nav-link">Programs</a>
+                        <a href="/workouts/personal" class="nav-link">My Workouts</a>
+                        <a href="/classes" class="nav-link">Book Class</a>
+                        <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/logout" class="nav-link">Logout (Member)</a>
+                    {% endif %}
+                {% else %}
+                    <!-- Visitor navigation -->
+                    <a href="/members" class="nav-link">Members</a>
+                    <a href="/workouts" class="nav-link">Workouts</a>
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/signup" class="btn btn-sm">Join Now</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">My Workouts</h1>
+            <p class="page-subtitle">Track your fitness journey and progress</p>
+        </div>
+    </section>
+
+    <section class="container">
+        <!-- Stats Summary -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-value">
+                    {% if workouts %}
+                        {{ workouts|length }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </div>
+                <div class="stat-label">Total Workouts</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">
+                    {% if workouts %}
+                        {{ workouts|selectattr('completion_status', 'equalto', 'completed')|list|length }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </div>
+                <div class="stat-label">Completed</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">
+                    {% if workouts %}
+                        {{ workouts|sum(attribute='workout.duration')|default(0) }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </div>
+                <div class="stat-label">Total Minutes</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">
+                    {% if workouts %}
+                        {{ workouts|sum(attribute='workout.calories')|default(0) }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </div>
+                <div class="stat-label">Calories Burned</div>
+            </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="filter-container">
+            <button class="filter-btn active" data-filter="all">All Workouts</button>
+            <button class="filter-btn" data-filter="completed">Completed</button>
+            <button class="filter-btn" data-filter="in_progress">In Progress</button>
+            <button class="filter-btn" data-filter="assigned">Not Started</button>
+        </div>
+
+        <!-- Workouts List -->
+        <div class="workouts-container">
+            {% if workouts %}
+                <div class="workouts-list">
+                    {% for workout in workouts %}
+                    <div class="workout-card" data-status="{{ workout.completion_status }}">
+                        <div class="workout-header">
+                            <h3>{{ workout.workout.name }}</h3>
+                            <span class="workout-badge {{ workout.completion_status }}">{{ workout.completion_status|title }}</span>
+                        </div>
+                        <div class="workout-content">
+                            <p>{{ workout.workout.description }}</p>
+                            
+                            <div class="workout-meta">
+                                <span><i>⏱️</i> {{ workout.workout.duration|default(45) }} min</span>
+                                <span><i>🔥</i> {{ workout.workout.calories|default(300) }} calories</span>
+                                <span><i>📅</i> Assigned: {{ workout.date_assigned.strftime('%Y-%m-%d') }}</span>
+                            </div>
+                            
+                            {% if workout.completion_status == 'in_progress' %}
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 50%;"></div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if workout.notes %}
+                            <div class="workout-notes">
+                                <p>{{ workout.notes }}</p>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="workout-actions">
+                                <a href="/workouts/{{ workout.workout.id }}" class="btn">View Details</a>
+                                
+                                {% if workout.completion_status == 'assigned' %}
+                                <button class="btn btn-outline start-workout" data-id="{{ workout.id }}">Start Workout</button>
+                                {% elif workout.completion_status == 'in_progress' %}
+                                <button class="btn btn-outline complete-workout" data-id="{{ workout.id }}">Mark Completed</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-data">
+                    <h3>No workouts assigned yet</h3>
+                    <p>Explore our programs to find workouts that match your fitness goals.</p>
+                    <a href="/workouts" class="btn btn-lg">Browse Workouts</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                        </svg>
+                        OLYMPUS STRENGTH
+                    </a>
+                    <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">f</a>
+                        <a href="#" class="social-link">t</a>
+                        <a href="#" class="social-link">in</a>
+                        <a href="#" class="social-link">ig</a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/members">Members</a></li>
+                        <li><a href="/workouts">Workouts</a></li>
+                        <li><a href="/login">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="#">Olympic Weightlifting</a></li>
+                        <li><a href="#">Spartan HIIT</a></li>
+                        <li><a href="#">Strength Foundations</a></li>
+                        <li><a href="#">All Programs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li>📞 (555) 123-4567</li>
+                        <li>📧 info@olympusstrength.com</li>
+                        <li>📍 123 Fitness Ave, Olympia</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const workoutCards = document.querySelectorAll('.workout-card');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active button
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Get filter value
+                const filter = this.getAttribute('data-filter');
+                
+                // Show/hide workouts based on filter
+                workoutCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-status') === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Start workout button functionality
+        const startButtons = document.querySelectorAll('.start-workout');
+        startButtons.forEach(button => {
+            button.addEventListener('click', async function() {
+                const workoutId = this.getAttribute('data-id');
+                
+                try {
+                    const response = await fetch(`/api/member-workouts/${workoutId}/start`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        // Show success message
+                        alert('Workout started!');
+                        
+                        // Reload page to update status
+                        window.location.reload();
+                    } else {
+                        alert('Error updating workout status.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred.');
+                }
+            });
+        });
+        
+        // Complete workout button functionality
+        const completeButtons = document.querySelectorAll('.complete-workout');
+        completeButtons.forEach(button => {
+            button.addEventListener('click', async function() {
+                const workoutId = this.getAttribute('data-id');
+                
+                try {
+                    const response = await fetch(`/api/member-workouts/${workoutId}/complete`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        // Show success message
+                        alert('Congratulations! Workout completed!');
+                        
+                        // Reload page to update status
+                        window.location.reload();
+                    } else {
+                        alert('Error updating workout status.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred.');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
