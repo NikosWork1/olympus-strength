@@ -10,26 +10,31 @@
         /* Calendar Styles */
         .calendar-container {
             margin: 20px 0;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .calendar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .calendar-nav {
             background-color: #f5f5f5;
             border: none;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             font-size: 18px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: background-color 0.3s;
         }
 
         .calendar-nav:hover {
@@ -38,7 +43,8 @@
 
         .current-month {
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
+            color: #333;
         }
 
         .weekday-row {
@@ -46,13 +52,14 @@
             grid-template-columns: repeat(7, 1fr);
             text-align: center;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            color: #666;
         }
 
         .dates-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
+            gap: 8px;
         }
 
         .calendar-day {
@@ -62,7 +69,8 @@
             justify-content: center;
             cursor: pointer;
             border-radius: 50%;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
         .calendar-day:hover:not(.empty):not(.past) {
@@ -90,51 +98,160 @@
 
         /* Time Slots */
         .time-slots {
-            margin: 20px 0;
+            margin: 30px 0;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .time-slots h3 {
+            margin-bottom: 20px;
+            color: #333;
         }
 
         #time-slots-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
         }
 
         .time-slot {
-            padding: 10px;
+            padding: 12px 15px;
             text-align: center;
             background-color: #f5f5f5;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
         .time-slot:hover {
             background-color: #e8f5e9;
+            transform: translateY(-2px);
         }
 
         .time-slot.selected {
             background-color: #4CAF50;
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Program card enhancements */
+        .program-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .program-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .program-header {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .program-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%);
+            z-index: 0;
+        }
+        
+        .program-header h3, .program-badge {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .program-content {
+            padding: 1.5rem;
+        }
+        
+        .book-btn {
+            width: 100%;
+            padding: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
         }
 
         /* Modal adjustments */
         .modal-content {
-            max-width: 600px;
-            max-height: 80vh;
+            max-width: 650px;
+            max-height: 85vh;
             overflow-y: auto;
+            padding: 30px;
         }
 
         .booking-summary {
             background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #4CAF50;
         }
 
         .booking-summary h3 {
             margin-top: 0;
-            color: #4CAF50;
+            color: #212121;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .booking-summary p {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: #212121;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        
+        .btn[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            letter-spacing: 0.5px;
+        }
+        
+        .close-modal {
+            font-size: 28px;
+            top: 20px;
+            right: 25px;
+        }
+        
+        /* No Classes Message */
+        .no-classes {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .no-classes h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .no-classes p {
+            margin-bottom: 25px;
+            color: #666;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
     </style>
 </head>
@@ -154,6 +271,7 @@
                         <a href="/members" class="nav-link">MEMBERS</a>
                         <a href="/workouts" class="nav-link">WORKOUTS</a>
                         <a href="/book_class" class="nav-link">BOOK CLASS</a>
+                        <a href="/my-bookings" class="nav-link">MY BOOKINGS</a>
                         <a href="/logout" class="nav-link">LOGOUT</a>
                         <a href="/profile" class="profile-icon" title="My Profile">👤</a>
                     {% elif current_user.role == 'admin' %}
@@ -193,27 +311,101 @@
         <div class="container">
             {% if classes %}
                 <div class="program-grid">
-                    {% for class in classes %}
                     <div class="program-card">
-                        <div class="program-header">
-                            <h3>{{ class.name }}</h3>
-                            <span class="program-badge">{{ class.level }}</span>
+                        <div class="program-header" style="background-color: #4CAF50;">
+                            <h3>Olympic Weightlifting</h3>
+                            <span class="program-badge">All Levels</span>
                         </div>
                         <div class="program-content">
-                            <p>{{ class.description }}</p>
+                            <p>Master the snatch and clean & jerk with expert technique coaching for maximum power development.</p>
                             <div class="program-details">
-                                <span>🧑‍🏫 {{ class.instructor }}</span>
-                                <span>📅 {{ class.schedule }}</span>
+                                <span>🧑‍🏫 Alex Hermes</span>
+                                <span>📅 Mon, Wed, Fri</span>
                             </div>
-                            <button class="btn book-btn" data-class-id="{{ class.id }}">Book Now</button>
+                            <button class="btn book-btn" data-class-id="1">Book Now</button>
                         </div>
                     </div>
-                    {% endfor %}
+                    
+                    <div class="program-card">
+                        <div class="program-header" style="background-color: #F44336;">
+                            <h3>Spartan HIIT</h3>
+                            <span class="program-badge">Intermediate</span>
+                        </div>
+                        <div class="program-content">
+                            <p>High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.</p>
+                            <div class="program-details">
+                                <span>🧑‍🏫 Marcus Leonidas</span>
+                                <span>📅 Tue, Thu</span>
+                            </div>
+                            <button class="btn book-btn" data-class-id="2">Book Now</button>
+                        </div>
+                    </div>
+                    
+                    <div class="program-card">
+                        <div class="program-header" style="background-color: #2196F3;">
+                            <h3>Strength Foundations</h3>
+                            <span class="program-badge">Beginner</span>
+                        </div>
+                        <div class="program-content">
+                            <p>Master fundamental lifts with expert coaching to build the foundation for legendary strength.</p>
+                            <div class="program-details">
+                                <span>🧑‍🏫 Helena Troy</span>
+                                <span>📅 Mon, Wed</span>
+                            </div>
+                            <button class="btn book-btn" data-class-id="3">Book Now</button>
+                        </div>
+                    </div>
+                    
+                    <div class="program-card">
+                        <div class="program-header" style="background-color: #9C27B0;">
+                            <h3>Atlas Conditioning</h3>
+                            <span class="program-badge">All Levels</span>
+                        </div>
+                        <div class="program-content">
+                            <p>Build endurance, strength, and conditioning through varied movement patterns that prepare you for anything.</p>
+                            <div class="program-details">
+                                <span>🧑‍🏫 Diana Artemis</span>
+                                <span>📅 Tue, Thu, Sat</span>
+                            </div>
+                            <button class="btn book-btn" data-class-id="4">Book Now</button>
+                        </div>
+                    </div>
+                    
+                    <div class="program-card">
+                        <div class="program-header" style="background-color: #FF9800;">
+                            <h3>Hercules Challenge</h3>
+                            <span class="program-badge">Advanced</span>
+                        </div>
+                        <div class="program-content">
+                            <p>Push your limits with this intense functional fitness program inspired by the twelve labors of Hercules.</p>
+                            <div class="program-details">
+                                <span>🧑‍🏫 Jason Argos</span>
+                                <span>📅 Mon, Wed, Fri</span>
+                            </div>
+                            <button class="btn book-btn" data-class-id="5">Book Now</button>
+                        </div>
+                    </div>
+                    
+                    <div class="program-card">
+                        <div class="program-header" style="background-color: #009688;">
+                            <h3>Olympian Recovery</h3>
+                            <span class="program-badge">All Levels</span>
+                        </div>
+                        <div class="program-content">
+                            <p>Balance strength with mobility through dedicated recovery sessions to enhance performance and prevent injury.</p>
+                            <div class="program-details">
+                                <span>🧑‍🏫 Diana Artemis</span>
+                                <span>📅 Tue, Thu</span>
+                            </div>
+                            <button class="btn book-btn" data-class-id="6">Book Now</button>
+                        </div>
+                    </div>
                 </div>
             {% else %}
-                <div class="no-data">
+                <div class="no-classes">
                     <h3>No classes available at the moment</h3>
-                    <p>Check back soon for new class offerings.</p>
+                    <p>Our schedule is being updated. Please check back soon for new class offerings.</p>
+                    <a href="/" class="btn">Return to Home</a>
                 </div>
             {% endif %}
         </div>
@@ -248,7 +440,7 @@
                 <input type="hidden" id="class-id" name="class_id">
                 <input type="hidden" id="booking-date" name="booking_date">
                 <input type="hidden" id="booking-time" name="booking_time">
-                <button type="submit" class="btn btn-lg">Confirm Booking</button>
+                <button type="submit" class="btn">Confirm Booking</button>
             </form>
         </div>
     </div>
@@ -258,17 +450,19 @@
             <div class="footer-content">
                 <div class="footer-about">
                     <a href="/" class="footer-logo">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
-                            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
-                        </svg>
-                        OLYMPUS STRENGTH
+                        <img src="/static/img/logo.png" alt="Olympus Strength" class="logo-img">
                     </a>
                     <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
                     <div class="social-links">
-                        <a href="#" class="social-link">f</a>
-                        <a href="#" class="social-link">t</a>
-                        <a href="#" class="social-link">in</a>
-                        <a href="#" class="social-link">ig</a>
+                        <a href="#" class="social-link">
+                            <img src="/static/img/fb.png" alt="Facebook" class="social-icon">
+                        </a>
+                        <a href="#" class="social-link">
+                            <img src="/static/img/x.png" alt="X (Twitter)" class="social-icon">
+                        </a>
+                        <a href="#" class="social-link">
+                            <img src="/static/img/instagram.png" alt="Instagram" class="social-icon">
+                        </a>
                     </div>
                 </div>
                 
@@ -300,14 +494,13 @@
                         <li>📍 123 Fitness Ave, Olympia</li>
                     </ul>
                 </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
-            </div>
         </div>
     </footer>
 
+    <!-- Notification container for messages -->
+    <div class="notification-container"></div>
+
+    <!-- Scripts -->
     <script src="/static/js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -315,6 +508,14 @@
             const modal = document.getElementById('booking-modal');
             const bookingForm = document.getElementById('booking-form');
             const bookButtons = document.querySelectorAll('.book-btn');
+            const calendarContainer = document.getElementById('booking-calendar');
+            const timeSlotsContainer = document.getElementById('time-slots-container');
+            const closeModalButtons = document.querySelectorAll('.close-modal');
+
+            // Current date to track calendar navigation
+            let currentDate = new Date();
+            let selectedDate = null;
+            let selectedTime = null;
 
             // Setup booking buttons
             bookButtons.forEach(button => {
@@ -332,17 +533,28 @@
                     document.getElementById('class-schedule').textContent = scheduleText;
                     
                     // Initialize calendar
-                    const calendarContainer = document.getElementById('booking-calendar');
-                    calendarContainer.innerHTML = '';
                     createCalendar(calendarContainer);
                     
                     // Clear time slots
-                    document.getElementById('time-slots-container').innerHTML = 
-                        '<p>Please select a date first</p>';
+                    timeSlotsContainer.innerHTML = '<p>Please select a date first</p>';
                     
                     // Show modal
                     modal.style.display = 'block';
                 });
+            });
+
+            // Close modal when clicking the close button
+            closeModalButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    modal.style.display = 'none';
+                });
+            });
+
+            // Close modal when clicking outside the modal content
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
             });
 
             // Handle booking form submission
@@ -355,9 +567,15 @@
                     const bookingTime = document.getElementById('booking-time').value;
                     
                     if (!bookingDate || !bookingTime) {
-                        alert('Please select both a date and time for your booking');
+                        showNotification('Please select both a date and time for your booking', 'error');
                         return;
                     }
+                    
+                    // Show loading state for the submit button
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    const originalText = submitButton.textContent;
+                    submitButton.innerHTML = 'Processing...';
+                    submitButton.disabled = true;
                     
                     try {
                         const response = await fetch('/api/bookings', {
@@ -367,7 +585,6 @@
                             },
                             body: JSON.stringify({
                                 class_id: parseInt(classId),
-                                member_id: {{ current_user.id }},
                                 class_date: `${bookingDate}T${convertTo24Hour(bookingTime)}`
                             })
                         });
@@ -377,20 +594,205 @@
                             modal.style.display = 'none';
                             
                             // Show success message
-                            alert('Class booked successfully!');
+                            showNotification('Class booked successfully!', 'success');
                             
-                            // Reload page after short delay
+                            // Redirect to my bookings page
                             setTimeout(() => {
-                                window.location.reload();
-                            }, 1000);
+                                window.location.href = '/my-bookings';
+                            }, 1500);
                         } else {
-                            alert('Error booking class. Please try again.');
+                            const data = await response.json();
+                            showNotification(data.detail || 'Error booking class. Please try again.', 'error');
                         }
                     } catch (error) {
                         console.error('Booking error:', error);
-                        alert('Error booking class. Please try again.');
+                        showNotification('Error booking class. Please try again.', 'error');
+                    } finally {
+                        // Restore button state
+                        submitButton.innerHTML = originalText;
+                        submitButton.disabled = false;
                     }
                 });
+            }
+
+            // Create calendar function
+            function createCalendar(container) {
+                // Clear existing content
+                container.innerHTML = '';
+                
+                // Create calendar header with navigation
+                const header = document.createElement('div');
+                header.className = 'calendar-header';
+                
+                const prevButton = document.createElement('button');
+                prevButton.className = 'calendar-nav';
+                prevButton.innerHTML = '&lt;';
+                prevButton.addEventListener('click', () => {
+                    currentDate.setMonth(currentDate.getMonth() - 1);
+                    createCalendar(container);
+                });
+                
+                const nextButton = document.createElement('button');
+                nextButton.className = 'calendar-nav';
+                nextButton.innerHTML = '&gt;';
+                nextButton.addEventListener('click', () => {
+                    currentDate.setMonth(currentDate.getMonth() + 1);
+                    createCalendar(container);
+                });
+                
+                const monthLabel = document.createElement('div');
+                monthLabel.className = 'current-month';
+                monthLabel.textContent = `${currentDate.toLocaleString('default', { month: 'long' })} ${currentDate.getFullYear()}`;
+                
+                header.appendChild(prevButton);
+                header.appendChild(monthLabel);
+                header.appendChild(nextButton);
+                container.appendChild(header);
+                
+                // Create weekday row
+                const weekdayRow = document.createElement('div');
+                weekdayRow.className = 'weekday-row';
+                
+                const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                weekdays.forEach(day => {
+                    const dayElem = document.createElement('div');
+                    dayElem.textContent = day;
+                    weekdayRow.appendChild(dayElem);
+                });
+                
+                container.appendChild(weekdayRow);
+                
+                // Create dates grid
+                const datesGrid = document.createElement('div');
+                datesGrid.className = 'dates-grid';
+                
+                // Calculate first day of month and days in month
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+                const firstDay = new Date(year, month, 1);
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                
+                // Add empty cells for days before the first day of the month
+                for (let i = 0; i < firstDay.getDay(); i++) {
+                    const emptyDay = document.createElement('div');
+                    emptyDay.className = 'calendar-day empty';
+                    datesGrid.appendChild(emptyDay);
+                }
+                
+                // Current date for comparison
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                // Add calendar days
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayElem = document.createElement('div');
+                    dayElem.className = 'calendar-day';
+                    dayElem.textContent = day;
+                    
+                    // Create a date object for this day
+                    const date = new Date(year, month, day);
+                    
+                    // Mark today
+                    if (date.getTime() === today.getTime()) {
+                        dayElem.classList.add('today');
+                    }
+                    
+                    // Disable past days
+                    if (date < today) {
+                        dayElem.classList.add('past');
+                    } else {
+                        // Add click event for future and today dates
+                        dayElem.addEventListener('click', () => {
+                            // Remove selected class from all days
+                            document.querySelectorAll('.calendar-day').forEach(day => {
+                                day.classList.remove('selected');
+                            });
+                            
+                            // Add selected class to clicked day
+                            dayElem.classList.add('selected');
+                            
+                            // Update selected date
+                            selectedDate = new Date(year, month, day);
+                            document.getElementById('booking-date').value = formatDate(selectedDate);
+                            
+                            // Generate time slots
+                            generateTimeSlots();
+                        });
+                    }
+                    
+                    datesGrid.appendChild(dayElem);
+                }
+                
+                container.appendChild(datesGrid);
+            }
+
+            // Generate time slots for the selected date
+            function generateTimeSlots() {
+                // Clear existing time slots
+                timeSlotsContainer.innerHTML = '';
+                
+                if (!selectedDate) {
+                    timeSlotsContainer.innerHTML = '<p>Please select a date first</p>';
+                    return;
+                }
+                
+                // Get the day of week (0-6, where 0 is Sunday)
+                const dayOfWeek = selectedDate.getDay();
+                
+                // Define available time slots based on the day of the week
+                let timeSlots = [];
+                
+                // Match time slots with the class schedule
+                // For this example, we'll use some rules based on the day:
+                if (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5) {
+                    // Monday (1), Wednesday (3), Friday (5)
+                    timeSlots = ['6:00 AM', '7:00 AM', '8:00 AM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM'];
+                } else if (dayOfWeek === 2 || dayOfWeek === 4) {
+                    // Tuesday (2), Thursday (4)
+                    timeSlots = ['6:30 AM', '7:30 AM', '8:30 AM', '4:30 PM', '5:30 PM', '6:30 PM', '7:30 PM'];
+                } else if (dayOfWeek === 6) {
+                    // Saturday (6)
+                    timeSlots = ['8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM'];
+                } else {
+                    // Sunday (0) - Limited slots
+                    timeSlots = ['9:00 AM', '10:00 AM'];
+                }
+                
+                // Create time slot elements
+                timeSlots.forEach(time => {
+                    const timeSlot = document.createElement('div');
+                    timeSlot.className = 'time-slot';
+                    timeSlot.textContent = time;
+                    
+                    timeSlot.addEventListener('click', () => {
+                        // Remove selected class from all time slots
+                        document.querySelectorAll('.time-slot').forEach(slot => {
+                            slot.classList.remove('selected');
+                        });
+                        
+                        // Add selected class to clicked time slot
+                        timeSlot.classList.add('selected');
+                        
+                        // Update selected time
+                        selectedTime = time;
+                        document.getElementById('booking-time').value = time;
+                    });
+                    
+                    timeSlotsContainer.appendChild(timeSlot);
+                });
+                
+                // If no time slots are available
+                if (timeSlots.length === 0) {
+                    timeSlotsContainer.innerHTML = '<p>No time slots available for this date. Please select another date.</p>';
+                }
+            }
+
+            // Helper function to format date to YYYY-MM-DD
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
             }
 
             // Helper function to convert 12-hour time to 24-hour
@@ -407,6 +809,40 @@
                 }
                 
                 return `${hours}:${minutes}:00`;
+            }
+
+            // Notification function
+            function showNotification(message, type = 'success') {
+                // Check if notification container exists, if not create it
+                let notificationContainer = document.querySelector('.notification-container');
+                
+                if (!notificationContainer) {
+                    notificationContainer = document.createElement('div');
+                    notificationContainer.className = 'notification-container';
+                    document.body.appendChild(notificationContainer);
+                }
+                
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                
+                // Add close button
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'notification-close';
+                closeBtn.innerHTML = '&times;';
+                closeBtn.onclick = () => notification.remove();
+                notification.appendChild(closeBtn);
+                
+                // Add to container
+                notificationContainer.appendChild(notification);
+                
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 5000);
             }
         });
     </script>
