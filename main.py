@@ -433,116 +433,40 @@ async def profile_page(request: Request, db: Session = Depends(get_db)):
 </html>
         """)
 
-# Login page
+# The @app.get("/login") route for rendering the login page
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
-# Login post
+# The @app.post("/login") route for handling form submission
 @app.post("/login")
 async def login(
     response: Response,
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
+    # Attempt to authenticate the user
     member = crud.get_member_by_email(db, form_data.username)
     if not member or not verify_password(form_data.password, member.password_hash):
+        # Return to login page with error if authentication fails
         return templates.TemplateResponse(
             "login.html", 
             {
-                "request": {"method": "GET"},
+                "request": request,
                 "error": "Invalid email or password"
             },
             status_code=401
         )
     
-    # Create access token - MAKE SURE TO INCLUDE THE ROLE
+    # Create access token with user role included
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": member.email, "role": member.role}, expires_delta=access_token_expires
+        data={"sub": member.email, "role": member.role}, 
+        expires_delta=access_token_expires
     )
     
-    # Set cookie
-    response = RedirectResponse(url="/", status_code=303)
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-        expires=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-    )
-    
-    return response
-
-# Signup page
-@app.get("/signup", response_class=HTMLResponse)
-async def signup_page(request: Request):
-    return templates.TemplateResponse("signup.html", {"request": request})
-
-# Updated signup route
-@app.post("/signup")
-async def signup(
-    response: Response,
-    name: str = Form(...),
-    email: str = Form(...),
-    password: str = Form(...),
-    confirm_password: str = Form(...),
-    membership_type: str = Form(...),
-    role: str = Form("customer"),  # Default to customer role
-    db: Session = Depends(get_db)
-):
-    # Force role to be customer for public signups
-    role = "customer"
-    
-    # Check if passwords match
-    if password != confirm_password:
-        return templates.TemplateResponse(
-            "signup.html", 
-            {
-                "request": {"method": "GET"},
-                "error": "Passwords do not match",
-                "form_data": {
-                    "name": name,
-                    "email": email,
-                    "membership_type": membership_type
-                }
-            },
-            status_code=400
-        )
-    
-    # Check if user already exists
-    existing_user = crud.get_member_by_email(db, email)
-    if existing_user:
-        return templates.TemplateResponse(
-            "signup.html", 
-            {
-                "request": {"method": "GET"},
-                "error": "Email already registered",
-                "form_data": {
-                    "name": name,
-                    "membership_type": membership_type
-                }
-            },
-            status_code=400
-        )
-    
-    # Create member
-    member = crud.create_member(db, schemas.MemberCreate(
-        name=name,
-        email=email,
-        password=password,
-        phone="",
-        membership_type=membership_type,
-        role=role
-    ))
-    
-    # Create access token
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": member.email, "role": member.role}, expires_delta=access_token_expires
-    )
-    
-    # Set cookie and redirect
+    # Set cookie and redirect to home page
     response = RedirectResponse(url="/", status_code=303)
     response.set_cookie(
         key="access_token",
