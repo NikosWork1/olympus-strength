@@ -5,7 +5,1030 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Olympus Strength</title>
     <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
-    <link rel="stylesheet" href="/static/css/main.css">
+    <style>
+        /* Reset and base styles */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Modern Variables */
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --primary-light: #C8E6C9;
+            --secondary: #212121;
+            --text-dark: #212121;
+            --text-light: #757575;
+            --background: #f8f9fa;
+            --white: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --accent: #FFC107;
+            --success: #28a745;
+            --danger: #dc3545;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Inter', 'Segoe UI', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--background);
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--secondary) !important;
+            color: var(--white);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif !important;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700 !important;
+            color: var(--white);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .logo svg {
+            margin-right: 0.75rem;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--white) !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            position: relative !important;
+            transition: color 0.3s !important;
+            text-transform: uppercase !important;
+            font-size: 0.9rem !important;
+            letter-spacing: 0.5px !important;
+            margin-left: 2rem !important;
+        }
+
+        .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Profile icon in navbar */
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 2rem;
+            color: var(--white);
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .profile-icon:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Enhanced Dropdown Menu Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dropdown-icon {
+            font-size: 0.7rem;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #212121;
+            border-radius: 6px;
+            min-width: 200px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-top: 5px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown.active .dropdown-icon {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 12px 16px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.95rem;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: #4CAF50;
+            color: white;
+            padding-left: 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-lg {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-cta {
+            background-image: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1594381898411-846e7d193883?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80');
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            text-align: center;
+            padding: 7rem 0 4rem;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary);
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 2rem auto 0;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--secondary);
+            color: var(--white);
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-about {
+            max-width: 100%;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .footer-logo svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 0.5rem;
+        }
+
+        .footer-links h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+
+        .footer-links h4::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: var(--gray-400);
+        }
+
+        /* Mobile Navigation */
+        .mobile-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Admin & Coach Dashboard Styles */
+        .admin-container,
+        .coach-container {
+            padding: 3rem 0;
+            margin-top: 70px;
+        }
+
+        .admin-grid,
+        .coach-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+
+        /* Sidebar Navigation */
+        .admin-sidebar,
+        .coach-sidebar {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .admin-menu,
+        .coach-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .admin-menu-item,
+        .coach-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .admin-menu-item:hover,
+        .coach-menu-item:hover,
+        .admin-menu-item.active,
+        .coach-menu-item.active {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .admin-menu-icon,
+        .coach-menu-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Main Content Area */
+        .admin-content,
+        .coach-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Stats Cards */
+        .admin-stats,
+        .coach-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Section Styling */
+        .admin-section,
+        .coach-section {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .admin-section-title,
+        .coach-section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        /* Activity List */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background-color: var(--gray-100);
+            transition: var(--transition);
+        }
+
+        .activity-item:hover {
+            background-color: var(--gray-200);
+        }
+
+        .activity-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border-radius: 50%;
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-meta {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .quick-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 1rem;
+            border-radius: var(--border-radius);
+            background-color: var(--gray-100);
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: var(--transition);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .quick-action:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            transform: translateY(-5px);
+        }
+
+        .quick-action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .quick-action-text {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Tab system styling */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Data table styling */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .data-table th {
+            background-color: #f7f7f7;
+            font-weight: 600;
+            color: #333;
+            position: sticky;
+            top: 0;
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Admin header and search/filter */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .admin-header h2 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .search-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-filter input,
+        .search-filter select {
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .search-filter input {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-badge.active {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-badge.inactive {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        /* Action buttons */
+        .action-btn {
+            padding: 6px 12px;
+            margin-right: 6px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            opacity: 0.85;
+        }
+        
+        .edit-member, .edit-workout, .edit-class {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .delete-member, .delete-workout, .delete-class {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .view-workout {
+            background-color: #f1f8e9;
+            color: #558b2f;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+        
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 16px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+        }
+        
+        .close-modal:hover {
+            color: #333;
+        }
+        
+        /* Form styles */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .difficulty-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .difficulty-option {
+            flex: 1;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .difficulty-option:hover {
+            border-color: #4CAF50;
+            background-color: rgba(76, 175, 80, 0.05);
+        }
+        
+        .difficulty-option.active {
+            border-color: #4CAF50;
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+        
+        .difficulty-option h4 {
+            margin: 0 0 6px;
+        }
+        
+        .difficulty-option p {
+            margin: 0;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        /* Utilities */
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #757575;
+            font-style: italic;
+        }
+        
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+        
+        .success-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nav {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background-color: var(--secondary);
+                padding: 1rem;
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            }
+            
+            .nav.active {
+                display: flex;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-actions {
+                justify-content: center;
+            }
+            
+            .admin-grid,
+            .coach-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dropdown-menu {
+                position: static;
+                background-color: rgba(33, 33, 33, 0.9);
+                box-shadow: none;
+                opacity: 0;
+                max-height: 0;
+                overflow: hidden;
+                visibility: visible;
+                transform: none;
+                transition: max-height 0.3s ease, opacity 0.3s ease;
+                border: none;
+                margin-top: 0;
+                border-left: 3px solid #4CAF50;
+            }
+            
+            .dropdown.active .dropdown-menu {
+                opacity: 1;
+                max-height: 300px;
+            }
+            
+            .dropdown-toggle {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .dropdown-item {
+                padding: 12px 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .features-grid, 
+            .program-grid, 
+            .members-grid,
+            .workouts-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .data-table {
+                overflow-x: auto;
+                display: block;
+            }
+        }
+
+        /* Notification container styling */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .notification {
+            margin-bottom: 10px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            min-width: 250px;
+        }
+
+        .notification.success {
+            background-color: #4CAF50;
+        }
+
+        .notification.error {
+            background-color: #F44336;
+        }
+
+        .notification.info {
+            background-color: #2196F3;
+        }
+
+        .notification-close {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -42,27 +1065,27 @@
             <div class="admin-grid">
                 <div class="admin-sidebar">
                     <div class="admin-menu">
-                        <a href="#" class="admin-menu-item active">
+                        <a href="#" class="admin-menu-item active" data-tab="overview">
                             <span class="admin-menu-icon">📊</span>
                             <span class="admin-menu-text">Overview</span>
                         </a>
-                        <a href="#" class="admin-menu-item">
+                        <a href="#" class="admin-menu-item" data-tab="members">
                             <span class="admin-menu-icon">👥</span>
                             <span class="admin-menu-text">Members</span>
                         </a>
-                        <a href="#" class="admin-menu-item">
+                        <a href="#" class="admin-menu-item" data-tab="workouts">
                             <span class="admin-menu-icon">💪</span>
                             <span class="admin-menu-text">Workouts</span>
                         </a>
-                        <a href="#" class="admin-menu-item">
+                        <a href="#" class="admin-menu-item" data-tab="classes">
                             <span class="admin-menu-icon">📅</span>
                             <span class="admin-menu-text">Classes</span>
                         </a>
-                        <a href="#" class="admin-menu-item">
+                        <a href="#" class="admin-menu-item" data-tab="finances">
                             <span class="admin-menu-icon">💰</span>
                             <span class="admin-menu-text">Finances</span>
                         </a>
-                        <a href="#" class="admin-menu-item">
+                        <a href="#" class="admin-menu-item" data-tab="settings">
                             <span class="admin-menu-icon">⚙️</span>
                             <span class="admin-menu-text">Settings</span>
                         </a>
@@ -70,91 +1093,1318 @@
                 </div>
                 
                 <div class="admin-content">
-                    <div class="admin-stats">
-                        <div class="stat-card">
-                            <div class="stat-icon">👥</div>
-                            <div class="stat-value">{{ members|length }}</div>
-                            <div class="stat-label">Total Members</div>
+                    <!-- Overview Tab (default visible) -->
+                    <div id="overview-content" class="tab-content active">
+                        <div class="admin-stats">
+                            <div class="stat-card">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-value">86</div>
+                                <div class="stat-label">Total Members</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon">💪</div>
+                                <div class="stat-value">24</div>
+                                <div class="stat-label">Workouts</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon">📅</div>
+                                <div class="stat-value">12</div>
+                                <div class="stat-label">Classes</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon">📈</div>
+                                <div class="stat-value">85%</div>
+                                <div class="stat-label">Retention Rate</div>
+                            </div>
                         </div>
                         
-                        <div class="stat-card">
-                            <div class="stat-icon">💪</div>
-                            <div class="stat-value">{{ workouts|length }}</div>
-                            <div class="stat-label">Workouts</div>
+                        <div class="admin-section">
+                            <h2 class="admin-section-title">Recent Activity</h2>
+                            
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="activity-icon">👤</div>
+                                    <div class="activity-details">
+                                        <div class="activity-title">New Member Registration</div>
+                                        <div class="activity-meta">John Doe • 2 hours ago</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="activity-item">
+                                    <div class="activity-icon">📆</div>
+                                    <div class="activity-details">
+                                        <div class="activity-title">Class Booking</div>
+                                        <div class="activity-meta">Spartan HIIT • 3 hours ago</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="activity-item">
+                                    <div class="activity-icon">💰</div>
+                                    <div class="activity-details">
+                                        <div class="activity-title">Payment Received</div>
+                                        <div class="activity-meta">$79.99 • 5 hours ago</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="activity-item">
+                                    <div class="activity-icon">✏️</div>
+                                    <div class="activity-details">
+                                        <div class="activity-title">Workout Updated</div>
+                                        <div class="activity-meta">Foundations of Power • 1 day ago</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="stat-card">
-                            <div class="stat-icon">📅</div>
-                            <div class="stat-value">{{ classes|length }}</div>
-                            <div class="stat-label">Classes</div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon">📈</div>
-                            <div class="stat-value">85%</div>
-                            <div class="stat-label">Retention Rate</div>
+                        <div class="admin-section">
+                            <h2 class="admin-section-title">Quick Actions</h2>
+                            
+                            <div class="quick-actions">
+                                <a href="#" class="quick-action" id="quick-add-member">
+                                    <div class="quick-action-icon">➕</div>
+                                    <div class="quick-action-text">Add Member</div>
+                                </a>
+                                
+                                <a href="#" class="quick-action" id="quick-add-class">
+                                    <div class="quick-action-icon">📝</div>
+                                    <div class="quick-action-text">Create Class</div>
+                                </a>
+                                
+                                <a href="#" class="quick-action" id="quick-run-reports">
+                                    <div class="quick-action-icon">📊</div>
+                                    <div class="quick-action-text">Run Reports</div>
+                                </a>
+                                
+                                <a href="#" class="quick-action" id="quick-send-email">
+                                    <div class="quick-action-icon">📧</div>
+                                    <div class="quick-action-text">Send Email</div>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="admin-section">
-                        <h2 class="admin-section-title">Recent Activity</h2>
+                    <!-- Members Tab -->
+                    <div id="members-content" class="tab-content">
+                        <div class="admin-header">
+                            <h2>Members Management</h2>
+                            <button id="add-member-btn" class="btn">Add New Member</button>
+                        </div>
                         
-                        <div class="activity-list">
-                            <div class="activity-item">
-                                <div class="activity-icon">👤</div>
-                                <div class="activity-details">
-                                    <div class="activity-title">New Member Registration</div>
-                                    <div class="activity-meta">John Doe • 2 hours ago</div>
-                                </div>
+                        <div class="search-filter">
+                            <input type="text" id="search-members" placeholder="Search members...">
+                            <select id="membership-filter">
+                                <option value="">All Membership Types</option>
+                                <option value="Bronze">Bronze</option>
+                                <option value="Silver">Silver</option>
+                                <option value="Gold">Gold</option>
+                            </select>
+                        </div>
+                        
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Membership</th>
+                                    <th>Join Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-id="1">
+                                    <td>1</td>
+                                    <td>John Doe</td>
+                                    <td>john.doe@example.com</td>
+                                    <td>Gold</td>
+                                    <td>2024-12-15</td>
+                                    <td>
+                                        <span class="status-badge active">Active</span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn edit-member" data-id="1">Edit</button>
+                                        <button class="action-btn delete-member" data-id="1">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr data-id="2">
+                                    <td>2</td>
+                                    <td>Jane Smith</td>
+                                    <td>jane.smith@example.com</td>
+                                    <td>Silver</td>
+                                    <td>2025-01-05</td>
+                                    <td>
+                                        <span class="status-badge active">Active</span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn edit-member" data-id="2">Edit</button>
+                                        <button class="action-btn delete-member" data-id="2">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr data-id="3">
+                                    <td>3</td>
+                                    <td>Michael Johnson</td>
+                                    <td>michael.j@example.com</td>
+                                    <td>Bronze</td>
+                                    <td>2024-11-20</td>
+                                    <td>
+                                        <span class="status-badge inactive">Inactive</span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn edit-member" data-id="3">Edit</button>
+                                        <button class="action-btn delete-member" data-id="3">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr data-id="4">
+                                    <td>4</td>
+                                    <td>Emily Davis</td>
+                                    <td>emily.d@example.com</td>
+                                    <td>Gold</td>
+                                    <td>2025-02-10</td>
+                                    <td>
+                                        <span class="status-badge active">Active</span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn edit-member" data-id="4">Edit</button>
+                                        <button class="action-btn delete-member" data-id="4">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr data-id="5">
+                                    <td>5</td>
+                                    <td>Robert Wilson</td>
+                                    <td>robert.w@example.com</td>
+                                    <td>Silver</td>
+                                    <td>2025-01-25</td>
+                                    <td>
+                                        <span class="status-badge active">Active</span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn edit-member" data-id="5">Edit</button>
+                                        <button class="action-btn delete-member" data-id="5">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Workouts Tab -->
+                    <div id="workouts-content" class="tab-content">
+                        <div class="admin-header">
+                            <h2>Workouts Management</h2>
+                            <button id="add-workout-btn" class="btn">Add New Workout</button>
+                        </div>
+                        
+                        <div class="search-filter">
+                            <input type="text" id="search-workouts" placeholder="Search workouts...">
+                            <select id="difficulty-filter">
+                                <option value="">All Difficulty Levels</option>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                            </select>
+                        </div>
+                        
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Difficulty</th>
+                                    <th>Duration</th>
+                                    <th>Category</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-id="1">
+                                    <td>1</td>
+                                    <td>Olympic Weightlifting</td>
+                                    <td>Advanced</td>
+                                    <td>60 min</td>
+                                    <td>Strength</td>
+                                    <td>
+                                        <button class="action-btn edit-workout" data-id="1">Edit</button>
+                                        <button class="action-btn delete-workout" data-id="1">Delete</button>
+                                        <button class="action-btn view-workout" data-id="1">View</button>
+                                    </td>
+                                </tr>
+                                <tr data-id="2">
+                                    <td>2</td>
+                                    <td>Spartan HIIT</td>
+                                    <td>Intermediate</td>
+                                    <td>45 min</td>
+                                    <td>Cardio</td>
+                                    <td>
+                                        <button class="action-btn edit-workout" data-id="2">Edit</button>
+                                        <button class="action-btn delete-workout" data-id="2">Delete</button>
+                                        <button class="action-btn view-workout" data-id="2">View</button>
+                                    </td>
+                                </tr>
+                                <tr data-id="3">
+                                    <td>3</td>
+                                    <td>Strength Foundations</td>
+                                    <td>Beginner</td>
+                                    <td>50 min</td>
+                                    <td>Strength</td>
+                                    <td>
+                                        <button class="action-btn edit-workout" data-id="3">Edit</button>
+                                        <button class="action-btn delete-workout" data-id="3">Delete</button>
+                                        <button class="action-btn view-workout" data-id="3">View</button>
+                                    </td>
+                                </tr>
+                                <tr data-id="4">
+                                    <td>4</td>
+                                    <td>Core Crusher</td>
+                                    <td>Intermediate</td>
+                                    <td>30 min</td>
+                                    <td>Core</td>
+                                    <td>
+                                        <button class="action-btn edit-workout" data-id="4">Edit</button>
+                                        <button class="action-btn delete-workout" data-id="4">Delete</button>
+                                        <button class="action-btn view-workout" data-id="4">View</button>
+                                    </td>
+                                </tr>
+                                <tr data-id="5">
+                                    <td>5</td>
+                                    <td>Cardio Blast</td>
+                                    <td>Beginner</td>
+                                    <td>40 min</td>
+                                    <td>Cardio</td>
+                                    <td>
+                                        <button class="action-btn edit-workout" data-id="5">Edit</button>
+                                        <button class="action-btn delete-workout" data-id="5">Delete</button>
+                                        <button class="action-btn view-workout" data-id="5">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Classes Tab -->
+                    <div id="classes-content" class="tab-content">
+                        <div class="admin-header">
+                            <h2>Classes Management</h2>
+                            <button id="add-class-btn" class="btn">Add New Class</button>
+                        </div>
+                        
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Instructor</th>
+                                    <th>Schedule</th>
+                                    <th>Max Capacity</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-id="1">
+                                    <td>1</td>
+                                    <td>Olympic Lifting</td>
+                                    <td>Alex Hermes</td>
+                                    <td>Mon, Wed, Fri - 7:00 AM</td>
+                                    <td>15</td>
+                                    <td>
+                                        <button class="action-btn edit-class" data-id="1">Edit</button>
+                                        <button class="action-btn delete-class" data-id="1">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr data-id="2">
+                                    <td>2</td>
+                                    <td>Spartan HIIT</td>
+                                    <td>Marcus Leonidas</td>
+                                    <td>Tue, Thu - 6:00 PM</td>
+                                    <td>20</td>
+                                    <td>
+                                        <button class="action-btn edit-class" data-id="2">Edit</button>
+                                        <button class="action-btn delete-class" data-id="2">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr data-id="3">
+                                    <td>3</td>
+                                    <td>Strength Foundations</td>
+                                    <td>Helena Troy</td>
+                                    <td>Mon, Wed - 5:30 PM</td>
+                                    <td>12</td>
+                                    <td>
+                                        <button class="action-btn edit-class" data-id="3">Edit</button>
+                                        <button class="action-btn delete-class" data-id="3">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr data-id="4">
+                                    <td>4</td>
+                                    <td>Atlas Conditioning</td>
+                                    <td>Diana Artemis</td>
+                                    <td>Tue, Thu, Sat - 8:00 AM</td>
+                                    <td>18</td>
+                                    <td>
+                                        <button class="action-btn edit-class" data-id="4">Edit</button>
+                                        <button class="action-btn delete-class" data-id="4">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Finances Tab -->
+                    <div id="finances-content" class="tab-content">
+                        <div class="admin-header">
+                            <h2>Financial Management</h2>
+                            <button id="run-financial-report" class="btn">Run Report</button>
+                        </div>
+                        
+                        <div class="admin-stats">
+                            <div class="stat-card">
+                                <div class="stat-icon">💰</div>
+                                <div class="stat-value">$12,450</div>
+                                <div class="stat-label">Monthly Revenue</div>
                             </div>
                             
-                            <div class="activity-item">
-                                <div class="activity-icon">📆</div>
-                                <div class="activity-details">
-                                    <div class="activity-title">Class Booking</div>
-                                    <div class="activity-meta">Spartan HIIT • 3 hours ago</div>
-                                </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📈</div>
+                                <div class="stat-value">+15%</div>
+                                <div class="stat-label">Growth</div>
                             </div>
                             
-                            <div class="activity-item">
-                                <div class="activity-icon">💰</div>
-                                <div class="activity-details">
-                                    <div class="activity-title">Payment Received</div>
-                                    <div class="activity-meta">$79.99 • 5 hours ago</div>
-                                </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">🧾</div>
+                                <div class="stat-value">$7,800</div>
+                                <div class="stat-label">Expenses</div>
                             </div>
                             
-                            <div class="activity-item">
-                                <div class="activity-icon">✏️</div>
-                                <div class="activity-details">
-                                    <div class="activity-title">Workout Updated</div>
-                                    <div class="activity-meta">Foundations of Power • 1 day ago</div>
+                            <div class="stat-card">
+                                <div class="stat-icon">💲</div>
+                                <div class="stat-value">$4,650</div>
+                                <div class="stat-label">Net Profit</div>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-section">
+                            <h2 class="admin-section-title">Recent Transactions</h2>
+                            
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Date</th>
+                                        <th>Member</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1001</td>
+                                        <td>2025-03-10</td>
+                                        <td>John Doe</td>
+                                        <td>Membership Fee</td>
+                                        <td>$79.99</td>
+                                        <td><span class="status-badge active">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>1002</td>
+                                        <td>2025-03-10</td>
+                                        <td>Jane Smith</td>
+                                        <td>Personal Training</td>
+                                        <td>$120.00</td>
+                                        <td><span class="status-badge active">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>1003</td>
+                                        <td>2025-03-09</td>
+                                        <td>Emily Davis</td>
+                                        <td>Membership Fee</td>
+                                        <td>$79.99</td>
+                                        <td><span class="status-badge active">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>1004</td>
+                                        <td>2025-03-09</td>
+                                        <td>Robert Wilson</td>
+                                        <td>Merchandise</td>
+                                        <td>$45.50</td>
+                                        <td><span class="status-badge active">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>1005</td>
+                                        <td>2025-03-08</td>
+                                        <td>Michael Johnson</td>
+                                        <td>Class Booking</td>
+                                        <td>$25.00</td>
+                                        <td><span class="status-badge inactive">Refunded</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Settings Tab -->
+                    <div id="settings-content" class="tab-content">
+                        <div class="admin-header">
+                            <h2>System Settings</h2>
+                            <button id="save-settings" class="btn">Save Changes</button>
+                        </div>
+                        
+                        <div class="admin-section">
+                            <h2 class="admin-section-title">General Settings</h2>
+                            
+                            <form id="general-settings-form">
+                                <div class="form-group">
+                                    <label for="gym-name">Gym Name</label>
+                                    <input type="text" id="gym-name" name="gym_name" value="Olympus Strength">
                                 </div>
+                                
+                                <div class="form-group">
+                                    <label for="contact-email">Contact Email</label>
+                                    <input type="email" id="contact-email" name="contact_email" value="info@olympusstrength.com">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="phone-number">Phone Number</label>
+                                    <input type="text" id="phone-number" name="phone_number" value="+30 210 5555 100">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="address">Address</label>
+                                    <textarea id="address" name="address">123 Fitness Ave, Olympia</textarea>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="admin-section">
+                            <h2 class="admin-section-title">Membership Pricing</h2>
+                            
+                            <form id="pricing-settings-form">
+                                <div class="form-group">
+                                    <label for="bronze-price">Bronze Membership</label>
+                                    <input type="number" id="bronze-price" name="bronze_price" value="29.99">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="silver-price">Silver Membership</label>
+                                    <input type="number" id="silver-price" name="silver_price" value="49.99">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="gold-price">Gold Membership</label>
+                                    <input type="number" id="gold-price" name="gold_price" value="79.99">
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="admin-section">
+                            <h2 class="admin-section-title">Email Notifications</h2>
+                            
+                            <form id="notification-settings-form">
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" name="notify_new_member" checked> 
+                                        New Member Registration
+                                    </label>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" name="notify_class_booking" checked> 
+                                        Class Bookings
+                                    </label>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" name="notify_payment" checked> 
+                                        Payment Received
+                                    </label>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" name="notify_membership_expiry" checked> 
+                                        Membership Expiry Reminders
+                                    </label>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Member Modal -->
+    <div id="member-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="member-modal-title">Add New Member</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="member-form">
+                    <input type="hidden" id="member-id">
+                    
+                    <div class="form-group">
+                        <label for="member-name">Full Name</label>
+                        <input type="text" id="member-name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="member-email">Email</label>
+                        <input type="email" id="member-email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="member-phone">Phone</label>
+                        <input type="text" id="member-phone" name="phone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="member-membership">Membership Type</label>
+                        <select id="member-membership" name="membership_type" required>
+                            <option value="Bronze">Bronze</option>
+                            <option value="Silver">Silver</option>
+                            <option value="Gold">Gold</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="member-password">Password</label>
+                        <input type="password" id="member-password" name="password">
+                        <small>(Leave blank to keep current password when editing)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Status</label>
+                        <div style="display: flex; gap: 20px; margin-top: 8px;">
+                            <label style="display: flex; align-items: center; gap: 6px;">
+                                <input type="radio" name="is_active" value="true" checked> 
+                                <span>Active</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px;">
+                                <input type="radio" name="is_active" value="false"> 
+                                <span>Inactive</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-member" class="btn btn-outline">Cancel</button>
+                <button id="save-member" class="btn">Save Member</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout Modal -->
+    <div id="workout-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="workout-modal-title">Add New Workout</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="workout-form">
+                    <input type="hidden" id="workout-id">
+                    
+                    <div class="form-group">
+                        <label for="workout-name">Workout Name</label>
+                        <input type="text" id="workout-name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="workout-description">Description</label>
+                        <textarea id="workout-description" name="description" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Difficulty Level</label>
+                        <div class="difficulty-options">
+                            <div class="difficulty-option beginner" data-difficulty="Beginner">
+                                <h4>Beginner</h4>
+                                <p>For those new to fitness</p>
+                                <input type="radio" name="difficulty" value="Beginner" style="display: none;" required>
+                        </div>
+                            <div class="difficulty-option intermediate" data-difficulty="Intermediate">
+                                <h4>Intermediate</h4>
+                                <p>For regular gym-goers</p>
+                                <input type="radio" name="difficulty" value="Intermediate" style="display: none;">
+                            </div>
+                            <div class="difficulty-option advanced" data-difficulty="Advanced">
+                                <h4>Advanced</h4>
+                                <p>For experienced athletes</p>
+                                <input type="radio" name="difficulty" value="Advanced" style="display: none;">
                             </div>
                         </div>
                     </div>
                     
-                    <div class="admin-section">
-                        <h2 class="admin-section-title">Quick Actions</h2>
-                        
-                        <div class="quick-actions">
-                            <a href="#" class="quick-action">
-                                <div class="quick-action-icon">➕</div>
-                                <div class="quick-action-text">Add Member</div>
-                            </a>
-                            
-                            <a href="#" class="quick-action">
-                                <div class="quick-action-icon">📝</div>
-                                <div class="quick-action-text">Create Class</div>
-                            </a>
-                            
-                            <a href="#" class="quick-action">
-                                <div class="quick-action-icon">📊</div>
-                                <div class="quick-action-text">Run Reports</div>
-                            </a>
-                            
-                            <a href="#" class="quick-action">
-                                <div class="quick-action-icon">📧</div>
-                                <div class="quick-action-text">Send Email</div>
-                            </a>
+                    <div style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="workout-duration">Duration (minutes)</label>
+                            <input type="number" id="workout-duration" name="duration" min="5" max="120" value="45">
                         </div>
+                        
+                        <div class="form-group" style="flex: 1;">
+                            <label for="workout-category">Primary Target Area</label>
+                            <select id="workout-category" name="category">
+                                <option value="Full Body">Full Body</option>
+                                <option value="Upper Body">Upper Body</option>
+                                <option value="Lower Body">Lower Body</option>
+                                <option value="Core">Core</option>
+                                <option value="Cardio">Cardio</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-workout" class="btn btn-outline">Cancel</button>
+                <button id="save-workout" class="btn">Save Workout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Modal -->
+    <div id="class-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="class-modal-title">Add New Class</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="class-form">
+                    <input type="hidden" id="class-id">
+                    
+                    <div class="form-group">
+                        <label for="class-name">Class Name</label>
+                        <input type="text" id="class-name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="class-description">Description</label>
+                        <textarea id="class-description" name="description" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="class-instructor">Instructor</label>
+                        <input type="text" id="class-instructor" name="instructor" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="class-schedule">Schedule</label>
+                        <input type="text" id="class-schedule" name="schedule" required placeholder="e.g. Mon, Wed, Fri - 7:00 AM">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="class-level">Level</label>
+                        <select id="class-level" name="level">
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="All Levels">All Levels</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="class-capacity">Max Capacity</label>
+                        <input type="number" id="class-capacity" name="max_capacity" min="1" max="50" value="20">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-class" class="btn btn-outline">Cancel</button>
+                <button id="save-class" class="btn">Save Class</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                        </svg>
+                        OLYMPUS STRENGTH
+                    </a>
+                    <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/members">Members</a></li>
+                        <li><a href="/workouts">Workouts</a></li>
+                        <li><a href="/login">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="#">Olympic Weightlifting</a></li>
+                        <li><a href="#">Spartan HIIT</a></li>
+                        <li><a href="#">Strength Foundations</a></li>
+                        <li><a href="#">All Programs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li>📞 (555) 123-4567</li>
+                        <li>📧 info@olympusstrength.com</li>
+                        <li>📍 123 Fitness Ave, Olympia</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification container -->
+    <div class="notification-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab navigation functionality
+            const tabLinks = document.querySelectorAll('.admin-menu-item');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all tabs
+                    tabLinks.forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all tab contents
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Show corresponding tab content
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-content`).classList.add('active');
+                });
+            });
+            
+            // Modal functionality for Members
+            const memberModal = document.getElementById('member-modal');
+            const addMemberBtn = document.getElementById('add-member-btn');
+            const quickAddMemberBtn = document.getElementById('quick-add-member');
+            const cancelMemberBtn = document.getElementById('cancel-member');
+            const saveMemberBtn = document.getElementById('save-member');
+            const editMemberBtns = document.querySelectorAll('.edit-member');
+            const deleteMemberBtns = document.querySelectorAll('.delete-member');
+            const closeModalBtns = document.querySelectorAll('.close-modal');
+            
+            // Function to open member modal
+            function openMemberModal(isEdit = false, memberId = null) {
+                const modalTitle = document.getElementById('member-modal-title');
+                const memberForm = document.getElementById('member-form');
+                
+                if (isEdit) {
+                    modalTitle.textContent = 'Edit Member';
+                    document.getElementById('member-id').value = memberId;
+                    
+                    // In a real application, you would fetch member data here
+                    // For demo purposes, we'll fill with dummy data
+                    if (memberId === '1') {
+                        document.getElementById('member-name').value = 'John Doe';
+                        document.getElementById('member-email').value = 'john.doe@example.com';
+                        document.getElementById('member-phone').value = '(555) 123-4567';
+                        document.getElementById('member-membership').value = 'Gold';
+                        document.querySelector('input[name="is_active"][value="true"]').checked = true;
+                    } else if (memberId === '2') {
+                        document.getElementById('member-name').value = 'Jane Smith';
+                        document.getElementById('member-email').value = 'jane.smith@example.com';
+                        document.getElementById('member-phone').value = '(555) 987-6543';
+                        document.getElementById('member-membership').value = 'Silver';
+                        document.querySelector('input[name="is_active"][value="true"]').checked = true;
+                    } else if (memberId === '3') {
+                        document.getElementById('member-name').value = 'Michael Johnson';
+                        document.getElementById('member-email').value = 'michael.j@example.com';
+                        document.getElementById('member-phone').value = '(555) 246-8135';
+                        document.getElementById('member-membership').value = 'Bronze';
+                        document.querySelector('input[name="is_active"][value="false"]').checked = true;
+                    }
+                } else {
+                    modalTitle.textContent = 'Add New Member';
+                    memberForm.reset();
+                    document.getElementById('member-id').value = '';
+                }
+                
+                memberModal.style.display = 'block';
+            }
+            
+            // Open modal when "Add New Member" button is clicked
+            if (addMemberBtn) {
+                addMemberBtn.addEventListener('click', () => openMemberModal());
+            }
+            
+            // Open modal when quick action is clicked
+            if (quickAddMemberBtn) {
+                quickAddMemberBtn.addEventListener('click', () => openMemberModal());
+            }
+            
+            // Edit member button click
+            editMemberBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const memberId = this.getAttribute('data-id');
+                    openMemberModal(true, memberId);
+                });
+            });
+            
+            // Delete member button click
+            deleteMemberBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const memberId = this.getAttribute('data-id');
+                    const memberName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+                    
+                    if (confirm(`Are you sure you want to delete ${memberName}? This action cannot be undone.`)) {
+                        // In a real app, you would delete the member via API
+                        // For demo, we'll just remove the row
+                        this.closest('tr').remove();
+                        showNotification(`Member ${memberName} deleted successfully`, 'success');
+                    }
+                });
+            });
+            
+            // Close modal when "Cancel" button is clicked
+            if (cancelMemberBtn) {
+                cancelMemberBtn.addEventListener('click', () => {
+                    memberModal.style.display = 'none';
+                });
+            }
+            
+            // Save member when "Save" button is clicked
+            if (saveMemberBtn) {
+                saveMemberBtn.addEventListener('click', () => {
+                    // In a real app, you would validate and save to database
+                    // For demo, we'll just show a success message
+                    const memberId = document.getElementById('member-id').value;
+                    const isEdit = memberId !== '';
+                    
+                    if (isEdit) {
+                        showNotification('Member updated successfully', 'success');
+                    } else {
+                        showNotification('New member added successfully', 'success');
+                    }
+                    
+                    memberModal.style.display = 'none';
+                });
+            }
+            
+            // Modal functionality for Workouts
+            const workoutModal = document.getElementById('workout-modal');
+            const addWorkoutBtn = document.getElementById('add-workout-btn');
+            const cancelWorkoutBtn = document.getElementById('cancel-workout');
+            const saveWorkoutBtn = document.getElementById('save-workout');
+            const editWorkoutBtns = document.querySelectorAll('.edit-workout');
+            const deleteWorkoutBtns = document.querySelectorAll('.delete-workout');
+            const viewWorkoutBtns = document.querySelectorAll('.view-workout');
+            
+            // Function to open workout modal
+            function openWorkoutModal(isEdit = false, workoutId = null) {
+                const modalTitle = document.getElementById('workout-modal-title');
+                const workoutForm = document.getElementById('workout-form');
+                
+                // Reset difficulty options
+                document.querySelectorAll('.difficulty-option').forEach(option => {
+                    option.classList.remove('active');
+                });
+                
+                if (isEdit) {
+                    modalTitle.textContent = 'Edit Workout';
+                    document.getElementById('workout-id').value = workoutId;
+                    
+                    // In a real application, you would fetch workout data here
+                    // For demo purposes, we'll fill with dummy data
+                    if (workoutId === '1') {
+                        document.getElementById('workout-name').value = 'Olympic Weightlifting';
+                        document.getElementById('workout-description').value = 'Master the snatch and clean & jerk with expert technique coaching for maximum power development.';
+                        document.getElementById('workout-duration').value = '60';
+                        document.getElementById('workout-category').value = 'Strength';
+                        
+                        // Set difficulty
+                        document.querySelector('.difficulty-option[data-difficulty="Advanced"]').classList.add('active');
+                        document.querySelector('input[name="difficulty"][value="Advanced"]').checked = true;
+                    } else if (workoutId === '2') {
+                        document.getElementById('workout-name').value = 'Spartan HIIT';
+                        document.getElementById('workout-description').value = 'High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.';
+                        document.getElementById('workout-duration').value = '45';
+                        document.getElementById('workout-category').value = 'Cardio';
+                        
+                        // Set difficulty
+                        document.querySelector('.difficulty-option[data-difficulty="Intermediate"]').classList.add('active');
+                        document.querySelector('input[name="difficulty"][value="Intermediate"]').checked = true;
+                    }
+                } else {
+                    modalTitle.textContent = 'Add New Workout';
+                    workoutForm.reset();
+                    document.getElementById('workout-id').value = '';
+                }
+                
+                workoutModal.style.display = 'block';
+            }
+            
+            // Open modal when "Add New Workout" button is clicked
+            if (addWorkoutBtn) {
+                addWorkoutBtn.addEventListener('click', () => openWorkoutModal());
+            }
+            
+            // Edit workout button click
+            editWorkoutBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const workoutId = this.getAttribute('data-id');
+                    openWorkoutModal(true, workoutId);
+                });
+            });
+            
+            // Delete workout button click
+            deleteWorkoutBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const workoutId = this.getAttribute('data-id');
+                    const workoutName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+                    
+                    if (confirm(`Are you sure you want to delete "${workoutName}"? This action cannot be undone.`)) {
+                        // In a real app, you would delete the workout via API
+                        // For demo, we'll just remove the row
+                        this.closest('tr').remove();
+                        showNotification(`Workout "${workoutName}" deleted successfully`, 'success');
+                    }
+                });
+            });
+            
+            // View workout button click
+            viewWorkoutBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const workoutId = this.getAttribute('data-id');
+                    const workoutName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+                    
+                    // In a real app, you would redirect to workout detail page
+                    // For demo, just show a notification
+                    showNotification(`Viewing details for "${workoutName}"`, 'info');
+                });
+            });
+            
+            // Close modal when "Cancel" button is clicked
+            if (cancelWorkoutBtn) {
+                cancelWorkoutBtn.addEventListener('click', () => {
+                    workoutModal.style.display = 'none';
+                });
+            }
+            
+            // Save workout when "Save" button is clicked
+            if (saveWorkoutBtn) {
+                saveWorkoutBtn.addEventListener('click', () => {
+                    // In a real app, you would validate and save to database
+                    // For demo, we'll just show a success message
+                    const workoutId = document.getElementById('workout-id').value;
+                    const isEdit = workoutId !== '';
+                    
+                    if (isEdit) {
+                        showNotification('Workout updated successfully', 'success');
+                    } else {
+                        showNotification('New workout added successfully', 'success');
+                    }
+                    
+                    workoutModal.style.display = 'none';
+                });
+            }
+            
+            // Modal functionality for Classes
+            const classModal = document.getElementById('class-modal');
+            const addClassBtn = document.getElementById('add-class-btn');
+            const quickAddClassBtn = document.getElementById('quick-add-class');
+            const cancelClassBtn = document.getElementById('cancel-class');
+            const saveClassBtn = document.getElementById('save-class');
+            const editClassBtns = document.querySelectorAll('.edit-class');
+            const deleteClassBtns = document.querySelectorAll('.delete-class');
+            
+            // Function to open class modal
+            function openClassModal(isEdit = false, classId = null) {
+                const modalTitle = document.getElementById('class-modal-title');
+                const classForm = document.getElementById('class-form');
+                
+                if (isEdit) {
+                    modalTitle.textContent = 'Edit Class';
+                    document.getElementById('class-id').value = classId;
+                    
+                    // In a real application, you would fetch class data here
+                    // For demo purposes, we'll fill with dummy data
+                    if (classId === '1') {
+                        document.getElementById('class-name').value = 'Olympic Lifting';
+                        document.getElementById('class-description').value = 'Master the snatch and clean & jerk with expert technique coaching for maximum power development.';
+                        document.getElementById('class-instructor').value = 'Alex Hermes';
+                        document.getElementById('class-schedule').value = 'Mon, Wed, Fri - 7:00 AM';
+                        document.getElementById('class-level').value = 'All Levels';
+                        document.getElementById('class-capacity').value = '15';
+                    } else if (classId === '2') {
+                        document.getElementById('class-name').value = 'Spartan HIIT';
+                        document.getElementById('class-description').value = 'High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.';
+                        document.getElementById('class-instructor').value = 'Marcus Leonidas';
+                        document.getElementById('class-schedule').value = 'Tue, Thu - 6:00 PM';
+                        document.getElementById('class-level').value = 'Intermediate';
+                        document.getElementById('class-capacity').value = '20';
+                    }
+                } else {
+                    modalTitle.textContent = 'Add New Class';
+                    classForm.reset();
+                    document.getElementById('class-id').value = '';
+                }
+                
+                classModal.style.display = 'block';
+            }
+            
+            // Open modal when "Add New Class" button is clicked
+            if (addClassBtn) {
+                addClassBtn.addEventListener('click', () => openClassModal());
+            }
+            
+            // Open modal when quick action is clicked
+            if (quickAddClassBtn) {
+                quickAddClassBtn.addEventListener('click', () => openClassModal());
+            }
+            
+            // Edit class button click
+            editClassBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const classId = this.getAttribute('data-id');
+                    openClassModal(true, classId);
+                });
+            });
+            
+            // Delete class button click
+            deleteClassBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const classId = this.getAttribute('data-id');
+                    const className = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+                    
+                    if (confirm(`Are you sure you want to delete "${className}"? This action cannot be undone.`)) {
+                        // In a real app, you would delete the class via API
+                        // For demo, we'll just remove the row
+                        this.closest('tr').remove();
+                        showNotification(`Class "${className}" deleted successfully`, 'success');
+                    }
+                });
+            });
+            
+            // Close modal when "Cancel" button is clicked
+            if (cancelClassBtn) {
+                cancelClassBtn.addEventListener('click', () => {
+                    classModal.style.display = 'none';
+                });
+            }
+            
+            // Save class when "Save" button is clicked
+            if (saveClassBtn) {
+                saveClassBtn.addEventListener('click', () => {
+                    // In a real app, you would validate and save to database
+                    // For demo, we'll just show a success message
+                    const classId = document.getElementById('class-id').value;
+                    const isEdit = classId !== '';
+                    
+                    if (isEdit) {
+                        showNotification('Class updated successfully', 'success');
+                    } else {
+                        showNotification('New class added successfully', 'success');
+                    }
+                    
+                    classModal.style.display = 'none';
+                });
+            }
+            
+            // Close all modals when clicking the close button
+            closeModalBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modal = this.closest('.modal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Close modal when clicking outside the modal content
+            window.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
+            });
+            
+            // Finance functions
+            const runFinancialReportBtn = document.getElementById('run-financial-report');
+            if (runFinancialReportBtn) {
+                runFinancialReportBtn.addEventListener('click', function() {
+                    showNotification('Generating financial report...', 'info');
+                    setTimeout(() => {
+                        showNotification('Financial report generated successfully!', 'success');
+                    }, 2000);
+                });
+            }
+            
+            // Settings functions
+            const saveSettingsBtn = document.getElementById('save-settings');
+            if (saveSettingsBtn) {
+                saveSettingsBtn.addEventListener('click', function() {
+                    showNotification('Settings saved successfully', 'success');
+                });
+            }
+            
+            // Difficulty option selection
+            const difficultyOptions = document.querySelectorAll('.difficulty-option');
+            difficultyOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from all options
+                    difficultyOptions.forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked option
+                    this.classList.add('active');
+                    
+                    // Check the corresponding radio button
+                    const difficulty = this.getAttribute('data-difficulty');
+                    document.querySelector(`input[name="difficulty"][value="${difficulty}"]`).checked = true;
+                });
+            });
+            
+            // Quick actions
+            const quickRunReportsBtn = document.getElementById('quick-run-reports');
+            if (quickRunReportsBtn) {
+                quickRunReportsBtn.addEventListener('click', function() {
+                    showNotification('Generating reports...', 'info');
+                    setTimeout(() => {
+                        showNotification('Reports generated successfully!', 'success');
+                    }, 2000);
+                });
+            }
+            
+            const quickSendEmailBtn = document.getElementById('quick-send-email');
+            if (quickSendEmailBtn) {
+                quickSendEmailBtn.addEventListener('click', function() {
+                    showNotification('Email feature coming soon!', 'info');
+                });
+            }
+            
+            // Filter functions for tables
+            const searchMembersInput = document.getElementById('search-members');
+            const membershipFilterSelect = document.getElementById('membership-filter');
+            
+            if (searchMembersInput) {
+                searchMembersInput.addEventListener('input', filterMembers);
+            }
+            
+            if (membershipFilterSelect) {
+                membershipFilterSelect.addEventListener('change', filterMembers);
+            }
+            
+            function filterMembers() {
+                const searchTerm = searchMembersInput.value.toLowerCase();
+                const membershipType = membershipFilterSelect.value;
+                const memberRows = document.querySelectorAll('#members-content .data-table tbody tr');
+                
+                memberRows.forEach(row => {
+                    const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                    const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                    const membership = row.querySelector('td:nth-child(4)').textContent;
+                    
+                    const nameMatch = name.includes(searchTerm);
+                    const emailMatch = email.includes(searchTerm);
+                    const membershipMatch = !membershipType || membership === membershipType;
+                    
+                    if ((nameMatch || emailMatch) && membershipMatch) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+            
+            const searchWorkoutsInput = document.getElementById('search-workouts');
+            const difficultyFilterSelect = document.getElementById('difficulty-filter');
+            
+            if (searchWorkoutsInput) {
+                searchWorkoutsInput.addEventListener('input', filterWorkouts);
+            }
+            
+            if (difficultyFilterSelect) {
+                difficultyFilterSelect.addEventListener('change', filterWorkouts);
+            }
+            
+            function filterWorkouts() {
+                const searchTerm = searchWorkoutsInput.value.toLowerCase();
+                const difficultyType = difficultyFilterSelect.value;
+                const workoutRows = document.querySelectorAll('#workouts-content .data-table tbody tr');
+                
+                workoutRows.forEach(row => {
+                    const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                    const difficulty = row.querySelector('td:nth-child(3)').textContent;
+                    const category = row.querySelector('td:nth-child(5)').textContent.toLowerCase();
+                    
+                    const nameMatch = name.includes(searchTerm);
+                    const categoryMatch = category.includes(searchTerm);
+                    const difficultyMatch = !difficultyType || difficulty === difficultyType;
+                    
+                    if ((nameMatch || categoryMatch) && difficultyMatch) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Mobile navigation toggle
+            const mobileToggle = document.querySelector('.mobile-toggle');
+            const nav = document.querySelector('.nav');
+            
+            if (mobileToggle && nav) {
+                mobileToggle.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                });
+            }
+            
+            // Notification system
+            function showNotification(message, type = 'success') {
+                const notificationContainer = document.querySelector('.notification-container');
+                
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
+                    ${message}
+                    <button class="notification-close">&times;</button>
+                `;
+                
+                notificationContainer.appendChild(notification);
+                
+                // Add event listener to close button
+                const closeButton = notification.querySelector('.notification-close');
+                closeButton.addEventListener('click', function() {
+                    notification.remove();
+                });
+                
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>
