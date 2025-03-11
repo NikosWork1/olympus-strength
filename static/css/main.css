@@ -96,6 +96,12 @@ header {
     letter-spacing: 1px;
 }
 
+.logo-img {
+    height: 40px;
+    width: auto;
+    margin-right: 0.75rem;
+}
+
 .logo svg {
     margin-right: 0.75rem;
 }
