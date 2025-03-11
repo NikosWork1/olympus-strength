@@ -266,20 +266,36 @@
             <button class="mobile-toggle">☰</button>
             
             <nav class="nav">
-                <a href="/" class="nav-link">HOME</a>
-                <a href="/members" class="nav-link">MEMBERS</a>
-                <a href="/workouts" class="nav-link">WORKOUTS</a>
-                
-                <div class="dropdown">
-                    <a href="#" class="nav-link dropdown-toggle">CLASSES <span class="dropdown-icon">▼</span></a>
-                    <div class="dropdown-menu">
-                        <a href="/classes" class="dropdown-item">Book a Class</a>
-                        <a href="/my-workouts" class="dropdown-item">My Workouts</a>
-                    </div>
-                </div>
-                
-                <a href="/profile" class="profile-icon" title="My Profile">👤</a>
-                <a href="/logout" class="nav-link">LOGOUT</a>
+                {% if current_user %}
+                    {% if current_user.role == 'user' %}
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/classes" class="nav-link">BOOK CLASS</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
+                    {% elif current_user.role == 'admin' %}
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/admin/dashboard" class="nav-link">ADMIN DASHBOARD</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
+                    {% elif current_user.role == 'coach' %}
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/coach/dashboard" class="nav-link">COACH DASHBOARD</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
+                    {% endif %}
+                {% else %}
+                    <a href="/" class="nav-link">HOME</a>
+                    <a href="/members" class="nav-link">MEMBERS</a>
+                    <a href="/workouts" class="nav-link">WORKOUTS</a>
+                    <a href="/login" class="nav-link">LOGIN</a>
+                    <a href="/signup" class="btn btn-sm">Join Now</a>
+                {% endif %}
             </nav>
         </div>
     </header>
@@ -361,7 +377,7 @@
                         <p>Push your limits with this legendary strength program designed to build godlike power.</p>
                         <div class="workout-meta">
                             <span><i>⏱️</i> 60 min</span>
-                            <span><i>🔥</i> 600 calories</span>
+                            <span><i>��</i> 600 calories</span>
                         </div>
                         <button class="view-details-btn">View Details</button>
                     </div>
