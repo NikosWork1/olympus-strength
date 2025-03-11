@@ -1626,3 +1626,185 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+/* Add these styles to your main.css or create a new CSS file */
+
+/* Workout Cards */
+.workouts-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.workout-card {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.workout-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.workout-header {
+    padding: 20px;
+    position: relative;
+    color: white;
+}
+
+.workout-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.workout-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.workout-content {
+    padding: 20px;
+}
+
+.workout-content p {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #555;
+    height: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.workout-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    color: #757575;
+    font-size: 0.9rem;
+}
+
+.view-details-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.view-details-btn:hover {
+    background-color: #388E3C;
+}
+
+/* Difficulty colors */
+.workout-card[data-difficulty="Beginner"] .workout-header {
+    background-color: #4CAF50;
+}
+
+.workout-card[data-difficulty="Intermediate"] .workout-header {
+    background-color: #FF9800;
+}
+
+.workout-card[data-difficulty="Advanced"] .workout-header {
+    background-color: #F44336;
+}
+
+.workout-card[data-difficulty="Strength"] .workout-header {
+    background-color: #3F51B5;
+}
+
+.workout-card[data-difficulty="Cardio"] .workout-header {
+    background-color: #9C27B0;
+}
+
+/* Workout filters */
+.workout-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    background-color: #f5f5f5;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.filter-btn.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Notification styles */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.notification {
+    background-color: white;
+    color: #333;
+    border-left: 4px solid #4CAF50;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    position: relative;
+    min-width: 300px;
+}
+
+.notification.success {
+    border-left-color: #4CAF50;
+}
+
+.notification.error {
+    border-left-color: #F44336;
+}
+
+.notification.info {
+    border-left-color: #2196F3;
+}
+
+.notification-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #757575;
+}
