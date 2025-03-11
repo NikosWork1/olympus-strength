@@ -3,103 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Olympus Strength - Forge Your Legacy</title>
+    <meta name="description" content="Olympus Strength - Premier fitness and strength training facility">
+    <title>Olympus Strength</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/css/main.css">
+    <!-- Swiper.js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
     <style>
-        /* Dropdown menu styles */
-        .dropdown {
+        .swiper {
+            width: 100%;
+            height: 100vh;
+        }
+        .swiper-slide {
+            text-align: center;
+            background-position: center;
+            background-size: cover;
+        }
+        .slide-content {
             position: relative;
-            display: inline-block;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
-        
-        .dropdown-toggle {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        .slide-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
         }
-        
-        .dropdown-icon {
-            font-size: 0.7rem;
+        .hero-gradient {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+        }
+        .nav-blur {
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .feature-card {
             transition: transform 0.3s ease;
         }
-        
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: #212121;
-            border-radius: 6px;
-            min-width: 200px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
             transition: all 0.3s ease;
-            z-index: 1000;
-            margin-top: 5px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        .dropdown.active .dropdown-menu {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        .dropdown.active .dropdown-icon {
-            transform: rotate(180deg);
-        }
-        
-        .dropdown-item {
-            display: block;
-            padding: 12px 16px;
-            color: #ffffff;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.95rem;
-        }
-        
-        .dropdown-item:last-child {
-            border-bottom: none;
-        }
-        
-        .dropdown-item:hover {
-            background-color: #4CAF50;
-            color: white;
-            padding-left: 20px;
-        }
-        
-        /* Staff Login Section */
-        .staff-login-section {
-            background-color: #f5f5f5;
-            padding: 3rem 0;
-            border-top: 1px solid #e0e0e0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .staff-login-container {
-            max-width: 600px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        
-        .staff-login-content h2 {
-            color: #212121;
-            margin-bottom: 1rem;
-            font-size: 2rem;
-        }
-        
-        .staff-login-content p {
-            color: #757575;
-            margin-bottom: 1.5rem;
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2);
         }
     </style>
 </head>
-<body>
+<body class="flex flex-col min-h-screen bg-gray-50">
+    <!-- Navigation Bar -->
     <header>
         <div class="container header-container">
             <a href="/" class="logo">
@@ -114,19 +80,19 @@
             <nav class="nav">
                 {% if current_user %}
                     {% if current_user.role == 'admin' %}
-                        <!-- Admin-specific navigation (most powerful role) -->
-                        <a href="/" class="nav-link">HOME</a>
-                        <a href="/members" class="nav-link">MEMBERS</a>
-                        <a href="/workouts" class="nav-link">WORKOUTS</a>
-                        <a href="/admin/dashboard" class="nav-link">ADMIN DASHBOARD</a>
-                        <a href="/profile" class="nav-link">PROFILE</a>
-                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <!-- Admin-specific navigation -->
+                        <a href="/" class="nav-link">Home</a>
+                        <a href="/members" class="nav-link">Members</a>
+                        <a href="/workouts" class="nav-link">Workouts</a>
+                        <a href="/admin/dashboard" class="nav-link">Admin Dashboard</a>
+                        <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/logout" class="nav-link">Logout (Admin)</a>
                         
                     {% elif current_user.role == 'coach' %}
-                        <!-- Coach-specific navigation (intermediate role) -->
-                        <a href="/" class="nav-link">HOME</a>
-                        <a href="/members" class="nav-link">MEMBERS</a>
-                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <!-- Coach-specific navigation -->
+                        <a href="/" class="nav-link">Home</a>
+                        <a href="/members" class="nav-link">Members</a>
+                        <a href="/workouts" class="nav-link">Workouts</a>
                         
                         <div class="dropdown">
                             <a href="#" class="nav-link dropdown-toggle">CLASSES <span class="dropdown-icon">▼</span></a>
@@ -136,316 +102,375 @@
                             </div>
                         </div>
                         
-                        <a href="/coach/dashboard" class="nav-link">COACH DASHBOARD</a>
-                        <a href="/profile" class="nav-link">PROFILE</a>
-                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <a href="/coach/dashboard" class="nav-link">Coach Dashboard</a>
+                        <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/logout" class="nav-link">Logout (Coach)</a>
                         
                     {% else %}
-                        <!-- Customer-specific navigation (most common role) -->
-                        <a href="/" class="nav-link">HOME</a>
-                        <a href="/members" class="nav-link">MEMBERS</a>
-                        <a href="/workouts" class="nav-link">WORKOUTS</a>
-                        
-                        <div class="dropdown">
-                            <a href="#" class="nav-link dropdown-toggle">CLASSES <span class="dropdown-icon">▼</span></a>
-                            <div class="dropdown-menu">
-                                <a href="/classes" class="dropdown-item">Book a Class</a>
-                                <a href="/my-workouts" class="dropdown-item">My Workouts</a>
-                            </div>
-                        </div>
-                        
-                        <a href="/profile" class="nav-link">PROFILE</a>
-                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <!-- Customer-specific navigation -->
+                        <a href="/" class="nav-link">Home</a>
+                        <a href="/members" class="nav-link">Community</a>
+                        <a href="/workouts" class="nav-link">Programs</a>
+                        <a href="/workouts/personal" class="nav-link">My Workouts</a>
+                        <a href="/classes" class="nav-link">Book Class</a>
+                        <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/logout" class="nav-link">Logout</a>
                     {% endif %}
                 {% else %}
-                    <!-- Visitor navigation (unauthenticated state) -->
-                    <a href="/" class="nav-link">HOME</a>
-                    <a href="/maps" class="nav-link">FIND US</a>
-                    <a href="/contact" class="nav-link">CONTACT US</a>
-                    <a href="/login" class="nav-link">LOGIN</a>
+                    <!-- Visitor navigation -->
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/maps" class="nav-link">Find Us</a>
+                    <a href="/contact" class="nav-link">Contact Us</a>
+                    <a href="/login" class="nav-link">Login</a>
                     <a href="/signup" class="btn btn-sm">Join Now</a>
                 {% endif %}
             </nav>
         </div>
     </header>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>FORGE YOUR LEGACY AT OLYMPUS STRENGTH</h1>
-            <p>Where gods train. Where legends are made. Your journey to greatness begins here.</p>
-            <a href="/signup" class="btn btn-cta btn-lg">START YOUR JOURNEY</a>
-        </div>
-    </section>
-    
-    <section class="features">
-        <div class="container">
-            <h2 class="section-title">WHY CHOOSE OLYMPUS STRENGTH</h2>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">💪</div>
-                    <h3>State-of-the-Art Equipment</h3>
-                    <p>Train with the latest fitness technology and premium equipment for maximum results.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">👨‍🏫</div>
-                    <h3>Expert Trainers</h3>
-                    <p>Our certified professionals create personalized programs to help you reach your goals.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">🕒</div>
-                    <h3>Flexible Hours</h3>
-                    <p>Open 24/7 to accommodate your schedule, because dedication knows no time.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">🤝</div>
-                    <h3>Community Support</h3>
-                    <p>Join a passionate community that will motivate and inspire your fitness journey.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section id="programs" class="programs">
-        <div class="container">
-            <h2 class="section-title">OUR ELITE PROGRAMS</h2>
-            
-            <div class="program-grid">
-                <div class="program-card">
-                    <div class="program-header">
-                        <h3>Olympic Weightlifting</h3>
-                        <span class="program-badge">All Levels</span>
-                    </div>
-                    <div class="program-content">
-                        <p>Master the snatch and clean & jerk with expert technique coaching for maximum power development.</p>
-                        <div class="program-details">
-                            <span>🧑‍🏫 Alex Hermes</span>
-                            <span>📅 Mon, Wed, Fri</span>
+    <!-- Main Content -->
+    <main class="flex-grow">
+        <!-- Hero Section with Carousel -->
+        <section class="relative h-screen">
+            <div class="swiper hero-swiper">
+                <div class="swiper-wrapper">
+                    <!-- Slide 1 -->
+                    <div class="swiper-slide" style="background-image: url('/static/img/hero1.jpg')">
+                        <div class="slide-overlay"></div>
+                        <div class="slide-content flex items-center justify-center h-full text-white">
+                            <div data-aos="fade-up">
+                                <h1 class="text-6xl font-bold mb-6 leading-tight">Forge Your Legacy at<br>Olympus Strength</h1>
+                                <p class="text-xl text-gray-300 mb-10">Where gods train. Where legends are made. Your journey to greatness begins here.</p>
+                                <a href="#start-journey" class="btn-primary text-lg font-semibold px-10 py-4 rounded-full inline-block">
+                                    Start Your Journey
+                                </a>
+                            </div>
                         </div>
-                        <a href="#" class="btn">Book Class</a>
                     </div>
-                </div>
-                
-                <div class="program-card">
-                    <div class="program-header">
-                        <h3>Spartan HIIT</h3>
-                        <span class="program-badge">Intermediate</span>
-                    </div>
-                    <div class="program-content">
-                        <p>High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.</p>
-                        <div class="program-details">
-                            <span>🧑‍🏫 Marcus Leonidas</span>
-                            <span>📅 Tue, Thu</span>
-                        </div>
-                        <a href="#" class="btn">Book Class</a>
-                    </div>
-                </div>
-                
-                <div class="program-card">
-                    <div class="program-header">
-                        <h3>Strength Foundations</h3>
-                        <span class="program-badge">Beginner</span>
-                    </div>
-                    <div class="program-content">
-                        <p>Master fundamental lifts with expert coaching to build the foundation for legendary strength.</p>
-                        <div class="program-details">
-                            <span>🧑‍🏫 Helena Troy</span>
-                            <span>📅 Mon, Wed</span>
-                        </div>
-                        <a href="#" class="btn">Book Class</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Staff Login Section -->
-    <section class="staff-login-section">
-        <div class="container">
-            <div class="staff-login-container">
-                <div class="staff-login-content">
-                    <h2>Staff Access</h2>
-                    <p>Coaches and administrators, access your dashboards and management tools here.</p>
-                    <a href="/login" class="btn btn-outline">Staff Login</a>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section class="cta">
-        <div class="cta-content">
-            <h2>Ready to Transform Your Life?</h2>
-            <p>Join Olympus Strength today and start your journey towards a stronger, godlike physique.</p>
-            <a href="/signup" class="btn btn-lg">Join Now</a>
-        </div>
-    </section>
 
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-about">
-                    <a href="/" class="footer-logo">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
-                            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
-                        </svg>
-                        OLYMPUS STRENGTH
-                    </a>
-                    <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
-                    <div class="social-links">
-                        <a href="#" class="social-link">f</a>
-                        <a href="#" class="social-link">t</a>
-                        <a href="#" class="social-link">in</a>
-                        <a href="#" class="social-link">ig</a>
+                    <!-- Slide 2 -->
+                    <div class="swiper-slide" style="background-image: url('/static/img/hero2.jpg')">
+                        <div class="slide-overlay"></div>
+                        <div class="slide-content flex items-center justify-center h-full text-white">
+                            <div data-aos="fade-up">
+                                <h2 class="text-6xl font-bold mb-6 leading-tight">Elite Training<br>Exceptional Results</h2>
+                                <p class="text-xl text-gray-300 mb-10">State-of-the-art facilities and expert coaching to help you achieve your goals.</p>
+                                <a href="/workouts" class="btn-primary text-lg font-semibold px-10 py-4 rounded-full inline-block">
+                                    View Programs
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 3 -->
+                    <div class="swiper-slide" style="background-image: url('/static/img/hero3.jpg')">
+                        <div class="slide-overlay"></div>
+                        <div class="slide-content flex items-center justify-center h-full text-white">
+                            <div data-aos="fade-up">
+                                <h2 class="text-6xl font-bold mb-6 leading-tight">Join Our<br>Fitness Community</h2>
+                                <p class="text-xl text-gray-300 mb-10">Be part of a supportive community that pushes you to be your best.</p>
+                                <a href="/contact" class="btn-primary text-lg font-semibold px-10 py-4 rounded-full inline-block">
+                                    Contact Us
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="start-journey" class="py-24 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-16" data-aos="fade-up">Why Choose Olympus</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    <div class="feature-card p-8 bg-white rounded-2xl shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                        <div class="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">Elite Training</h3>
+                        <p class="text-gray-600 text-center">World-class equipment and programming designed for maximum results.</p>
+                    </div>
+                    <div class="feature-card p-8 bg-white rounded-2xl shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                        <div class="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">Expert Coaches</h3>
+                        <p class="text-gray-600 text-center">Personalized guidance from certified professionals who live and breathe fitness.</p>
+                    </div>
+                    <div class="feature-card p-8 bg-white rounded-2xl shadow-lg" data-aos="fade-up" data-aos-delay="300">
+                        <div class="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">Results Guaranteed</h3>
+                        <p class="text-gray-600 text-center">Your success is our mission. We're committed to helping you achieve your goals.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Programs Preview Section -->
+        <section class="py-24 bg-gray-100">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-16" data-aos="fade-up">Our Elite Programs</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-lg overflow-hidden shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                        <div class="h-48 bg-green-600 flex items-center justify-center">
+                            <h3 class="text-2xl font-bold text-white">Olympic Weightlifting</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-700 mb-4">Master the snatch and clean & jerk with expert technique coaching for maximum power development.</p>
+                            <div class="flex justify-between text-sm text-gray-600 mb-4">
+                                <span>🧑‍🏫 Alex Hermes</span>
+                                <span>📅 Mon, Wed, Fri</span>
+                            </div>
+                            <a href="/classes" class="btn-primary w-full text-center py-2 rounded-md text-white font-medium inline-block">Book Class</a>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg overflow-hidden shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                        <div class="h-48 bg-green-600 flex items-center justify-center">
+                            <h3 class="text-2xl font-bold text-white">Spartan HIIT</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-700 mb-4">High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.</p>
+                            <div class="flex justify-between text-sm text-gray-600 mb-4">
+                                <span>🧑‍🏫 Marcus Leonidas</span>
+                                <span>📅 Tue, Thu</span>
+                            </div>
+                            <a href="/classes" class="btn-primary w-full text-center py-2 rounded-md text-white font-medium inline-block">Book Class</a>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg overflow-hidden shadow-lg" data-aos="fade-up" data-aos-delay="300">
+                        <div class="h-48 bg-green-600 flex items-center justify-center">
+                            <h3 class="text-2xl font-bold text-white">Strength Foundations</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-700 mb-4">Master fundamental lifts with expert coaching to build the foundation for legendary strength.</p>
+                            <div class="flex justify-between text-sm text-gray-600 mb-4">
+                                <span>🧑‍🏫 Helena Troy</span>
+                                <span>📅 Mon, Wed</span>
+                            </div>
+                            <a href="/classes" class="btn-primary w-full text-center py-2 rounded-md text-white font-medium inline-block">Book Class</a>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="footer-links">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/members">Members</a></li>
-                        <li><a href="/workouts">Workouts</a></li>
-                        <li><a href="/login">Login</a></li>
+                <div class="text-center mt-12">
+                    <a href="/workouts" class="inline-flex items-center text-green-600 hover:text-green-700 font-semibold">
+                        View All Programs
+                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-20 bg-green-600 text-white">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-4xl font-bold mb-6" data-aos="fade-up">Ready to Transform Your Life?</h2>
+                <p class="text-xl max-w-3xl mx-auto mb-10" data-aos="fade-up" data-aos-delay="100">Join Olympus Strength today and start your journey towards a stronger, godlike physique.</p>
+                <a href="/signup" class="bg-white text-green-600 hover:bg-gray-100 py-4 px-10 rounded-full font-bold text-lg inline-block" data-aos="fade-up" data-aos-delay="200">Join Now</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+        <div class="container mx-auto px-4 pt-16 pb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">Olympus Strength</h3>
+                    <p class="text-gray-400 mb-4">Where gods train. Where legends are made.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <span class="sr-only">Facebook</span>
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <span class="sr-only">Instagram</span>
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <span class="sr-only">Twitter</span>
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="/members" class="text-gray-400 hover:text-white">Members</a></li>
+                        <li><a href="/workouts" class="text-gray-400 hover:text-white">Programs</a></li>
+                        <li><a href="/classes" class="text-gray-400 hover:text-white">Classes</a></li>
                     </ul>
                 </div>
                 
-                <div class="footer-links">
-                    <h4>Programs</h4>
-                    <ul>
-                        <li><a href="#">Olympic Weightlifting</a></li>
-                        <li><a href="#">Spartan HIIT</a></li>
-                        <li><a href="#">Strength Foundations</a></li>
-                        <li><a href="#">All Programs</a></li>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Programs</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/workouts" class="text-gray-400 hover:text-white">Olympic Weightlifting</a></li>
+                        <li><a href="/workouts" class="text-gray-400 hover:text-white">Spartan HIIT</a></li>
+                        <li><a href="/workouts" class="text-gray-400 hover:text-white">Strength Foundations</a></li>
+                        <li><a href="/workouts" class="text-gray-400 hover:text-white">All Programs</a></li>
                     </ul>
                 </div>
                 
-                <div class="footer-links">
-                    <h4>Contact Us</h4>
-                    <ul>
-                        <li>📞 (555) 123-4567</li>
-                        <li>📧 info@olympusstrength.com</li>
-                        <li>📍 123 Fitness Ave, Olympia</li>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-start">
+                            <span class="mr-2">📞</span>
+                            <span>+30 210 810 3410</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">📧</span>
+                            <span>info@olympusstrength.gr</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">📍</span>
+                            <span>Patision 223, Athens 112 53, Greece</span>
+                        </li>
                     </ul>
                 </div>
             </div>
             
-            <div class="footer-bottom">
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400 text-sm">
                 <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <div class="notification-container"></div>
-
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
     <script src="/static/js/main.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Mobile menu toggle
-        const mobileToggle = document.querySelector('.mobile-toggle');
-        const nav = document.querySelector('.nav');
-        
-        if (mobileToggle) {
-            mobileToggle.addEventListener('click', function() {
-                nav.classList.toggle('active');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AOS
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
             });
-        }
-        
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                const targetId = this.getAttribute('href');
-                
-                // Skip if it's just "#" or if it's a button with other actions
-                if (targetId === '#' || this.classList.contains('btn-sm')) return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
+            
+            // Initialize Swiper
+            const swiper = new Swiper('.hero-swiper', {
+                loop: true,
+                autoplay: {
+                    delay: 5000,
+                    disableOnInteraction: false,
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            });
+            
+            // Setup mobile menu toggle
+            const mobileToggle = document.querySelector('.mobile-toggle');
+            const nav = document.querySelector('.nav');
+            
+            if (mobileToggle && nav) {
+                mobileToggle.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                });
+            }
+            
+            // Setup dropdowns
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
                     e.preventDefault();
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
+                    
+                    // Close all other dropdowns first
+                    document.querySelectorAll('.dropdown').forEach(dropdown => {
+                        if (dropdown !== this.parentElement) {
+                            dropdown.classList.remove('active');
+                            const icon = dropdown.querySelector('.dropdown-icon');
+                            if (icon) {
+                                icon.textContent = '▼';
+                            }
+                        }
+                    });
+
+// Toggle current dropdown
+                    const dropdown = this.parentElement;
+                    dropdown.classList.toggle('active');
+                    
+                    // Update the dropdown icon
+                    const icon = this.querySelector('.dropdown-icon');
+                    if (icon) {
+                        icon.textContent = dropdown.classList.contains('active') ? '▲' : '▼';
+                    }
+                });
+            });
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown-toggle')) {
+                    document.querySelectorAll('.dropdown').forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                        const icon = dropdown.querySelector('.dropdown-icon');
+                        if (icon) {
+                            icon.textContent = '▼';
+                        }
+                    });
+                }
+            });
+            
+            // Scroll to section when clicking on hero CTA
+            const startJourneyBtn = document.querySelector('.slide-content a[href="#start-journey"]');
+            if (startJourneyBtn) {
+                startJourneyBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetSection = document.querySelector('#start-journey');
+                    if (targetSection) {
+                        window.scrollTo({
+                            top: targetSection.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            }
+            
+            // Book class buttons
+            const bookButtons = document.querySelectorAll('.btn-primary');
+            bookButtons.forEach(button => {
+                if (button.textContent.trim() === 'Book Class') {
+                    button.addEventListener('click', function(e) {
+                        {% if not current_user %}
+                            e.preventDefault();
+                            window.location.href = '/login';
+                        {% endif %}
                     });
                 }
             });
         });
-        
-        // Book class button functionality
-        document.querySelectorAll('.btn').forEach(button => {
-            if (button.textContent.includes('Book Class')) {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    showNotification('Class booking functionality will be available soon!', 'info');
-                });
-            }
-        });
-
-        // Dropdown functionality for mobile
-        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-        
-        dropdownToggles.forEach(toggle => {
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const dropdown = this.parentElement;
-                dropdown.classList.toggle('active');
-                
-                // Update the dropdown icon
-                const icon = this.querySelector('.dropdown-icon');
-                if (icon) {
-                    icon.textContent = dropdown.classList.contains('active') ? '▲' : '▼';
-                }
-            });
-        });
-        
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.dropdown')) {
-                document.querySelectorAll('.dropdown').forEach(dropdown => {
-                    dropdown.classList.remove('active');
-                    const icon = dropdown.querySelector('.dropdown-icon');
-                    if (icon) {
-                        icon.textContent = '▼';
-                    }
-                });
-            }
-        });
-
-        // Simple notification function
-        window.showNotification = function(message, type = 'success') {
-            // Check if notification container exists, if not create it
-            let notificationContainer = document.querySelector('.notification-container');
-            
-            if (!notificationContainer) {
-                notificationContainer = document.createElement('div');
-                notificationContainer.className = 'notification-container';
-                document.body.appendChild(notificationContainer);
-            }
-            
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.textContent = message;
-            
-            // Add close button
-            const closeBtn = document.createElement('button');
-            closeBtn.className = 'notification-close';
-            closeBtn.innerHTML = '&times;';
-            closeBtn.onclick = () => notification.remove();
-            notification.appendChild(closeBtn);
-            
-            // Add to container
-            notificationContainer.appendChild(notification);
-            
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 5000);
-        };
-    });
     </script>
 </body>
 </html>
