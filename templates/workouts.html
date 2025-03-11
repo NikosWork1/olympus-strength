@@ -271,7 +271,7 @@
                         <a href="/" class="nav-link">HOME</a>
                         <a href="/members" class="nav-link">MEMBERS</a>
                         <a href="/workouts" class="nav-link">WORKOUTS</a>
-                        <a href="/classes" class="nav-link">BOOK CLASS</a>
+                        <a href="/book_class" class="nav-link">BOOK CLASS</a>
                         <a href="/logout" class="nav-link">LOGOUT</a>
                         <a href="/profile" class="profile-icon" title="My Profile">👤</a>
                     {% elif current_user.role == 'admin' %}
@@ -377,7 +377,7 @@
                         <p>Push your limits with this legendary strength program designed to build godlike power.</p>
                         <div class="workout-meta">
                             <span><i>⏱️</i> 60 min</span>
-                            <span><i>��</i> 600 calories</span>
+                            <span><i>🔥</i> 600 calories</span>
                         </div>
                         <button class="view-details-btn">View Details</button>
                     </div>
@@ -544,345 +544,97 @@
                     // Select the radio input
                     const radio = this.querySelector('input[type="radio"]');
                     radio.checked = true;
-                }
-                
-                // Create exercise table
-                const table = document.createElement('table');
-                table.style.width = '100%';
-                table.style.borderCollapse = 'collapse';
-                
-                // Add table header
-                const thead = document.createElement('thead');
-                thead.innerHTML = `
-                    <tr>
-                        <th style="text-align: left; padding: 0.75rem; border-bottom: 2px solid #e0e0e0;">Exercise</th>
-                        <th style="text-align: center; padding: 0.75rem; border-bottom: 2px solid #e0e0e0;">Sets</th>
-                        <th style="text-align: center; padding: 0.75rem; border-bottom: 2px solid #e0e0e0;">Reps</th>
-                        <th style="text-align: left; padding: 0.75rem; border-bottom: 2px solid #e0e0e0;">Notes</th>
-                    </tr>
-                `;
-                table.appendChild(thead);
-                
-                // Add table body with exercises
-                const tbody = document.createElement('tbody');
-                exercises.forEach(exercise => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td style="padding: 0.75rem; border-bottom: 1px solid #e0e0e0;"><strong>${exercise.name}</strong></td>
-                        <td style="text-align: center; padding: 0.75rem; border-bottom: 1px solid #e0e0e0;">${exercise.sets}</td>
-                        <td style="text-align: center; padding: 0.75rem; border-bottom: 1px solid #e0e0e0;">${exercise.reps}</td>
-                        <td style="padding: 0.75rem; border-bottom: 1px solid #e0e0e0;">${exercise.notes}</td>
-                    `;
-                    tbody.appendChild(row);
                 });
-                table.appendChild(tbody);
-                
-                exercisesSection.appendChild(table);
-                modalBody.appendChild(exercisesSection);
-                
-                // Add tips section
-                const tipsSection = document.createElement('div');
-                tipsSection.style.marginTop = '2rem';
-                tipsSection.style.backgroundColor = '#e8f5e9';
-                tipsSection.style.padding = '1rem';
-                tipsSection.style.borderRadius = '6px';
-                
-                const tipsTitle = document.createElement('h3');
-                tipsTitle.textContent = 'Tips';
-                tipsTitle.style.marginBottom = '0.5rem';
-                tipsSection.appendChild(tipsTitle);
-                
-                const tipsList = document.createElement('ul');
-                tipsList.style.paddingLeft = '1.5rem';
-                tipsList.style.marginBottom = '0';
-                
-                const tips = [
-                    'Warm up properly before starting the intense exercises',
-                    'Focus on form rather than speed or weight',
-                    'Stay hydrated throughout the workout',
-                    'Rest 60-90 seconds between sets for optimal recovery',
-                    'Cool down with stretching after completing all exercises'
-                ];
-                
-                tips.forEach(tip => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = tip;
-                    listItem.style.marginBottom = '0.5rem';
-                    tipsList.appendChild(listItem);
+            });
+
+            // View details button functionality
+            const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
+            viewDetailsButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const workoutCard = this.closest('.workout-card');
+                    const title = workoutCard.querySelector('h3').textContent;
+                    const description = workoutCard.querySelector('p').textContent;
+                    const difficulty = workoutCard.querySelector('.workout-badge').textContent;
+                    
+                    showWorkoutDetailsModal(title, description, difficulty, workoutCard);
                 });
-                
-                tipsSection.appendChild(tipsList);
-                modalBody.appendChild(tipsSection);
-                
-                // Add coach section (demo)
-                const coachSection = document.createElement('div');
-                coachSection.style.marginTop = '2rem';
-                coachSection.style.display = 'flex';
-                coachSection.style.alignItems = 'center';
-                coachSection.style.gap = '1rem';
-                
-                const coachAvatar = document.createElement('div');
-                coachAvatar.style.width = '50px';
-                coachAvatar.style.height = '50px';
-                coachAvatar.style.borderRadius = '50%';
-                coachAvatar.style.backgroundColor = '#e0e0e0';
-                coachAvatar.style.display = 'flex';
-                coachAvatar.style.alignItems = 'center';
-                coachAvatar.style.justifyContent = 'center';
-                coachAvatar.style.fontWeight = 'bold';
-                coachAvatar.textContent = '👤';
-                
-                const coachInfo = document.createElement('div');
-                
-                const coachTitle = document.createElement('h3');
-                coachTitle.style.margin = '0';
-                coachTitle.style.marginBottom = '0.25rem';
-                coachTitle.textContent = 'Created by';
-                
-                const coachName = document.createElement('p');
-                coachName.style.margin = '0';
-                coachName.textContent = title.includes('Spartan') ? 'Marcus Leonidas' :
-                                        title.includes('Olympian') ? 'Alex Hermes' :
-                                        title.includes('Zeus') ? 'Helena Troy' :
-                                        title.includes('Herculean') ? 'Marcus Leonidas' :
-                                        title.includes('Athena') ? 'Diana Artemis' :
-                                        title.includes('Poseidon') ? 'Jason Argos' : 'Alex Hermes';
-                
-                coachInfo.appendChild(coachTitle);
-                coachInfo.appendChild(coachName);
-                
-                coachSection.appendChild(coachAvatar);
-                coachSection.appendChild(coachInfo);
-                
-                modalBody.appendChild(coachSection);
-                
-                // Create modal footer
-                const modalFooter = document.createElement('div');
-                modalFooter.className = 'workout-modal-footer';
-                modalFooter.style.padding = '1rem 1.5rem';
-                modalFooter.style.borderTop = '1px solid #e0e0e0';
-                modalFooter.style.display = 'flex';
-                modalFooter.style.justifyContent = 'space-between';
-                
-                // Add close button
+            });
+
+            // Function to show workout details modal
+            function showWorkoutDetailsModal(title, description, difficulty, workoutCard) {
+                // Create modal container
+                const modal = document.createElement('div');
+                modal.className = 'workout-modal';
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+                modal.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                modal.style.display = 'flex';
+                modal.style.justifyContent = 'center';
+                modal.style.alignItems = 'center';
+                modal.style.zIndex = '1000';
+
+                // Create modal content
+                const modalContent = document.createElement('div');
+                modalContent.className = 'workout-modal-content';
+                modalContent.style.backgroundColor = 'white';
+                modalContent.style.borderRadius = '8px';
+                modalContent.style.width = '90%';
+                modalContent.style.maxWidth = '600px';
+                modalContent.style.maxHeight = '90vh';
+                modalContent.style.overflow = 'auto';
+                modalContent.style.position = 'relative';
+
+                // Create close button
                 const closeButton = document.createElement('button');
-                closeButton.textContent = 'Close';
-                closeButton.className = 'btn btn-outline';
-                closeButton.style.padding = '0.5rem 1rem';
-                closeButton.style.borderRadius = '4px';
-                closeButton.style.border = '1px solid #e0e0e0';
+                closeButton.textContent = '×';
+                closeButton.style.position = 'absolute';
+                closeButton.style.right = '10px';
+                closeButton.style.top = '10px';
+                closeButton.style.border = 'none';
                 closeButton.style.background = 'none';
+                closeButton.style.fontSize = '24px';
                 closeButton.style.cursor = 'pointer';
-                
-                // Add start workout button
-                const startButton = document.createElement('button');
-                startButton.textContent = 'Start Workout';
-                startButton.className = 'btn';
-                startButton.style.padding = '0.5rem 1rem';
-                startButton.style.borderRadius = '4px';
-                startButton.style.backgroundColor = '#4CAF50';
-                startButton.style.color = 'white';
-                startButton.style.border = 'none';
-                startButton.style.cursor = 'pointer';
-                
-                modalFooter.appendChild(closeButton);
-                modalFooter.appendChild(startButton);
-                
-                // Assemble modal
-                modalContent.appendChild(modalHeader);
-                modalContent.appendChild(modalBody);
-                modalContent.appendChild(modalFooter);
+                closeButton.style.color = '#333';
+
+                // Close button event handler
+                closeButton.addEventListener('click', () => {
+                    modal.remove();
+                });
+
+                // Add content to modal
+                modalContent.innerHTML = `
+                    <div class="workout-modal-header" style="background-color: ${headerColor}; padding: 1.5rem; border-radius: 8px 8px 0 0; color: white;">
+                        <h2 style="margin: 0;">${title}</h2>
+                        <span class="workout-badge">${difficulty}</span>
+                    </div>
+                    <div class="workout-modal-body" style="padding: 1.5rem;">
+                        <p>${description}</p>
+                        <div class="workout-meta">
+                            <span><i>⏱️</i> ${duration}</span>
+                            <span><i>🔥</i> ${calories}</span>
+                        </div>
+                    </div>
+                `;
+
+                // Add close button to modal content
+                modalContent.appendChild(closeButton);
+
+                // Add modal content to modal
                 modal.appendChild(modalContent);
-                
-                // Add to body
+
+                // Add modal to body
                 document.body.appendChild(modal);
-                
-                // Close modal when clicking outside or on close button
-                modal.addEventListener('click', function(e) {
+
+                // Close modal when clicking outside content
+                modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
                         modal.remove();
                     }
                 });
-                
-                closeButton.addEventListener('click', function() {
-                    modal.remove();
-                });
-                
-                // Handle start workout button
-                startButton.addEventListener('click', function() {
-                    modal.remove();
-                    showNotification('Workout started! Let\'s get to work!', 'success');
-                });
             }
-            
-            // Form submission
-            const workoutForm = document.getElementById('add-workout-form');
-            if (workoutForm) {
-                workoutForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    
-                    // Basic form validation
-                    const nameInput = workoutForm.querySelector('[name="name"]');
-                    const descriptionInput = workoutForm.querySelector('[name="description"]');
-                    const difficultyInput = workoutForm.querySelector('[name="difficulty"]:checked');
-                    
-                    if (!nameInput || !descriptionInput || !difficultyInput) {
-                        showNotification('Please fill in all required fields.', 'error');
-                        return;
-                    }
-                    
-                    if (!nameInput.value || !descriptionInput.value) {
-                        showNotification('Please fill in all required fields.', 'error');
-                        return;
-                    }
-                    
-                    const formData = {
-                        name: nameInput.value,
-                        description: descriptionInput.value,
-                        difficulty: difficultyInput.value,
-                        category: workoutForm.querySelector('[name="target_area"]')?.value || '',
-                        duration: parseInt(workoutForm.querySelector('[name="duration"]')?.value || 45)
-                    };
-                    
-                    // Show loading state
-                    const submitButton = workoutForm.querySelector('button[type="submit"]');
-                    const originalButtonText = submitButton.textContent;
-                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                    submitButton.disabled = true;
-                    
-                    try {
-                        // Make API request to add workout
-                        const response = await fetch('/api/workouts', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(formData)
-                        });
-                        
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        
-                        const newWorkout = await response.json();
-                        
-                        // Create new workout card
-                        const workoutCard = document.createElement('div');
-                        workoutCard.className = 'workout-card';
-                        workoutCard.setAttribute('data-difficulty', newWorkout.difficulty);
-                        
-                        // Set background color based on difficulty
-                        let headerColor;
-                        switch(newWorkout.difficulty) {
-                            case 'Beginner':
-                                headerColor = '#4CAF50';
-                                break;
-                            case 'Intermediate':
-                                headerColor = '#FF9800';
-                                break;
-                            case 'Advanced':
-                                headerColor = '#F44336';
-                                break;
-                            default:
-                                headerColor = '#2196F3';
-                        }
-                        
-                        // Calculate calories (simple estimation based on duration)
-                        const calories = Math.round(newWorkout.duration * 10);
-                        
-                        workoutCard.innerHTML = `
-                            <div class="workout-header" style="background-color: ${headerColor};">
-                                <h3>${newWorkout.name}</h3>
-                                <span class="workout-badge">${newWorkout.difficulty}</span>
-                            </div>
-                            <div class="workout-content">
-                                <p>${newWorkout.description}</p>
-                                <div class="workout-meta">
-                                    <span><i>⏱️</i> ${newWorkout.duration} min</span>
-                                    <span><i>🔥</i> ${calories} calories</span>
-                                </div>
-                                <button class="view-details-btn">View Details</button>
-                            </div>
-                        `;
-                        
-                        // Add event listener to the new view details button
-                        const newViewDetailsBtn = workoutCard.querySelector('.view-details-btn');
-                        newViewDetailsBtn.addEventListener('click', function() {
-                            const card = this.closest('.workout-card');
-                            const title = card.querySelector('h3').textContent;
-                            const description = card.querySelector('p').textContent;
-                            const difficulty = card.querySelector('.workout-badge').textContent;
-                            showWorkoutDetailsModal(title, description, difficulty, card);
-                        });
-                        
-                        // Add to the grid with animation
-                        const workoutsGrid = document.querySelector('.workouts-list');
-                        workoutCard.style.opacity = '0';
-                        workoutCard.style.transform = 'translateY(20px)';
-                        workoutsGrid.appendChild(workoutCard);
-                        
-                        setTimeout(() => {
-                            workoutCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                            workoutCard.style.opacity = '1';
-                            workoutCard.style.transform = 'translateY(0)';
-                        }, 10);
-                        
-                        // Show success message
-                        showNotification('Workout created successfully!', 'success');
-                        
-                        // Reset form
-                        workoutForm.reset();
-                        difficultyOptions.forEach(opt => opt.classList.remove('active'));
-                        
-                        // Scroll to the new workout
-                        setTimeout(() => {
-                            workoutCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }, 500);
-                        
-                    } catch (error) {
-                        console.error('Error creating workout:', error);
-                        showNotification('Failed to create workout. Please try again.', 'error');
-                    } finally {
-                        // Restore button state
-                        submitButton.textContent = originalButtonText;
-                        submitButton.disabled = false;
-                    }
-                });
-            }
-
-            // Notification function
-            window.showNotification = function(message, type = 'success') {
-                // Check if notification container exists, if not create it
-                let notificationContainer = document.querySelector('.notification-container');
-                
-                if (!notificationContainer) {
-                    notificationContainer = document.createElement('div');
-                    notificationContainer.className = 'notification-container';
-                    document.body.appendChild(notificationContainer);
-                }
-                
-                // Create notification element
-                const notification = document.createElement('div');
-                notification.className = `notification ${type}`;
-                notification.textContent = message;
-                
-                // Add close button
-                const closeBtn = document.createElement('button');
-                closeBtn.className = 'notification-close';
-                closeBtn.innerHTML = '&times;';
-                closeBtn.onclick = () => notification.remove();
-                notification.appendChild(closeBtn);
-                
-                // Add to container
-                notificationContainer.appendChild(notification);
-                
-                // Auto-remove after 5 seconds
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
-                    }
-                }, 5000);
-            };
         });
     </script>
 </body>
