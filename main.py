@@ -1136,6 +1136,47 @@ async def my_bookings(request: Request, db: Session = Depends(get_db)):
             "error_message": "There was an error loading your bookings. Please try again later.",
             "current_user": current_user
         })
+
+# Add these updated routes to main.py
+
+@app.put("/api/workouts/{workout_id}", response_model=schemas.Workout)
+def update_workout_api(workout_id: int, workout: schemas.WorkoutUpdate, db: Session = Depends(get_db)):
+    db_workout = crud.update_workout(db, workout_id=workout_id, workout=workout)
+    if db_workout is None:
+        raise HTTPException(status_code=404, detail="Workout not found")
+    return db_workout
+
+@app.delete("/api/workouts/{workout_id}")
+def delete_workout_api(workout_id: int, db: Session = Depends(get_db)):
+    success = crud.delete_workout(db, workout_id=workout_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Workout not found")
+    return {"success": True}
+
+# Add a more robust error handler for form validation issues
+@app.exception_handler(422)
+async def validation_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=422,
+        content={"detail": "Invalid input data. Please check all required fields."},
+    )
+
+# Add this improved member creation endpoint with better error handling
+@app.post("/api/members", response_model=schemas.Member)
+def create_member_api(member: schemas.MemberCreate, db: Session = Depends(get_db)):
+    try:
+        # Check if email already exists
+        db_member = crud.get_member_by_email(db, email=member.email)
+        if db_member:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        
+        # Create the member
+        return crud.create_member(db=db, member=member)
+    except Exception as e:
+        # Log the error for debugging
+        logger.error(f"Error creating member: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating member: {str(e)}")
+        
 # Run the app
 if __name__ == "__main__":
     import uvicorn
