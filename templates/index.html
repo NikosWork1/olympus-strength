@@ -6,6 +6,7 @@
     <title>Olympus Strength - Forge Your Legacy</title>
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <style>
         /* Dropdown menu styles */
         .dropdown {
@@ -177,86 +178,37 @@
         </div>
     </section>
     
-    <section class="features">
-        <div class="container">
-            <h2 class="section-title">WHY CHOOSE OLYMPUS STRENGTH</h2>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">💪</div>
-                    <h3>State-of-the-Art Equipment</h3>
-                    <p>Train with the latest fitness technology and premium equipment for maximum results.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">👨‍🏫</div>
-                    <h3>Expert Trainers</h3>
-                    <p>Our certified professionals create personalized programs to help you reach your goals.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">🕒</div>
-                    <h3>Flexible Hours</h3>
-                    <p>Open 24/7 to accommodate your schedule, because dedication knows no time.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">🤝</div>
-                    <h3>Community Support</h3>
-                    <p>Join a passionate community that will motivate and inspire your fitness journey.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section id="programs" class="programs">
-        <div class="container">
-            <h2 class="section-title">OUR ELITE PROGRAMS</h2>
-            
-            <div class="program-grid">
-                <div class="program-card">
-                    <div class="program-header">
-                        <h3>Olympic Weightlifting</h3>
-                        <span class="program-badge">All Levels</span>
+    <!-- Features Section -->
+    <section id="start-journey" class="py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-16" data-aos="fade-up" data-lang-key="features.title">Why Choose Olympus</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div class="feature-card p-8 bg-white rounded-2xl" data-aos="fade-up" data-aos-delay="100">
+                    <div class="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
                     </div>
-                    <div class="program-content">
-                        <p>Master the snatch and clean & jerk with expert technique coaching for maximum power development.</p>
-                        <div class="program-details">
-                            <span>🧑‍🏫 Alex Hermes</span>
-                            <span>📅 Mon, Wed, Fri</span>
-                        </div>
-                        <a href="#" class="btn">Book Class</a>
-                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center" data-lang-key="features.elite.title">Elite Training</h3>
+                    <p class="text-gray-600 text-center" data-lang-key="features.elite.desc">World-class equipment and programming designed for maximum results.</p>
                 </div>
-                
-                <div class="program-card">
-                    <div class="program-header">
-                        <h3>Spartan HIIT</h3>
-                        <span class="program-badge">Intermediate</span>
+                <div class="feature-card p-8 bg-white rounded-2xl" data-aos="fade-up" data-aos-delay="200">
+                    <div class="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
                     </div>
-                    <div class="program-content">
-                        <p>High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.</p>
-                        <div class="program-details">
-                            <span>🧑‍🏫 Marcus Leonidas</span>
-                            <span>📅 Tue, Thu</span>
-                        </div>
-                        <a href="#" class="btn">Book Class</a>
-                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center" data-lang-key="features.expert.title">Expert Coaches</h3>
+                    <p class="text-gray-600 text-center" data-lang-key="features.expert.desc">Personalized guidance from certified professionals who live and breathe fitness.</p>
                 </div>
-                
-                <div class="program-card">
-                    <div class="program-header">
-                        <h3>Strength Foundations</h3>
-                        <span class="program-badge">Beginner</span>
+                <div class="feature-card p-8 bg-white rounded-2xl" data-aos="fade-up" data-aos-delay="300">
+                    <div class="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
                     </div>
-                    <div class="program-content">
-                        <p>Master fundamental lifts with expert coaching to build the foundation for legendary strength.</p>
-                        <div class="program-details">
-                            <span>🧑‍🏫 Helena Troy</span>
-                            <span>📅 Mon, Wed</span>
-                        </div>
-                        <a href="#" class="btn">Book Class</a>
-                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center" data-lang-key="features.results.title">Results Guaranteed</h3>
+                    <p class="text-gray-600 text-center" data-lang-key="features.results.desc">Your success is our mission. We're committed to helping you achieve your goals.</p>
                 </div>
             </div>
         </div>
@@ -341,8 +293,11 @@
     <div class="notification-container"></div>
 
     <script src="/static/js/main.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
+        AOS.init();
+        
+        document.addEventListener('DOMContentLoaded', function() {
         // Mobile menu toggle
         const mobileToggle = document.querySelector('.mobile-toggle');
         const nav = document.querySelector('.nav');
