@@ -149,7 +149,7 @@
             
             <nav class="nav">
                 {% if current_user %}
-                    {% if current_user.role == 'user' %}
+                    {% if current_user.role == 'customer' %}
                         <a href="/" class="nav-link">HOME</a>
                         <a href="/members" class="nav-link">MEMBERS</a>
                         <a href="/workouts" class="nav-link">WORKOUTS</a>
