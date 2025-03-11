@@ -331,3 +331,68 @@ def assign_workout_to_coach(db: Session, workout_id: int, coach_id: int):
     db.refresh(coach_workout)
     return coach_workout
 
+def get_transactions(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Transaction).order_by(models.Transaction.date.desc()).offset(skip).limit(limit).all()
+
+def create_transaction(db: Session, transaction: schemas.TransactionCreate):
+    db_transaction = models.Transaction(**transaction.dict())
+    db.add(db_transaction)
+    db.commit()
+    db.refresh(db_transaction)
+    return db_transaction
+
+def get_monthly_revenue(db: Session, year: int = datetime.datetime.now().year, month: int = datetime.datetime.now().month):
+    start_date = datetime.datetime(year, month, 1)
+    if month == 12:
+        end_date = datetime.datetime(year + 1, 1, 1)
+    else:
+        end_date = datetime.datetime(year, month + 1, 1)
+    
+    result = db.query(func.sum(models.Transaction.amount)).filter(
+        models.Transaction.date >= start_date,
+        models.Transaction.date < end_date,
+        models.Transaction.status == "completed"
+    ).scalar()
+    
+    return result or 0
+
+def get_financial_summary(db: Session, year: int = datetime.datetime.now().year, month: int = datetime.datetime.now().month):
+    # Get revenue
+    revenue = get_monthly_revenue(db, year, month)
+    
+    # Get expenses (assuming expenses are negative transactions)
+    start_date = datetime.datetime(year, month, 1)
+    if month == 12:
+        end_date = datetime.datetime(year + 1, 1, 1)
+    else:
+        end_date = datetime.datetime(year, month + 1, 1)
+    
+    expenses = db.query(func.sum(models.Transaction.amount)).filter(
+        models.Transaction.date >= start_date,
+        models.Transaction.date < end_date,
+        models.Transaction.status == "completed",
+        models.Transaction.amount < 0
+    ).scalar() or 0
+    
+    # Calculate net profit
+    net_profit = revenue + expenses  # expenses are negative
+    
+    # Calculate growth compared to previous month
+    prev_month = month - 1
+    prev_year = year
+    if prev_month == 0:
+        prev_month = 12
+        prev_year -= 1
+    
+    prev_revenue = get_monthly_revenue(db, prev_year, prev_month)
+    growth = 0
+    if prev_revenue > 0:
+        growth = ((revenue - prev_revenue) / prev_revenue) * 100
+    
+    return {
+        "revenue": revenue,
+        "expenses": abs(expenses),  # Convert to positive for display
+        "net_profit": net_profit,
+        "growth": growth
+    }
+
