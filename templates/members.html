@@ -17,21 +17,34 @@
             <button class="mobile-toggle">☰</button>
             
             <nav class="nav">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/members" class="nav-link">Members</a>
-                <a href="/workouts" class="nav-link">Workouts</a>
-                
                 {% if current_user %}
-                    <a href="/profile" class="nav-link">Profile</a>
-                    {% if current_user.role == 'admin' %}
-                        <a href="/admin/dashboard" class="nav-link">Admin Dashboard</a>
+                    {% if current_user.role == 'user' %}
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/classes" class="nav-link">BOOK CLASS</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
+                    {% elif current_user.role == 'admin' %}
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/admin/dashboard" class="nav-link">ADMIN DASHBOARD</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
+                    {% elif current_user.role == 'coach' %}
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/coach/dashboard" class="nav-link">COACH DASHBOARD</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
                     {% endif %}
-                    {% if current_user.role == 'coach' %}
-                        <a href="/coach/dashboard" class="nav-link">Coach Dashboard</a>
-                    {% endif %}
-                    <a href="/logout" class="nav-link">Logout ({{ current_user.role }})</a>
                 {% else %}
-                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/" class="nav-link">HOME</a>
+                    <a href="/members" class="nav-link">MEMBERS</a>
+                    <a href="/workouts" class="nav-link">WORKOUTS</a>
+                    <a href="/login" class="nav-link">LOGIN</a>
                     <a href="/signup" class="btn btn-sm">Join Now</a>
                 {% endif %}
             </nav>
