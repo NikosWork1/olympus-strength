@@ -78,22 +78,51 @@ def create_workout(db: Session, workout: schemas.WorkoutCreate):
     return db_workout
 
 def update_workout(db: Session, workout_id: int, workout: schemas.WorkoutUpdate):
-    db_workout = db.query(models.Workout).filter(models.Workout.id == workout_id).first()
-    if db_workout:
+    try:
+        db_workout = db.query(models.Workout).filter(models.Workout.id == workout_id).first()
+        if db_workout is None:
+            return None
+            
+        # Update only the fields that are provided
         update_data = workout.dict(exclude_unset=True)
         for key, value in update_data.items():
             setattr(db_workout, key, value)
+            
         db.commit()
         db.refresh(db_workout)
-    return db_workout
+        return db_workout
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Database error updating workout: {e}")
+        raise e
+
 
 def delete_workout(db: Session, workout_id: int):
-    db_workout = db.query(models.Workout).filter(models.Workout.id == workout_id).first()
-    if db_workout:
+    try:
+        db_workout = db.query(models.Workout).filter(models.Workout.id == workout_id).first()
+        if not db_workout:
+            return False
+            
+        # Check for associated records first
+        workout_used = db.query(models.MemberWorkout).filter(
+            models.MemberWorkout.workout_id == workout_id
+        ).first()
+        
+        if workout_used:
+            # If it's being used, we should handle this gracefully
+            # For example, we could mark it as inactive instead of deleting
+            db_workout.is_active = False
+            db.commit()
+            return True
+            
+        # If not used, we can safely delete
         db.delete(db_workout)
         db.commit()
         return True
-    return False
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Database error deleting workout: {e}")
+        raise e
 
 # --- GymClass CRUD operations ---
 def get_class(db: Session, class_id: int):
@@ -179,12 +208,80 @@ def get_member_workout(db: Session, member_workout_id: int):
 def get_member_workouts(db: Session, member_id: int, skip: int = 0, limit: int = 100):
     return db.query(models.MemberWorkout).filter(models.MemberWorkout.member_id == member_id).offset(skip).limit(limit).all()
 
-def create_member_workout(db: Session, member_workout: schemas.MemberWorkoutCreate):
-    db_member_workout = models.MemberWorkout(**member_workout.dict())
-    db.add(db_member_workout)
-    db.commit()
-    db.refresh(db_member_workout)
-    return db_member_workout
+# Update these functions in crud.py
+
+def update_workout(db: Session, workout_id: int, workout: schemas.WorkoutUpdate):
+    try:
+        db_workout = db.query(models.Workout).filter(models.Workout.id == workout_id).first()
+        if db_workout is None:
+            return None
+            
+        # Update only the fields that are provided
+        update_data = workout.dict(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_workout, key, value)
+            
+        db.commit()
+        db.refresh(db_workout)
+        return db_workout
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Database error updating workout: {e}")
+        raise e
+
+def delete_workout(db: Session, workout_id: int):
+    try:
+        db_workout = db.query(models.Workout).filter(models.Workout.id == workout_id).first()
+        if not db_workout:
+            return False
+            
+        # Check for associated records first
+        workout_used = db.query(models.MemberWorkout).filter(
+            models.MemberWorkout.workout_id == workout_id
+        ).first()
+        
+        if workout_used:
+            # If it's being used, we should handle this gracefully
+            # For example, we could mark it as inactive instead of deleting
+            db_workout.is_active = False
+            db.commit()
+            return True
+            
+        # If not used, we can safely delete
+        db.delete(db_workout)
+        db.commit()
+        return True
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Database error deleting workout: {e}")
+        raise e
+
+def create_member(db: Session, member: schemas.MemberCreate):
+    try:
+        # Hash the password
+        hashed_password = pwd_context.hash(member.password)
+        
+        # Create the member object
+        db_member = models.Member(
+            name=member.name,
+            email=member.email,
+            password_hash=hashed_password,
+            phone=member.phone,
+            membership_type=member.membership_type,
+            role=member.role,
+            join_date=datetime.datetime.now(),
+            is_active=True
+        )
+        
+        # Add to database
+        db.add(db_member)
+        db.commit()
+        db.refresh(db_member)
+        return db_member
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Database error creating member: {e}")
+        raise e
 
 def update_member_workout(db: Session, member_workout_id: int, member_workout: schemas.MemberWorkoutUpdate):
     db_member_workout = db.query(models.MemberWorkout).filter(models.MemberWorkout.id == member_workout_id).first()
