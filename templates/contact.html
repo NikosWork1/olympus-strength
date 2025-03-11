@@ -1,469 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        // Set the language attribute before the page fully loads
+        document.documentElement.lang = localStorage.getItem('language') || 'en';
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - Olympus Strength</title>
+    <meta name="description" content="Contact Olympus Strength - Get in touch with us">
+    <title>Contact - Olympus Strength</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
-    <style>
-        /* Reset and base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f9f9f9;
-        }
-
-        a {
-            text-decoration: none;
-            color: #4CAF50;
-        }
-
-        /* Header styles */
-        header {
-            background-color: #212121;
-            color: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .container {
-            width: 85%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            font-weight: bold;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .nav-link {
-            color: white;
-            margin-left: 20px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-link:hover {
-            color: #4CAF50;
-        }
-
-        .nav {
-            display: flex;
-            align-items: center;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: #4CAF50;
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 30px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #388E3C;
-        }
-
-        .btn-sm {
-            font-size: 0.9rem;
-            padding: 0.4rem 1.2rem;
-        }
-
-        /* Page header */
-        .page-header {
-            text-align: center;
-            padding: 3rem 0;
-            background-color: #f5f5f5;
-            margin-bottom: 2rem;
-        }
-
-        .page-title {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            color: #212121;
-        }
-
-        .page-subtitle {
-            font-size: 1.1rem;
-            color: #757575;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        /* Contact page specific styles */
-        .contact-container {
-            margin: 3rem auto;
-        }
-
-        .contact-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-bottom: 3rem;
-        }
-
-        .contact-info {
-            flex: 1;
-            min-width: 300px;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .contact-form {
-            flex: 1;
-            min-width: 300px;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .contact-method {
-            margin-bottom: 25px;
-            display: flex;
-            align-items: flex-start;
-        }
-
-        .contact-icon {
-            background-color: #f0f8f0;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-size: 1.5rem;
-            color: #4CAF50;
-        }
-
-        .contact-details h3 {
-            margin-bottom: 5px;
-            color: #212121;
-        }
-
-        .contact-note {
-            font-size: 0.85rem;
-            color: #757575;
-            font-style: italic;
-        }
-
-        .social-links a {
-            margin-right: 15px;
-            font-weight: 500;
-        }
-
-        /* Form styles */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-
-        textarea.form-control {
-            min-height: 120px;
-        }
-
-        /* FAQ section */
-        .faq-section {
-            margin: 3rem auto;
-        }
-
-        .faq-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 1.5rem;
-        }
-
-        .faq-item {
-            flex: 1 0 300px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .faq-item h3 {
-            margin-bottom: 10px;
-            color: #212121;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #212121;
-            color: white;
-            padding: 3rem 0 1.5rem;
-            margin-top: 3rem;
-        }
-
-        .footer-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-bottom: 2rem;
-        }
-
-        .footer-about {
-            flex: 2;
-            min-width: 300px;
-        }
-
-        .footer-links {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .footer-links h4 {
-            margin-bottom: 15px;
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .footer-links h4:after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            height: 3px;
-            width: 40px;
-            background-color: #4CAF50;
-        }
-
-        .footer-links ul {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-
-        .footer-links a {
-            color: #bbb;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: white;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: #bbb;
-            font-size: 0.9rem;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .contact-grid, .faq-grid {
-                flex-direction: column;
-            }
-            
-            .page-title {
-                font-size: 2rem;
-            }
-        }
-    </style>
 </head>
-<body>
+<body class="flex flex-col min-h-screen bg-gray-50">
+    <!-- Header with navigation -->
     <header>
         <div class="container header-container">
             <a href="/" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                    <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                </svg>
                 OLYMPUS STRENGTH
             </a>
             
+            <button class="mobile-toggle">☰</button>
+            
             <nav class="nav">
-                <!-- Common links for all users -->
                 <a href="/" class="nav-link">Home</a>
                 <a href="/maps" class="nav-link">Find Us</a>
                 <a href="/contact" class="nav-link">Contact Us</a>
-                <a href="/login" class="nav-link">Login</a>
-                <a href="/signup" class="btn btn-sm" style="margin-left: 20px;">Join Now</a>
+                
+                {% if current_user %}
+                    {% if current_user.role == 'admin' %}
+                        <a href="/members" class="nav-link">Members</a>
+                        <a href="/workouts" class="nav-link">Workouts</a>
+                        <a href="/admin/dashboard" class="nav-link">Admin Dashboard</a>
+                        <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/logout" class="nav-link">Logout (Admin)</a>
+                    {% elif current_user.role == 'coach' %}
+                        <a href="/members" class="nav-link">Members</a>
+                        <a href="/workouts" class="nav-link">Workouts</a>
+                        <a href="/coach/dashboard" class="nav-link">Coach Dashboard</a>
+                        <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/logout" class="nav-link">Logout (Coach)</a>
+                    {% else %}
+                        <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/logout" class="nav-link">Logout</a>
+                    {% endif %}
+                {% else %}
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/signup" class="btn btn-sm">Join Now</a>
+                {% endif %}
             </nav>
         </div>
     </header>
 
-    <section class="page-header">
-        <div class="container">
-            <h1 class="page-title">Contact Us</h1>
-            <p class="page-subtitle">We're here to answer your questions and help you on your fitness journey</p>
-        </div>
-    </section>
+    <!-- Main Content -->
+    <main class="flex-grow pt-20">
+        <!-- Contact Header -->
+        <section class="hero-gradient text-white py-20 relative overflow-hidden">
+            <div class="absolute inset-0 bg-black opacity-50"></div>
+            <div class="container mx-auto px-4 relative z-10" data-aos="fade-up">
+                <h1 class="text-5xl font-bold text-center mb-6" data-lang-key="contact.header">Contact Us</h1>
+                <p class="text-xl text-center text-gray-300 max-w-2xl mx-auto" data-lang-key="contact.subtitle">Ready to start your journey? Get in touch with us today.</p>
+            </div>
+        </section>
 
-    <section class="contact-container">
-        <div class="container">
-            <div class="contact-grid">
-                <div class="contact-info">
-                    <h2>Get In Touch</h2>
-                    <p style="margin-bottom: 20px;">Have questions about our programs, memberships, or facilities? We're here to help! Fill out the form or use the contact information below to reach us.</p>
-                    
-                    <div class="contact-methods">
-                        <div class="contact-method">
-                            <div class="contact-icon">📞</div>
-                            <div class="contact-details">
-                                <h3>Phone</h3>
-                                <p>+30 210 810 3410</p>
-                                <p class="contact-note">Available Mon-Fri, 8am-8pm</p>
+        <!-- Contact Form & Info Section -->
+        <section class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <!-- Contact Form -->
+                    <div class="bg-white p-8 rounded-2xl shadow-lg" data-aos="fade-up">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-8" data-lang-key="contact.form.title">Send Us a Message</h2>
+                        
+                        <!-- Keep the original form action and method to maintain backend integration -->
+                        <form id="contactForm" action="/contact" method="post" class="space-y-6">
+                            <div>
+                                <label for="name" class="block text-gray-700 mb-2" data-lang-key="contact.form.name">Name</label>
+                                <input type="text" id="name" name="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-green-500" required>
+                            </div>
+                            <div>
+                                <label for="email" class="block text-gray-700 mb-2" data-lang-key="contact.form.email">Email</label>
+                                <input type="email" id="email" name="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-green-500" required>
+                            </div>
+                            <div>
+                                <label for="subject" class="block text-gray-700 mb-2" data-lang-key="contact.form.subject">Subject</label>
+                                <select id="subject" name="subject" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-green-500" required>
+                                    <option value="">Select a subject</option>
+                                    <option value="Membership Inquiry">Membership Inquiry</option>
+                                    <option value="Personal Training">Personal Training</option>
+                                    <option value="Class Information">Group Classes</option>
+                                    <option value="Facility Question">Facility Question</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="message" class="block text-gray-700 mb-2" data-lang-key="contact.form.message">Message</label>
+                                <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-green-500" required></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary w-full py-3 rounded-lg text-white bg-green-600 hover:bg-green-700" data-lang-key="contact.form.submit">Send Message</button>
+                        </form>
+                        
+                        <!-- Display success message if provided from backend -->
+                        {% if success_message %}
+                        <div class="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                            {{ success_message }}
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Display error message if provided from backend -->
+                        {% if error_message %}
+                        <div class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                            {{ error_message }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="space-y-8">
+                        <div class="bg-white p-8 rounded-2xl shadow-lg" data-aos="fade-up">
+                            <h2 class="text-3xl font-bold text-gray-800 mb-8" data-lang-key="contact.info.title">Contact Information</h2>
+                            <div class="space-y-6">
+                                <div class="flex items-start">
+                                    <svg class="w-6 h-6 text-green-500 mr-4 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-800" data-lang-key="contact.address">Address</h3>
+                                        <p class="text-gray-600" data-lang-key="contact.address.content">Patision 223, Athens 112 53, Greece</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <svg class="w-6 h-6 text-green-500 mr-4 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                    </svg>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-800" data-lang-key="contact.phone">Phone</h3>
+                                        <p class="text-gray-600" data-lang-key="contact.phone.content">+30 210 810 3410</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <svg class="w-6 h-6 text-green-500 mr-4 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-800" data-lang-key="contact.email">Email</h3>
+                                        <p class="text-gray-600" data-lang-key="contact.email.content">info@olympusstrength.gr</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        
-                        <div class="contact-method">
-                            <div class="contact-icon">📧</div>
-                            <div class="contact-details">
-                                <h3>Email</h3>
-                                <p>info@olympusstrength.gr</p>
-                                <p class="contact-note">We respond within 24 hours</p>
-                            </div>
-                        </div>
-                        
-                        <div class="contact-method">
-                            <div class="contact-icon">📍</div>
-                            <div class="contact-details">
-                                <h3>Main Location</h3>
-                                <p>Patision 223, Athens 112 53, Greece</p>
-                                <p class="contact-note">Open 24/7</p>
-                            </div>
-                        </div>
-                        
-                        <div class="contact-method">
-                            <div class="contact-icon">👥</div>
-                            <div class="contact-details">
-                                <h3>Social Media</h3>
-                                <div class="social-links">
-                                    <a href="#">Facebook</a>
-                                    <a href="#">Instagram</a>
-                                    <a href="#">Twitter</a>
+
+                        <!-- Opening Hours -->
+                        <div class="bg-white p-8 rounded-2xl shadow-lg" data-aos="fade-up">
+                            <h2 class="text-3xl font-bold text-gray-800 mb-8" data-lang-key="contact.hours.title">Opening Hours</h2>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600" data-lang-key="contact.schedule.day1">Monday - Friday</span>
+                                    <span class="font-semibold" data-lang-key="contact.schedule.time1">6:00 AM - 10:00 PM</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600" data-lang-key="contact.schedule.day2">Saturday</span>
+                                    <span class="font-semibold" data-lang-key="contact.schedule.time2">8:00 AM - 8:00 PM</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600" data-lang-key="contact.schedule.day3">Sunday</span>
+                                    <span class="font-semibold" data-lang-key="contact.schedule.time3">8:00 AM - 4:00 PM</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="contact-form">
-                    <h2>Send Us a Message</h2>
-                    <form action="/contact" method="post">
-                        <div class="form-group">
-                            <label for="name">Your Name</label>
-                            <input type="text" id="name" name="name" required class="form-control">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" id="email" name="email" required class="form-control">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="subject">Subject</label>
-                            <select id="subject" name="subject" class="form-control">
-                                <option value="Membership Inquiry">Membership Inquiry</option>
-                                <option value="Class Information">Class Information</option>
-                                <option value="Personal Training">Personal Training</option>
-                                <option value="Facility Question">Facility Question</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="message">Your Message</label>
-                            <textarea id="message" name="message" class="form-control" required></textarea>
-                        </div>
-                        
-                        <button type="submit" class="btn">Send Message</button>
-                    </form>
-                </div>
             </div>
-            
-            <div class="faq-section">
-                <h2 style="margin-bottom: 20px;">Frequently Asked Questions</h2>
-                
-                <div class="faq-grid">
-                    <div class="faq-item">
-                        <h3>What are your membership options?</h3>
-                        <p>We offer Bronze ($29.99/month), Silver ($49.99/month), and Gold ($79.99/month) memberships, each with different benefits and access levels.</p>
+        </section>
+
+        <!-- Map Section -->
+        <section class="py-20 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-16" data-aos="fade-up" data-lang-key="contact.location.title">Our Locations</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Athens Location -->
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-lg" data-aos="fade-up">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2" data-lang-key="contact.location.1">Athens</h3>
+                            <p class="text-gray-600">Mediterranean College - Athens</p>
+                        </div>
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3144.213208119487!2d23.72993767721095!3d37.995487099413374!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14a1a2cc68f2c591%3A0x5369b821925ebb51!2sMediterranean%20College!5e0!3m2!1sel!2sgr!4v1740417627664!5m2!1sel!2sgr"
+                            width="100%" 
+                            height="400" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
                     </div>
-                    
-                    <div class="faq-item">
-                        <h3>Do you offer a free trial?</h3>
-                        <p>Yes! We offer a 3-day free trial so you can experience our facilities and classes before committing to a membership.</p>
-                    </div>
-                    
-                    <div class="faq-item">
-                        <h3>Are personal trainers available?</h3>
-                        <p>Absolutely. Our certified personal trainers are available for one-on-one sessions, tailored to your specific fitness goals.</p>
-                    </div>
-                    
-                    <div class="faq-item">
-                        <h3>What amenities do you offer?</h3>
-                        <p>Our main facility offers state-of-the-art equipment, group fitness classes, a pool, sauna, locker rooms with showers, and a nutrition bar.</p>
-                    </div>
-                    
-                    <div class="faq-item">
-                        <h3>Can I freeze my membership?</h3>
-                        <p>Yes, memberships can be frozen for up to 3 months per year for medical reasons or extended travel.</p>
-                    </div>
-                    
-                    <div class="faq-item">
-                        <h3>What is your cancellation policy?</h3>
-                        <p>Members can cancel with 30 days' notice. Please contact our membership services for more details.</p>
+
+                    <!-- Glyfada Location -->
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2" data-lang-key="contact.location.2">Glyfada</h3>
+                            <p class="text-gray-600">Mediterranean College - Glyfada</p>
+                        </div>
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2292.105735520069!2d23.75722437970157!3d37.87790460256623!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14a1bf8163fe99a3%3A0x45703456debbc8f5!2zTWVkaXRlcnJhbmVhbiBDb2xsZWdlIM6TzrvPhc-GzrHOtM6x!5e0!3m2!1sel!2sgr!4v1740417540066!5m2!1sel!2sgr"
+                            width="100%" 
+                            height="400" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <footer>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-about">
-                    <h4>About Olympus Strength</h4>
-                    <p style="margin-top: 15px;">Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
+                    <a href="/" class="footer-logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                        </svg>
+                        OLYMPUS STRENGTH
+                    </a>
+                    <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
                 </div>
                 
                 <div class="footer-links">
                     <h4>Quick Links</h4>
                     <ul>
                         <li><a href="/">Home</a></li>
-                        <li><a href="/maps">Find Us</a></li>
-                        <li><a href="/contact">Contact Us</a></li>
+                        <li><a href="/members">Members</a></li>
+                        <li><a href="/workouts">Workouts</a></li>
                         <li><a href="/login">Login</a></li>
                     </ul>
                 </div>
@@ -493,5 +275,38 @@
             </div>
         </div>
     </footer>
+
+    <!-- JavaScript -->
+    <script src="/static/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AOS
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
+            
+            // Setup mobile navigation
+            setupMobileNav();
+
+            // Initialize language system if needed
+            if (typeof initLanguageSystem === 'function') {
+                initLanguageSystem();
+            }
+        });
+
+        // Basic mobile nav function in case main.js doesn't have it
+        function setupMobileNav() {
+            const mobileToggle = document.querySelector('.mobile-toggle');
+            const nav = document.querySelector('.nav');
+            
+            if (mobileToggle && nav) {
+                mobileToggle.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                });
+            }
+        }
+    </script>
 </body>
 </html>
