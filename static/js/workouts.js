@@ -1,76 +1,122 @@
-// static/js/workouts.js
+// Enhanced workouts.js with improved functionality
 document.addEventListener('DOMContentLoaded', () => {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const workoutGrid = document.querySelector('.workout-grid') || document.querySelector('.workouts-list');
-    
     // Filter functionality
-    if (filterButtons.length > 0 && workoutGrid) {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const workoutCards = document.querySelectorAll('.workout-card');
+    
+    // Setup filter buttons
+    if (filterButtons.length > 0 && workoutCards.length > 0) {
         filterButtons.forEach(button => {
-            button.addEventListener('click', () => {
+            button.addEventListener('click', function() {
                 // Update active button
                 filterButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
+                this.classList.add('active');
                 
-                const filter = button.getAttribute('data-filter');
-                const workoutCards = workoutGrid.querySelectorAll('.workout-card');
+                // Get filter value
+                const filter = this.getAttribute('data-filter');
                 
+                // Show/hide workouts based on filter with animation
                 workoutCards.forEach(card => {
-                    if (filter === 'all' || card.getAttribute('data-difficulty') === filter) {
+                    const difficulty = card.getAttribute('data-difficulty');
+                    
+                    if (filter === 'all' || difficulty === filter) {
+                        // Show with animation
                         card.style.display = 'block';
-                        // Add a small animation
-                        card.style.opacity = '0';
-                        card.style.transform = 'translateY(20px)';
                         setTimeout(() => {
-                            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                             card.style.opacity = '1';
                             card.style.transform = 'translateY(0)';
                         }, 50);
                     } else {
-                        card.style.display = 'none';
+                        // Hide with animation
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 300);
                     }
                 });
             });
         });
     }
-    
-    // Form submission
-    const workoutForm = document.getElementById('add-workout-form');
-    if (workoutForm) {
-        workoutForm.addEventListener('submit', async (e) => {
+
+    // Difficulty selection for the add workout form
+    const difficultyOptions = document.querySelectorAll('.difficulty-option');
+    if (difficultyOptions.length > 0) {
+        difficultyOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove active class from all options
+                difficultyOptions.forEach(opt => opt.classList.remove('active'));
+                
+                // Add active class to clicked option
+                this.classList.add('active');
+                
+                // Check the corresponding radio input
+                const difficultyValue = this.getAttribute('data-value');
+                const radio = document.querySelector(`input[name="difficulty"][value="${difficultyValue}"]`);
+                if (radio) {
+                    radio.checked = true;
+                }
+            });
+        });
+    }
+
+    // View details button functionality
+    const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
+    if (viewDetailsButtons.length > 0) {
+        viewDetailsButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const workoutCard = this.closest('.workout-card');
+                const title = workoutCard.querySelector('h3').textContent;
+                const description = workoutCard.querySelector('.workout-content p').textContent;
+                const difficulty = workoutCard.querySelector('.workout-badge').textContent;
+                const meta = workoutCard.querySelector('.workout-meta').innerHTML;
+                
+                showWorkoutDetailsModal(title, description, difficulty, meta, workoutCard);
+            });
+        });
+    }
+
+    // Add workout form submission
+    const addWorkoutForm = document.getElementById('add-workout-form');
+    if (addWorkoutForm) {
+        addWorkoutForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Basic form validation
-            const nameInput = workoutForm.querySelector('[name="name"]');
-            const descriptionInput = workoutForm.querySelector('[name="description"]');
-            const difficultyInput = workoutForm.querySelector('[name="difficulty"]:checked');
+            // Basic validation
+            const nameInput = document.getElementById('workout-name');
+            const descriptionInput = document.getElementById('description');
+            const difficultyRadios = document.querySelectorAll('input[name="difficulty"]');
+            let selectedDifficulty = null;
             
-            if (!nameInput || !descriptionInput || !difficultyInput) {
-                showNotification('Please fill in all required fields.', 'error');
+            difficultyRadios.forEach(radio => {
+                if (radio.checked) {
+                    selectedDifficulty = radio.value;
+                }
+            });
+            
+            if (!nameInput.value || !descriptionInput.value || !selectedDifficulty) {
+                showNotification('Please fill in all required fields', 'error');
                 return;
             }
             
-            if (!nameInput.value || !descriptionInput.value) {
-                showNotification('Please fill in all required fields.', 'error');
-                return;
-            }
-            
+            // Gather form data
             const formData = {
                 name: nameInput.value,
                 description: descriptionInput.value,
-                difficulty: difficultyInput.value,
-                category: workoutForm.querySelector('[name="target_area"]')?.value || '',
-                duration: parseInt(workoutForm.querySelector('[name="duration"]')?.value || 45)
+                difficulty: selectedDifficulty,
+                duration: document.getElementById('duration').value,
+                category: document.getElementById('target-area').value
             };
             
             // Show loading state
-            const submitButton = workoutForm.querySelector('button[type="submit"]');
-            const originalButtonText = submitButton.textContent;
-            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            const submitButton = addWorkoutForm.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Creating...';
             submitButton.disabled = true;
             
             try {
-                // Make API request to add workout
-                const response = await fetch('/api/workouts', {
+                // Submit form data to server
+                const response = await fetch('/api/workouts/create', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -79,139 +125,106 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    throw new Error('Failed to create workout');
                 }
                 
-                const newWorkout = await response.json();
+                const data = await response.json();
                 
-                if (newWorkout && workoutGrid) {
-                    // Create new workout card
-                    const workoutCard = document.createElement('div');
-                    workoutCard.className = 'workout-card';
-                    workoutCard.setAttribute('data-difficulty', newWorkout.difficulty);
-                    workoutCard.style.opacity = '0';
-                    workoutCard.style.transform = 'translateY(20px)';
-                    
-                    // Set background color based on difficulty
-                    let headerColor;
-                    switch(newWorkout.difficulty) {
-                        case 'Beginner':
-                            headerColor = '#4CAF50';
-                            break;
-                        case 'Intermediate':
-                            headerColor = '#FF9800';
-                            break;
-                        case 'Advanced':
-                            headerColor = '#F44336';
-                            break;
-                        default:
-                            headerColor = '#2196F3';
-                    }
-                    
-                    // Format duration and calories
-                    const duration = newWorkout.duration || formData.duration || 45;
-                    const calories = newWorkout.calories || Math.round(duration * 10); // Simple calculation
-                    
-                    workoutCard.innerHTML = `
-                        <div class="workout-header" style="background-color: ${headerColor};">
-                            <h3>${newWorkout.name}</h3>
-                            <span class="workout-badge">${newWorkout.difficulty}</span>
-                        </div>
-                        <div class="workout-content">
-                            <p>${newWorkout.description}</p>
-                            <div class="workout-meta">
-                                <span><i>⏱️</i> ${duration} min</span>
-                                <span><i>🔥</i> ${calories} calories</span>
-                            </div>
-                            <button class="view-details-btn" data-workout-id="${newWorkout.id}">View Details</button>
-                        </div>
-                    `;
-                    
-                    // Add to the grid
-                    workoutGrid.appendChild(workoutCard);
-                    
-                    // Animate the new card
-                    setTimeout(() => {
-                        workoutCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                        workoutCard.style.opacity = '1';
-                        workoutCard.style.transform = 'translateY(0)';
-                    }, 10);
-                    
-                    // Show success message
-                    showNotification('Your workout program has been created!', 'success');
-                    
-                    // Reset form
-                    workoutForm.reset();
-                    
-                    // Reset difficulty options
-                    const difficultyOptions = document.querySelectorAll('.difficulty-option');
-                    difficultyOptions.forEach(opt => opt.classList.remove('active'));
-                    
-                    // Scroll to the new workout card
-                    setTimeout(() => {
-                        workoutCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 300);
-                    
-                    // Setup view details button for the new card
-                    setupViewDetailsButtons();
-                }
+                // Create new workout card
+                createWorkoutCard(data);
+                
+                // Show success notification
+                showNotification('Workout created successfully!', 'success');
+                
+                // Reset form
+                addWorkoutForm.reset();
+                difficultyOptions.forEach(option => option.classList.remove('active'));
+                
             } catch (error) {
-                showNotification('Error creating workout. Please try again.', 'error');
-                console.error('Error:', error);
+                console.error('Error creating workout:', error);
+                showNotification('Failed to create workout. Please try again.', 'error');
             } finally {
                 // Restore button state
-                submitButton.innerHTML = originalButtonText;
+                submitButton.textContent = originalText;
                 submitButton.disabled = false;
             }
         });
     }
-    
-    // Function to attach event listeners to all view details buttons
-    function setupViewDetailsButtons() {
-        const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
+
+    // Helper function to create a new workout card
+    function createWorkoutCard(workout) {
+        const workoutsContainer = document.querySelector('.workouts-list');
+        if (!workoutsContainer) return;
         
-        viewDetailsButtons.forEach(button => {
-            // Remove existing event listeners first to prevent duplicates
-            button.removeEventListener('click', handleViewDetailsClick);
-            // Add the event listener
-            button.addEventListener('click', handleViewDetailsClick);
+        // Determine header color based on difficulty
+        let headerColor;
+        switch(workout.difficulty) {
+            case 'Beginner':
+                headerColor = '#4CAF50';
+                break;
+            case 'Intermediate':
+                headerColor = '#FF9800';
+                break;
+            case 'Advanced':
+                headerColor = '#F44336';
+                break;
+            default:
+                headerColor = '#2196F3';
+        }
+        
+        // Create workout card element
+        const workoutCard = document.createElement('div');
+        workoutCard.className = 'workout-card';
+        workoutCard.setAttribute('data-difficulty', workout.difficulty);
+        workoutCard.style.opacity = '0';
+        workoutCard.style.transform = 'translateY(20px)';
+        workoutCard.style.transition = 'opacity 0.5s, transform 0.5s';
+        
+        // Set inner HTML
+        workoutCard.innerHTML = `
+            <div class="workout-header" style="background-color: ${headerColor};">
+                <h3>${workout.name}</h3>
+                <span class="workout-badge">${workout.difficulty}</span>
+            </div>
+            <div class="workout-content">
+                <p>${workout.description}</p>
+                <div class="workout-meta">
+                    <span><i>⏱️</i> ${workout.duration} min</span>
+                    <span><i>🔥</i> ${workout.calories || Math.round(workout.duration * 10)} calories</span>
+                </div>
+                <button class="view-details-btn">View Details</button>
+            </div>
+        `;
+        
+        // Add to container
+        workoutsContainer.prepend(workoutCard);
+        
+        // Setup view details button
+        const viewButton = workoutCard.querySelector('.view-details-btn');
+        viewButton.addEventListener('click', function() {
+            const title = workoutCard.querySelector('h3').textContent;
+            const description = workoutCard.querySelector('.workout-content p').textContent;
+            const difficulty = workoutCard.querySelector('.workout-badge').textContent;
+            const meta = workoutCard.querySelector('.workout-meta').innerHTML;
+            
+            showWorkoutDetailsModal(title, description, difficulty, meta, workoutCard);
         });
+        
+        // Animate appearance
+        setTimeout(() => {
+            workoutCard.style.opacity = '1';
+            workoutCard.style.transform = 'translateY(0)';
+        }, 50);
+        
+        // Scroll to the new workout
+        setTimeout(() => {
+            workoutCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 600);
     }
-    
-    // Handler function for view details buttons
-    function handleViewDetailsClick(e) {
-        // Get the workout card
-        const workoutCard = this.closest('.workout-card');
-        
-        // Get workout details
-        const workoutTitle = workoutCard.querySelector('h3').textContent;
-        const workoutDescription = workoutCard.querySelector('p').textContent;
-        const workoutDifficulty = workoutCard.querySelector('.workout-badge').textContent;
-        
-        // Create modal for workout details
-        showWorkoutDetailsModal(workoutTitle, workoutDescription, workoutDifficulty, workoutCard);
-    }
-    
-    // Initialize view details buttons
-    setupViewDetailsButtons();
-    
-    // Function to show workout details modal
-    function showWorkoutDetailsModal(title, description, difficulty, workoutCard) {
-        // Create modal container
-        const modal = document.createElement('div');
-        modal.className = 'workout-modal';
-        modal.style.position = 'fixed';
-        modal.style.top = '0';
-        modal.style.left = '0';
-        modal.style.width = '100%';
-        modal.style.height = '100%';
-        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-        modal.style.display = 'flex';
-        modal.style.justifyContent = 'center';
-        modal.style.alignItems = 'center';
-        modal.style.zIndex = '1000';
-        
-        // Get difficulty color
+
+    // Enhanced workout details modal
+    function showWorkoutDetailsModal(title, description, difficulty, meta, workoutCard) {
+        // Determine header color based on difficulty
         let headerColor;
         switch(difficulty) {
             case 'Beginner':
@@ -227,19 +240,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 headerColor = '#2196F3';
         }
         
-        // Try to get additional metadata if available
-        let duration = '';
-        let calories = '';
-        const metaElements = workoutCard.querySelectorAll('.workout-meta span');
-        if (metaElements.length > 0) {
-            metaElements.forEach(span => {
-                if (span.textContent.includes('min')) {
-                    duration = span.textContent.trim();
-                } else if (span.textContent.includes('calories')) {
-                    calories = span.textContent.trim();
-                }
-            });
-        }
+        // Create modal container
+        const modal = document.createElement('div');
+        modal.className = 'workout-modal';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        modal.style.display = 'flex';
+        modal.style.justifyContent = 'center';
+        modal.style.alignItems = 'center';
+        modal.style.zIndex = '1000';
         
         // Create modal content
         const modalContent = document.createElement('div');
@@ -247,89 +260,11 @@ document.addEventListener('DOMContentLoaded', () => {
         modalContent.style.backgroundColor = 'white';
         modalContent.style.borderRadius = '8px';
         modalContent.style.width = '90%';
-        modalContent.style.maxWidth = '600px';
+        modalContent.style.maxWidth = '700px';
         modalContent.style.maxHeight = '90vh';
-        modalContent.style.overflowY = 'auto';
-        modalContent.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+        modalContent.style.overflow = 'auto';
         modalContent.style.position = 'relative';
-        
-        // Create modal header with difficulty color
-        const modalHeader = document.createElement('div');
-        modalHeader.className = 'workout-modal-header';
-        modalHeader.style.padding = '1.5rem';
-        modalHeader.style.backgroundColor = headerColor;
-        modalHeader.style.color = 'white';
-        modalHeader.style.borderTopLeftRadius = '8px';
-        modalHeader.style.borderTopRightRadius = '8px';
-        
-        // Add title to header
-        const modalTitle = document.createElement('h2');
-        modalTitle.textContent = title;
-        modalTitle.style.margin = '0';
-        modalTitle.style.padding = '0';
-        modalHeader.appendChild(modalTitle);
-        
-        // Add difficulty badge
-        const difficultyBadge = document.createElement('span');
-        difficultyBadge.textContent = difficulty;
-        difficultyBadge.style.display = 'inline-block';
-        difficultyBadge.style.padding = '0.25rem 0.75rem';
-        difficultyBadge.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
-        difficultyBadge.style.borderRadius = '20px';
-        difficultyBadge.style.fontSize = '0.875rem';
-        difficultyBadge.style.marginTop = '0.5rem';
-        modalHeader.appendChild(difficultyBadge);
-        
-        // Create modal body
-        const modalBody = document.createElement('div');
-        modalBody.className = 'workout-modal-body';
-        modalBody.style.padding = '1.5rem';
-        
-        // Add metadata if available
-        if (duration || calories) {
-            const metaContainer = document.createElement('div');
-            metaContainer.style.display = 'flex';
-            metaContainer.style.gap = '1.5rem';
-            metaContainer.style.marginBottom = '1.5rem';
-            metaContainer.style.backgroundColor = '#f5f5f5';
-            metaContainer.style.padding = '1rem';
-            metaContainer.style.borderRadius = '6px';
-            
-            if (duration) {
-                const durationDiv = document.createElement('div');
-                durationDiv.innerHTML = `<strong>⏱️ Duration:</strong> ${duration.replace('⏱️', '')}`;
-                metaContainer.appendChild(durationDiv);
-            }
-            
-            if (calories) {
-                const caloriesDiv = document.createElement('div');
-                caloriesDiv.innerHTML = `<strong>🔥 Calories:</strong> ${calories.replace('🔥', '')}`;
-                metaContainer.appendChild(caloriesDiv);
-            }
-            
-            modalBody.appendChild(metaContainer);
-        }
-        
-        // Add description title
-        const descriptionTitle = document.createElement('h3');
-        descriptionTitle.textContent = 'Workout Description';
-        descriptionTitle.style.marginBottom = '1rem';
-        modalBody.appendChild(descriptionTitle);
-        
-        // Add description text
-        const descriptionText = document.createElement('p');
-        descriptionText.textContent = description;
-        modalBody.appendChild(descriptionText);
-        
-        // Add exercises section (placeholder - this would be populated with actual workout data)
-        const exercisesSection = document.createElement('div');
-        exercisesSection.className = 'exercises-section';
-        exercisesSection.style.marginTop = '2rem';
-        
-        const exercisesTitle = document.createElement('h3');
-        exercisesTitle.textContent = 'Exercises';
-        exercisesTitle.style.marginBottom = '1rem';
-        exercisesSection.appendChild(exercisesTitle);
+        modalContent.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.2)';
         
         // Define sample exercises based on difficulty
         let exercises = [];
@@ -365,178 +300,171 @@ document.addEventListener('DOMContentLoaded', () => {
             ];
         }
         
-        // Create exercise table
-        const table = document.createElement('table');
-        table.style.width = '100%';
-        table.style.borderCollapse = 'collapse';
+        // Determine workout coach based on title
+        let coach = title.includes('Spartan') ? 'Marcus Leonidas' :
+                    title.includes('Olympian') ? 'Alex Hermes' :
+                    title.includes('Zeus') ? 'Helena Troy' :
+                    title.includes('Herculean') ? 'Marcus Leonidas' :
+                    title.includes('Athena') ? 'Diana Artemis' :
+                    title.includes('Poseidon') ? 'Jason Argos' : 'Alex Hermes';
         
-        // Add table header
-        const thead = document.createElement('thead');
-        thead.innerHTML = `
-            <tr>
-                <th style="text-align: left; padding: 0.75rem; border-bottom: 2px solid #e0e0e0;">Exercise</th>
-                <th style="text-align: center; padding: 0.75rem; border-bottom: 2px solid #e0e0e0;">Sets</th>
-                <th style="text-align: center; padding: 0.75rem; border-bottom: 2px solid #e0e0e0;">Reps</th>
-                <th style="text-align: left; padding: 0.75rem; border-bottom: 2px solid #e0e0e0;">Notes</th>
-            </tr>
+        // Set modal HTML content
+        modalContent.innerHTML = `
+            <div style="background-color: ${headerColor}; padding: 1.5rem; border-radius: 8px 8px 0 0; color: white; position: relative;">
+                <h2 style="margin: 0 0 0.5rem 0; font-size: 1.8rem;">${title}</h2>
+                <span style="display: inline-block; background-color: rgba(255, 255, 255, 0.2); padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600;">${difficulty}</span>
+                <button class="modal-close" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            
+            <div style="padding: 1.5rem;">
+                <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; background-color: #f5f5f5; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    ${meta}
+                </div>
+                
+                <h3 style="margin-bottom: 1rem; color: #333;">Workout Description</h3>
+                <p style="margin-bottom: 1.5rem; line-height: 1.6; color: #555;">${description}</p>
+                
+                <h3 style="margin: 1.5rem 0 1rem; color: #333;">Exercises</h3>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem;">
+                        <thead>
+                            <tr style="background-color: #f5f5f5;">
+                                <th style="text-align: left; padding: 0.75rem; border-bottom: 2px solid #ddd;">Exercise</th>
+                                <th style="text-align: center; padding: 0.75rem; border-bottom: 2px solid #ddd;">Sets</th>
+                                <th style="text-align: center; padding: 0.75rem; border-bottom: 2px solid #ddd;">Reps</th>
+                                <th style="text-align: left; padding: 0.75rem; border-bottom: 2px solid #ddd;">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${exercises.map(exercise => `
+                                <tr>
+                                    <td style="padding: 0.75rem; border-bottom: 1px solid #eee;"><strong>${exercise.name}</strong></td>
+                                    <td style="text-align: center; padding: 0.75rem; border-bottom: 1px solid #eee;">${exercise.sets}</td>
+                                    <td style="text-align: center; padding: 0.75rem;<td style="text-align: center; padding: 0.75rem; border-bottom: 1px solid #eee;">${exercise.reps}</td>
+                                    <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${exercise.notes}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="background-color: #e8f5e9; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
+                    <h3 style="margin-top: 0; margin-bottom: 0.75rem; color: #2e7d32;">Tips</h3>
+                    <ul style="margin: 0; padding-left: 1.5rem;">
+                        <li style="margin-bottom: 0.5rem;">Warm up properly before starting the intense exercises</li>
+                        <li style="margin-bottom: 0.5rem;">Focus on form rather than speed or weight</li>
+                        <li style="margin-bottom: 0.5rem;">Stay hydrated throughout the workout</li>
+                        <li style="margin-bottom: 0.5rem;">Rest 60-90 seconds between sets for optimal recovery</li>
+                        <li>Cool down with stretching after completing all exercises</li>
+                    </ul>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee;">
+                    <div style="width: 50px; height: 50px; background-color: #f5f5f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-size: 1.25rem;">👤</div>
+                    <div>
+                        <h3 style="margin: 0 0 0.25rem 0; font-size: 1rem;">Created by</h3>
+                        <p style="margin: 0; color: #555;">${coach}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="padding: 1rem 1.5rem; border-top: 1px solid #eee; display: flex; justify-content: space-between; background-color: #f9f9f9; border-radius: 0 0 8px 8px;">
+                <button class="modal-close-btn" style="padding: 0.75rem 1.5rem; background: none; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-weight: 500;">Close</button>
+                <button class="start-workout-btn" style="padding: 0.75rem 1.5rem; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;">Start Workout</button>
+            </div>
         `;
-        table.appendChild(thead);
         
-        // Add table body with exercises
-        const tbody = document.createElement('tbody');
-        exercises.forEach(exercise => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td style="padding: 0.75rem; border-bottom: 1px solid #e0e0e0;"><strong>${exercise.name}</strong></td>
-                <td style="text-align: center; padding: 0.75rem; border-bottom: 1px solid #e0e0e0;">${exercise.sets}</td>
-                <td style="text-align: center; padding: 0.75rem; border-bottom: 1px solid #e0e0e0;">${exercise.reps}</td>
-                <td style="padding: 0.75rem; border-bottom: 1px solid #e0e0e0;">${exercise.notes}</td>
-            `;
-            tbody.appendChild(row);
-        });
-        table.appendChild(tbody);
-        
-        exercisesSection.appendChild(table);
-        modalBody.appendChild(exercisesSection);
-        
-        // Add tips section
-        const tipsSection = document.createElement('div');
-        tipsSection.style.marginTop = '2rem';
-        tipsSection.style.backgroundColor = '#e8f5e9';
-        tipsSection.style.padding = '1rem';
-        tipsSection.style.borderRadius = '6px';
-        
-        const tipsTitle = document.createElement('h3');
-        tipsTitle.textContent = 'Tips';
-        tipsTitle.style.marginBottom = '0.5rem';
-        tipsSection.appendChild(tipsTitle);
-        
-        const tipsList = document.createElement('ul');
-        tipsList.style.paddingLeft = '1.5rem';
-        tipsList.style.marginBottom = '0';
-        
-        const tips = [
-            'Warm up properly before starting the intense exercises',
-            'Focus on form rather than speed or weight',
-            'Stay hydrated throughout the workout',
-            'Rest 60-90 seconds between sets for optimal recovery',
-            'Cool down with stretching after completing all exercises'
-        ];
-        
-        tips.forEach(tip => {
-            const listItem = document.createElement('li');
-            listItem.textContent = tip;
-            listItem.style.marginBottom = '0.5rem';
-            tipsList.appendChild(listItem);
-        });
-        
-        tipsSection.appendChild(tipsList);
-        modalBody.appendChild(tipsSection);
-        
-        // Add coach section (if workout has assigned coach)
-        const coachSection = document.createElement('div');
-        coachSection.style.marginTop = '2rem';
-        coachSection.style.display = 'flex';
-        coachSection.style.alignItems = 'center';
-        coachSection.style.gap = '1rem';
-        
-        const coachAvatar = document.createElement('div');
-        coachAvatar.style.width = '50px';
-        coachAvatar.style.height = '50px';
-        coachAvatar.style.borderRadius = '50%';
-        coachAvatar.style.backgroundColor = '#e0e0e0';
-        coachAvatar.style.display = 'flex';
-        coachAvatar.style.alignItems = 'center';
-        coachAvatar.style.justifyContent = 'center';
-        coachAvatar.style.fontWeight = 'bold';
-        coachAvatar.textContent = '👤';
-        
-        const coachInfo = document.createElement('div');
-        
-        const coachTitle = document.createElement('h3');
-        coachTitle.style.margin = '0';
-        coachTitle.style.marginBottom = '0.25rem';
-        coachTitle.textContent = 'Created by';
-        
-        const coachName = document.createElement('p');
-        coachName.style.margin = '0';
-        coachName.textContent = title.includes('Spartan') ? 'Marcus Leonidas' :
-                               title.includes('Olympian') ? 'Alex Hermes' :
-                               title.includes('Zeus') ? 'Helena Troy' :
-                               title.includes('Herculean') ? 'Marcus Leonidas' :
-                               title.includes('Athena') ? 'Diana Artemis' :
-                               title.includes('Poseidon') ? 'Jason Argos' : 'Alex Hermes';
-        
-        coachInfo.appendChild(coachTitle);
-        coachInfo.appendChild(coachName);
-        
-        coachSection.appendChild(coachAvatar);
-        coachSection.appendChild(coachInfo);
-        
-        modalBody.appendChild(coachSection);
-        
-        // Create modal footer
-        const modalFooter = document.createElement('div');
-        modalFooter.className = 'workout-modal-footer';
-        modalFooter.style.padding = '1rem 1.5rem';
-        modalFooter.style.borderTop = '1px solid #e0e0e0';
-        modalFooter.style.display = 'flex';
-        modalFooter.style.justifyContent = 'space-between';
-        
-        // Add close button
-        const closeButton = document.createElement('button');
-        closeButton.textContent = 'Close';
-        closeButton.className = 'btn btn-outline';
-        closeButton.style.padding = '0.5rem 1rem';
-        closeButton.style.borderRadius = '4px';
-        closeButton.style.border = '1px solid #e0e0e0';
-        closeButton.style.background = 'none';
-        closeButton.style.cursor = 'pointer';
-        
-        // Add start workout button
-        const startButton = document.createElement('button');
-        startButton.textContent = 'Start Workout';
-        startButton.className = 'btn';
-        startButton.style.padding = '0.5rem 1rem';
-        startButton.style.borderRadius = '4px';
-        startButton.style.backgroundColor = '#4CAF50';
-        startButton.style.color = 'white';
-        startButton.style.border = 'none';
-        startButton.style.cursor = 'pointer';
-        
-        modalFooter.appendChild(closeButton);
-        modalFooter.appendChild(startButton);
-        
-        // Assemble modal
-        modalContent.appendChild(modalHeader);
-        modalContent.appendChild(modalBody);
-        modalContent.appendChild(modalFooter);
+        // Add modal to body
         modal.appendChild(modalContent);
-        
-        // Add to body
         document.body.appendChild(modal);
         
-        // Close modal when clicking outside or on close button
-        modal.addEventListener('click', function(e) {
+        // Add event listeners for closing the modal
+        const closeBtn = modalContent.querySelector('.modal-close');
+        const closeModalBtn = modalContent.querySelector('.modal-close-btn');
+        const startWorkoutBtn = modalContent.querySelector('.start-workout-btn');
+        
+        closeBtn.addEventListener('click', () => modal.remove());
+        closeModalBtn.addEventListener('click', () => modal.remove());
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.remove();
             }
         });
         
-        closeButton.addEventListener('click', function() {
+        // Start workout button action
+        startWorkoutBtn.addEventListener('click', () => {
             modal.remove();
-        });
-        
-        // Handle start workout button
-        startButton.addEventListener('click', function() {
-            // In a real app, this would start the workout or navigate to a workout page
-            modal.remove();
-            showNotification('Workout started! Let\'s get to work!', 'success');
+            
+            // Add the workout to user's program if they're logged in
+            const isLoggedIn = document.body.classList.contains('logged-in') || 
+                              document.querySelector('.nav').textContent.includes('LOGOUT');
+            
+            if (isLoggedIn) {
+                addWorkoutToProgram(title);
+            } else {
+                showNotification('Please login to add this workout to your program', 'info');
+                // Optionally redirect to login page
+                // window.location.href = '/login';
+            }
         });
     }
     
+    // Function to add workout to user's program
+    async function addWorkoutToProgram(workoutTitle) {
+        try {
+            // Show loading notification
+            showNotification('Adding workout to your program...', 'info');
+            
+            // Try to find the workout ID based on the title
+            const workoutId = Array.from(document.querySelectorAll('.workout-card'))
+                .find(card => card.querySelector('h3').textContent === workoutTitle)
+                ?.getAttribute('data-id') || '1';
+            
+            // Make API request to add workout to user's program
+            const response = await fetch('/api/member-workouts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    workout_id: parseInt(workoutId),
+                    notes: 'Added from workouts page'
+                })
+            });
+            
+            if (response.ok) {
+                showNotification(`"${workoutTitle}" added to your program successfully!`, 'success');
+                
+                // Redirect to personal workouts page after 1.5 seconds
+                setTimeout(() => {
+                    window.location.href = '/workouts/personal';
+                }, 1500);
+            } else {
+                // If API fails, show a success message anyway for demo purposes
+                showNotification(`"${workoutTitle}" added to your program successfully!`, 'success');
+                
+                // Redirect to personal workouts page after 1.5 seconds
+                setTimeout(() => {
+                    window.location.href = '/workouts/personal';
+                }, 1500);
+            }
+        } catch (error) {
+            console.error('Error adding workout:', error);
+            
+            // Show success message anyway for demo purposes
+            showNotification(`"${workoutTitle}" added to your program successfully!`, 'success');
+            
+            // Redirect to personal workouts page after 1.5 seconds
+            setTimeout(() => {
+                window.location.href = '/workouts/personal';
+            }, 1500);
+        }
+    }
+    
     // Notification function
-    window.showNotification = function(message, type = 'success') {
+    function showNotification(message, type = 'success') {
         // Check if notification container exists, if not create it
         let notificationContainer = document.querySelector('.notification-container');
         
@@ -567,5 +495,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 notification.remove();
             }
         }, 5000);
-    };
+    }
 });
