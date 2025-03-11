@@ -1972,6 +1972,8 @@ footer {
     justify-content: center;
     text-decoration: none;
     transition: transform 0.3s ease;
+    width: 40px;
+    height: 40px;
 }
 
 .social-link:hover {
@@ -1979,16 +1981,22 @@ footer {
 }
 
 .social-icon {
-       width: 32px;
-       height: 32px;
-       object-fit: contain;
-       padding: 4px;
-   }
+    width: 40px;
+    height: 40px;
+}
 
-   @media (max-width: 768px) {
-       .social-icon {
-           width: 28px;
-           height: 28px;
-           padding: 3px;
-       }
-   }
+@media (max-width: 768px) {
+    .social-links {
+        justify-content: center;
+    }
+    
+    .social-link {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .social-icon {
+        width: 32px;
+        height: 32px;
+    }
+}
