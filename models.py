@@ -29,6 +29,7 @@ class Member(Base):
     classes = relationship("GymClass", secondary=class_member_association, back_populates="members")
     workouts = relationship("MemberWorkout", back_populates="member")
     created_workouts = relationship("CoachWorkout", back_populates="coach")
+    transactions = relationship("Transaction", back_populates="member")
 
 class GymClass(Base):
     __tablename__ = "classes"
@@ -100,4 +101,18 @@ class CoachWorkout(Base):
     # Relationships
     coach = relationship("Member", back_populates="created_workouts")
     workout = relationship("Workout", back_populates="creator")
+
+class Transaction(Base):
+    __tablename__ = "transactions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    member_id = Column(Integer, ForeignKey("members.id"), nullable=True)
+    amount = Column(Float, nullable=False)
+    type = Column(String(50), nullable=False)  # "Membership Fee", "Personal Training", etc.
+    date = Column(DateTime, default=datetime.datetime.now)
+    status = Column(String(20), default="completed")  # "completed", "refunded", etc.
+    description = Column(String(255), nullable=True)
+    
+    # Relationship
+    member = relationship("Member", back_populates="transactions")
 
