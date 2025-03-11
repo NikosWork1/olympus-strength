@@ -1,151 +1,104 @@
 <!DOCTYPE html>
- <html lang="en">
- <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Login - Olympus Strength</title>
-     <link rel="stylesheet" href="/static/css/main.css">
-     <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
-     <style>
-         .auth-divider {
-             margin: 2rem 0;
-             text-align: center;
-             position: relative;
-         }
- 
-         .auth-divider:before {
-             content: "";
-             display: block;
-             width: 100%;
-             height: 1px;
-             background: #e0e0e0;
-             position: absolute;
-             top: 50%;
-             left: 0;
-         }
- 
-         .auth-divider span {
-             position: relative;
-             background: white;
-             padding: 0 15px;
-             color: #757575;
-             font-size: 0.9rem;
-         }
- 
-         .staff-login {
-             background-color: #f5f5f5;
-             padding: 1.5rem;
-             border-radius: 8px;
-             margin-top: 1rem;
-         }
- 
-         .staff-login h3 {
-             margin-bottom: 0.5rem;
-             color: #4CAF50;
-         }
- 
-         .staff-login p {
-             font-size: 0.9rem;
-             margin-bottom: 1rem;
-         }
-         
-         .staff-toggle {
-             margin-top: 0.5rem;
-         }
-         
-         .staff-credentials {
-             margin-top: 1.5rem;
-             padding: 1rem;
-             background-color: #e8f5e9;
-             border-radius: 6px;
-             border-left: 4px solid #4CAF50;
-         }
-         
-         .credentials-section {
-             margin-bottom: 1rem;
-         }
-         
-         .credentials-section h4 {
-             margin-bottom: 0.5rem;
-             font-size: 1rem;
-             color: #2E7D32;
-         }
-         
-         .credentials-section ul {
-             list-style-type: none;
-             padding-left: 0;
-         }
-         
-         .credentials-section li {
-             margin-bottom: 0.5rem;
-             font-size: 0.9rem;
-         }
-         
-         .credentials-note {
-             font-size: 0.8rem;
-             font-style: italic;
-             color: #757575;
-             margin-top: 1rem;
-             margin-bottom: 0;
-         }
-     </style>
- </head>
- <body>
- @@ -134,56 +94,11 @@
-             <div class="staff-login">
-                 <h3>Staff Login</h3>
-                 <p>For coaches and administrators only. Please use your assigned credentials.</p>
-                 <a href="#staff-credentials" class="btn btn-outline staff-toggle">Show Staff Credentials</a>
-                 
-                 <div id="staff-credentials" class="staff-credentials" style="display: none;">
-                     <div class="credentials-section">
-                         <h4>Coach Credentials</h4>
-                         <ul>
-                             <li><strong>Alex Hermes:</strong> alex@olympusstrength.com / olympus2025</li>
-                             <li><strong>Marcus Leonidas:</strong> marcus@olympusstrength.com / olympus2025</li>
-                             <li><strong>Helena Troy:</strong> helena@olympusstrength.com / olympus2025</li>
-                             <li><strong>Diana Artemis:</strong> diana@olympusstrength.com / olympus2025</li>
-                             <li><strong>Jason Argos:</strong> jason@olympusstrength.com / olympus2025</li>
-                         </ul>
-                     </div>
-                     
-                     <div class="credentials-section">
-                         <h4>Admin Credentials</h4>
-                         <ul>
-                             <li><strong>Zeus Olympian:</strong> admin@olympusstrength.com / admin2025</li>
-                         </ul>
-                     </div>
-                     
-                     <p class="credentials-note">These credentials are for demonstration purposes only.</p>
-                 </div>
-                 <p>Contact the administrator if you need assistance with your account.</p>
-             </div>
-         </div>
-     </div>
- 
-     <script src="/static/js/main.js"></script>
-     <script>
-         // Toggle staff credentials visibility
-         document.addEventListener('DOMContentLoaded', function() {
-             const staffToggle = document.querySelector('.staff-toggle');
-             const staffCredentials = document.getElementById('staff-credentials');
-             
-             if (staffToggle && staffCredentials) {
-                 staffToggle.addEventListener('click', function(e) {
-                     e.preventDefault();
-                     
-                     const isVisible = staffCredentials.style.display !== 'none';
-                     
-                     if (isVisible) {
-                         staffCredentials.style.display = 'none';
-                         staffToggle.textContent = 'Show Staff Credentials';
-                     } else {
-                         staffCredentials.style.display = 'block';
-                         staffToggle.textContent = 'Hide Staff Credentials';
-                     }
-                 });
-             }
-         });
-     </script>
- </body>
- </html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Olympus Strength</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+    <style>
+        .auth-divider {
+            margin: 2rem 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .auth-divider:before {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 1px;
+            background: #e0e0e0;
+            position: absolute;
+            top: 50%;
+            left: 0;
+        }
+        
+        .auth-divider span {
+            position: relative;
+            background: white;
+            padding: 0 15px;
+            color: #757575;
+            font-size: 0.9rem;
+        }
+        
+        .staff-login {
+            background-color: #f5f5f5;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .staff-login h3 {
+            margin-bottom: 0.5rem;
+            color: #4CAF50;
+        }
+        
+        .staff-login p {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-form">
+            <div class="auth-logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50" width="24" height="24">
+                    <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                </svg>
+                OLYMPUS STRENGTH
+            </div>
+            
+            <h1 class="auth-title">Welcome Back</h1>
+            
+            {% if error %}
+            <div class="error-message">
+                <p>{{ error }}</p>
+            </div>
+            {% endif %}
+            
+            <form action="/login" method="post">
+                <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" name="username" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                
+                <button type="submit" class="btn">Login</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="/signup">Sign up</a></p>
+                <p><a href="/forgot-password">Forgot your password?</a></p>
+            </div>
+            
+            <div class="auth-divider">
+                <span>OR</span>
+            </div>
+            
+            <div class="staff-login">
+                <h3>Staff Login</h3>
+                <p>For coaches and administrators only. Please use your assigned credentials.</p>
+                <p>Contact the administrator if you need assistance with your account.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
