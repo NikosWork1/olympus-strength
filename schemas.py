@@ -9,6 +9,7 @@ class MemberBase(BaseModel):
     phone: Optional[str] = None
     membership_type: str
     role: Optional[str] = "customer"
+    transactions: List[Transaction] = []
 
 class MemberCreate(MemberBase):
     password: str
@@ -149,6 +150,23 @@ class Workout(WorkoutBase):
     duration: Optional[int] = 45
     calories: Optional[int] = 300
     coach_id: Optional[int] = None  # This will be populated from the relationship
+    
+    class Config:
+        orm_mode = True
+
+class TransactionBase(BaseModel):
+    member_id: Optional[int] = None
+    amount: float
+    type: str
+    description: Optional[str] = None
+    
+class TransactionCreate(TransactionBase):
+    pass
+    
+class Transaction(TransactionBase):
+    id: int
+    date: datetime
+    status: str
     
     class Config:
         orm_mode = True
