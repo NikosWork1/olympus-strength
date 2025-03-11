@@ -1177,22 +1177,141 @@ def create_member_api(member: schemas.MemberCreate, db: Session = Depends(get_db
         logger.error(f"Error creating member: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error creating member: {str(e)}")
         
-@app.get("/api/finances/summary")
-def get_financial_summary_api(year: int = None, month: int = None, db: Session = Depends(get_db)):
-    if year is None:
-        year = datetime.datetime.now().year
-    if month is None:
-        month = datetime.datetime.now().month
-        
-    return crud.get_financial_summary(db, year, month)
+from sqlalchemy import func
+from datetime import datetime
 
-@app.get("/api/transactions", response_model=List[schemas.Transaction])
-def get_transactions_api(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_transactions(db, skip=skip, limit=limit)
+@app.get("/api/finances/summary")
+def get_financial_summary_api(
+    start_date: Optional[str] = None, 
+    end_date: Optional[str] = None,
+    year: Optional[int] = None, 
+    month: Optional[int] = None, 
+    db: Session = Depends(get_db)
+):
+    try:
+        # Handle date parameters
+        if start_date and end_date:
+            # Parse date strings to datetime objects
+            start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
+            end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
+            
+            # Get transactions within date range
+            transactions = db.query(models.Transaction).filter(
+                models.Transaction.date >= start_date_obj,
+                models.Transaction.date <= end_date_obj,
+                models.Transaction.status == "completed"
+            ).all()
+            
+            # Calculate totals
+            revenue = sum(t.amount for t in transactions if t.amount > 0)
+            expenses = abs(sum(t.amount for t in transactions if t.amount < 0))
+            net_profit = revenue - expenses
+            
+            # Calculate growth (optional - can be based on previous period)
+            growth = 0
+            
+            return {
+                "revenue": revenue,
+                "expenses": expenses,
+                "net_profit": net_profit,
+                "growth": growth
+            }
+        
+        elif year is not None and month is not None:
+            # Use the existing function for monthly data
+            return crud.get_financial_summary(db, year, month)
+        
+        else:
+            # Default - get current month data
+            today = datetime.now()
+            return crud.get_financial_summary(db, today.year, today.month)
+    except Exception as e:
+        logger.error(f"Error in financial summary API: {e}")
+        raise HTTPException(status_code=500, detail=f"Error generating financial summary: {str(e)}")
+
+@app.get("/api/transactions")
+def get_transactions_api(
+    skip: int = 0, 
+    limit: int = 100, 
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    try:
+        query = db.query(models.Transaction)
+        
+        if start_date and end_date:
+            # Parse date strings to datetime objects
+            start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
+            end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
+            
+            # Filter by date range
+            query = query.filter(
+                models.Transaction.date >= start_date_obj,
+                models.Transaction.date <= end_date_obj
+            )
+        
+        # Always order by date, most recent first
+        query = query.order_by(models.Transaction.date.desc())
+        
+        # Apply pagination
+        transactions = query.offset(skip).limit(limit).all()
+        
+        # For each transaction, get the member name if available
+        result = []
+        for transaction in transactions:
+            # Convert to dict for adding custom fields
+            transaction_dict = {
+                "id": transaction.id,
+                "member_id": transaction.member_id,
+                "amount": transaction.amount,
+                "type": transaction.type,
+                "date": transaction.date,
+                "status": transaction.status,
+                "description": transaction.description,
+                "member_name": transaction.member.name if transaction.member else None
+            }
+            result.append(transaction_dict)
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error retrieving transactions: {e}")
+        raise HTTPException(status_code=500, detail=f"Error retrieving transactions: {str(e)}")
 
 @app.post("/api/transactions", response_model=schemas.Transaction)
 def create_transaction_api(transaction: schemas.TransactionCreate, db: Session = Depends(get_db)):
-    return crud.create_transaction(db=db, transaction=transaction)
+    try:
+        return crud.create_transaction(db=db, transaction=transaction)
+    except Exception as e:
+        logger.error(f"Error creating transaction: {e}")
+        raise HTTPException(status_code=400, detail=f"Error creating transaction: {str(e)}")
+
+@app.get("/api/transactions/{transaction_id}")
+def get_transaction_api(transaction_id: int, db: Session = Depends(get_db)):
+    try:
+        transaction = db.query(models.Transaction).filter(models.Transaction.id == transaction_id).first()
+        if not transaction:
+            raise HTTPException(status_code=404, detail="Transaction not found")
+        
+        # Convert to dict and add member name
+        transaction_dict = {
+            "id": transaction.id,
+            "member_id": transaction.member_id,
+            "amount": transaction.amount,
+            "type": transaction.type,
+            "date": transaction.date,
+            "status": transaction.status,
+            "description": transaction.description,
+            "member_name": transaction.member.name if transaction.member else None
+        }
+        
+        return transaction_dict
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    except Exception as e:
+        logger.error(f"Error retrieving transaction: {e}")
+        raise HTTPException(status_code=500, detail=f"Error retrieving transaction: {str(e)}")
 
 # Run the app
 if __name__ == "__main__":
