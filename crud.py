@@ -1,6 +1,7 @@
+import datetime
+from datetime import datetime
 from sqlalchemy.orm import Session
 import models, schemas
-from datetime import datetime
 from passlib.context import CryptContext
 from sqlalchemy import func
 import logging
@@ -273,7 +274,7 @@ def create_member(db: Session, member: schemas.MemberCreate):
             phone=member.phone,
             membership_type=member.membership_type,
             role=member.role,
-            join_date=datetime.datetime.now(),
+            join_date=datetime.now(),
             is_active=True
         )
         
@@ -345,7 +346,7 @@ def create_transaction(db: Session, transaction: schemas.TransactionCreate):
     db.refresh(db_transaction)
     return db_transaction
 
-def get_monthly_revenue(db: Session, year: int = datetime.datetime.now().year, month: int = datetime.datetime.now().month):
+def get_monthly_revenue(db: Session, year: int =datetime.now().year, month: int = datetime.now().month):
     start_date = datetime.datetime(year, month, 1)
     if month == 12:
         end_date = datetime.datetime(year + 1, 1, 1)
@@ -360,7 +361,7 @@ def get_monthly_revenue(db: Session, year: int = datetime.datetime.now().year, m
     
     return result or 0
 
-def get_financial_summary(db: Session, year: int = datetime.datetime.now().year, month: int = datetime.datetime.now().month):
+def get_financial_summary(db: Session, year: int = datetime.now().year, month: int = datetime.now().month):
     # Get revenue
     revenue = get_monthly_revenue(db, year, month)
     
