@@ -42,14 +42,14 @@ document.addEventListener('DOMContentLoaded', () => {
             // Basic form validation
             const nameInput = workoutForm.querySelector('[name="name"]');
             const descriptionInput = workoutForm.querySelector('[name="description"]');
-            const difficultyInput = workoutForm.querySelector('[name="difficulty"]');
+            const difficultyInput = workoutForm.querySelector('[name="difficulty"]:checked');
             
             if (!nameInput || !descriptionInput || !difficultyInput) {
-                console.error('Form inputs not found');
+                showNotification('Please fill in all required fields.', 'error');
                 return;
             }
             
-            if (!nameInput.value || !descriptionInput.value || !difficultyInput.value) {
+            if (!nameInput.value || !descriptionInput.value) {
                 showNotification('Please fill in all required fields.', 'error');
                 return;
             }
@@ -58,14 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: nameInput.value,
                 description: descriptionInput.value,
                 difficulty: difficultyInput.value,
-                category: workoutForm.querySelector('[name="target_area"]')?.value || ''
+                category: workoutForm.querySelector('[name="target_area"]')?.value || '',
+                duration: parseInt(workoutForm.querySelector('[name="duration"]')?.value || 45)
             };
-            
-            // Add duration and calories if available
-            const durationInput = workoutForm.querySelector('[name="duration"]');
-            if (durationInput && durationInput.value) {
-                formData.duration = parseInt(durationInput.value);
-            }
             
             // Show loading state
             const submitButton = workoutForm.querySelector('button[type="submit"]');
@@ -128,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span><i>⏱️</i> ${duration} min</span>
                                 <span><i>🔥</i> ${calories} calories</span>
                             </div>
-                            <a href="/workouts/${newWorkout.id}" class="btn">View Details</a>
+                            <button class="view-details-btn" data-workout-id="${newWorkout.id}">View Details</button>
                         </div>
                     `;
                     
@@ -148,10 +143,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Reset form
                     workoutForm.reset();
                     
+                    // Reset difficulty options
+                    const difficultyOptions = document.querySelectorAll('.difficulty-option');
+                    difficultyOptions.forEach(opt => opt.classList.remove('active'));
+                    
                     // Scroll to the new workout card
                     setTimeout(() => {
                         workoutCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }, 300);
+                    
+                    // Setup view details button for the new card
+                    setupViewDetailsButtons();
                 }
             } catch (error) {
                 showNotification('Error creating workout. Please try again.', 'error');
@@ -164,37 +166,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // View Details button functionality
-    document.addEventListener('click', (e) => {
-        const btn = e.target.closest('.view-workout-btn');
-        if (btn) {
-            const workoutName = btn.closest('.workout-card').querySelector('h3').textContent;
-            showNotification(`Detailed view for "${workoutName}" will be available soon!`, 'info');
-        }
-
-// Add this JavaScript to your workouts.js file or in a script tag at the bottom of your workouts.html page
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Set up event listeners for all View Details buttons
-    const viewDetailsButtons = document.querySelectorAll('.workout-card .btn');
-    
-    viewDetailsButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            // Prevent navigation if it's a link
-            e.preventDefault();
-            
-            // Get the workout card
-            const workoutCard = this.closest('.workout-card');
-            
-            // Get workout details
-            const workoutTitle = workoutCard.querySelector('h3').textContent;
-            const workoutDescription = workoutCard.querySelector('p').textContent;
-            const workoutDifficulty = workoutCard.querySelector('.workout-badge').textContent;
-            
-            // Create modal for workout details
-            showWorkoutDetailsModal(workoutTitle, workoutDescription, workoutDifficulty, workoutCard);
+    // Function to attach event listeners to all view details buttons
+    function setupViewDetailsButtons() {
+        const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
+        
+        viewDetailsButtons.forEach(button => {
+            // Remove existing event listeners first to prevent duplicates
+            button.removeEventListener('click', handleViewDetailsClick);
+            // Add the event listener
+            button.addEventListener('click', handleViewDetailsClick);
         });
-    });
+    }
+    
+    // Handler function for view details buttons
+    function handleViewDetailsClick(e) {
+        // Get the workout card
+        const workoutCard = this.closest('.workout-card');
+        
+        // Get workout details
+        const workoutTitle = workoutCard.querySelector('h3').textContent;
+        const workoutDescription = workoutCard.querySelector('p').textContent;
+        const workoutDifficulty = workoutCard.querySelector('.workout-badge').textContent;
+        
+        // Create modal for workout details
+        showWorkoutDetailsModal(workoutTitle, workoutDescription, workoutDifficulty, workoutCard);
+    }
+    
+    // Initialize view details buttons
+    setupViewDetailsButtons();
     
     // Function to show workout details modal
     function showWorkoutDetailsModal(title, description, difficulty, workoutCard) {
@@ -332,15 +331,39 @@ document.addEventListener('DOMContentLoaded', () => {
         exercisesTitle.style.marginBottom = '1rem';
         exercisesSection.appendChild(exercisesTitle);
         
-        // Sample exercises (in a real implementation, these would come from your database)
-        const exercises = [
-            { name: 'Warm-up', sets: '-', reps: '5 minutes', notes: 'Light cardio and dynamic stretching' },
-            { name: 'Squats', sets: '3', reps: '12', notes: 'Keep chest up, full range of motion' },
-            { name: 'Push-ups', sets: '3', reps: '10-15', notes: 'Modify on knees if needed' },
-            { name: 'Kettlebell Swings', sets: '3', reps: '15', notes: 'Focus on hip hinge' },
-            { name: 'Planks', sets: '3', reps: '30 sec', notes: 'Keep core tight, body in straight line' },
-            { name: 'Cool Down', sets: '-', reps: '5 minutes', notes: 'Static stretching, deep breathing' }
-        ];
+        // Define sample exercises based on difficulty
+        let exercises = [];
+        if (difficulty === 'Beginner') {
+            exercises = [
+                { name: 'Warm-up', sets: '-', reps: '5 minutes', notes: 'Light cardio and dynamic stretching' },
+                { name: 'Bodyweight Squats', sets: '3', reps: '12', notes: 'Keep chest up, full range of motion' },
+                { name: 'Push-ups (Modified)', sets: '3', reps: '8-10', notes: 'Knees on ground if needed' },
+                { name: 'Plank', sets: '3', reps: '20 sec', notes: 'Keep core tight, body in straight line' },
+                { name: 'Glute Bridges', sets: '3', reps: '12', notes: 'Focus on squeezing glutes at top' },
+                { name: 'Cool Down', sets: '-', reps: '5 minutes', notes: 'Static stretching, deep breathing' }
+            ];
+        } else if (difficulty === 'Intermediate') {
+            exercises = [
+                { name: 'Warm-up', sets: '-', reps: '5 minutes', notes: 'Dynamic stretching and mobility' },
+                { name: 'Dumbbell Squats', sets: '4', reps: '10', notes: 'Moderate weight, full depth' },
+                { name: 'Push-ups', sets: '3', reps: '12-15', notes: 'Full range of motion' },
+                { name: 'Kettlebell Swings', sets: '3', reps: '15', notes: 'Focus on hip hinge' },
+                { name: 'Dumbbell Rows', sets: '3', reps: '12 each', notes: 'Control the movement' },
+                { name: 'Plank Variations', sets: '3', reps: '40 sec', notes: 'Side planks and standard' },
+                { name: 'Cool Down', sets: '-', reps: '5 minutes', notes: 'Static stretching, deep breathing' }
+            ];
+        } else {
+            exercises = [
+                { name: 'Warm-up', sets: '-', reps: '5 minutes', notes: 'Dynamic movement prep' },
+                { name: 'Barbell Squats', sets: '5', reps: '5', notes: 'Heavy weight, full depth' },
+                { name: 'Weighted Pull-ups', sets: '4', reps: '6-8', notes: 'Controlled negatives' },
+                { name: 'Barbell Bench Press', sets: '5', reps: '5', notes: 'Focus on form and control' },
+                { name: 'Deadlifts', sets: '3', reps: '5', notes: 'Heavy weight, proper hip hinge' },
+                { name: 'Weighted Dips', sets: '3', reps: '8', notes: 'Full range of motion' },
+                { name: 'Ab Wheel Rollouts', sets: '3', reps: '10', notes: 'Extend as far as possible with control' },
+                { name: 'Cool Down', sets: '-', reps: '5 minutes', notes: 'Mobility work and stretching' }
+            ];
+        }
         
         // Create exercise table
         const table = document.createElement('table');
@@ -437,7 +460,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const coachName = document.createElement('p');
         coachName.style.margin = '0';
-        coachName.textContent = 'Alex Hermes';
+        coachName.textContent = title.includes('Spartan') ? 'Marcus Leonidas' :
+                               title.includes('Olympian') ? 'Alex Hermes' :
+                               title.includes('Zeus') ? 'Helena Troy' :
+                               title.includes('Herculean') ? 'Marcus Leonidas' :
+                               title.includes('Athena') ? 'Diana Artemis' :
+                               title.includes('Poseidon') ? 'Jason Argos' : 'Alex Hermes';
         
         coachInfo.appendChild(coachTitle);
         coachInfo.appendChild(coachName);
@@ -506,6 +534,38 @@ document.addEventListener('DOMContentLoaded', () => {
             showNotification('Workout started! Let\'s get to work!', 'success');
         });
     }
-});
-    });
+    
+    // Notification function
+    window.showNotification = function(message, type = 'success') {
+        // Check if notification container exists, if not create it
+        let notificationContainer = document.querySelector('.notification-container');
+        
+        if (!notificationContainer) {
+            notificationContainer = document.createElement('div');
+            notificationContainer.className = 'notification-container';
+            document.body.appendChild(notificationContainer);
+        }
+        
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        // Add close button
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'notification-close';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.onclick = () => notification.remove();
+        notification.appendChild(closeBtn);
+        
+        // Add to container
+        notificationContainer.appendChild(notification);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
+    };
 });
