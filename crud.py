@@ -5,6 +5,8 @@ from passlib.context import CryptContext
 from sqlalchemy import func
 import logging
 
+logger = logging.getLogger(__name__)
+
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
