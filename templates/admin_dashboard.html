@@ -1912,44 +1912,32 @@
             const deleteMemberBtns = document.querySelectorAll('.delete-member');
             const closeModalBtns = document.querySelectorAll('.close-modal');
             
-            // Function to open member modal
-            function openMemberModal(isEdit = false, memberId = null) {
-                const modalTitle = document.getElementById('member-modal-title');
-                const memberForm = document.getElementById('member-form');
-                
-                if (isEdit) {
-                    modalTitle.textContent = 'Edit Member';
-                    document.getElementById('member-id').value = memberId;
-                    
-                    // In a real application, you would fetch member data here
-                    // For demo purposes, we'll fill with dummy data
-                    if (memberId === '1') {
-                        document.getElementById('member-name').value = 'John Doe';
-                        document.getElementById('member-email').value = 'john.doe@example.com';
-                        document.getElementById('member-phone').value = '(555) 123-4567';
-                        document.getElementById('member-membership').value = 'Gold';
-                        document.querySelector('input[name="is_active"][value="true"]').checked = true;
-                    } else if (memberId === '2') {
-                        document.getElementById('member-name').value = 'Jane Smith';
-                        document.getElementById('member-email').value = 'jane.smith@example.com';
-                        document.getElementById('member-phone').value = '(555) 987-6543';
-                        document.getElementById('member-membership').value = 'Silver';
-                        document.querySelector('input[name="is_active"][value="true"]').checked = true;
-                    } else if (memberId === '3') {
-                        document.getElementById('member-name').value = 'Michael Johnson';
-                        document.getElementById('member-email').value = 'michael.j@example.com';
-                        document.getElementById('member-phone').value = '(555) 246-8135';
-                        document.getElementById('member-membership').value = 'Bronze';
-                        document.querySelector('input[name="is_active"][value="false"]').checked = true;
-                    }
-                } else {
-                    modalTitle.textContent = 'Add New Member';
-                    memberForm.reset();
-                    document.getElementById('member-id').value = '';
-                }
-                
-                memberModal.style.display = 'block';
-            }
+           // Function to open member modal
+function openMemberModal(isEdit = false, memberId = null) {
+    const modalTitle = document.getElementById('member-modal-title');
+    const memberForm = document.getElementById('member-form');
+    
+    if (isEdit) {
+        modalTitle.textContent = 'Edit Member';
+        document.getElementById('member-id').value = memberId;
+        
+        // Fetch real member data instead of using hardcoded values
+        fetchMemberData(memberId)
+            .then(memberData => {
+                populateMemberForm(memberData);
+            })
+            .catch(error => {
+                console.error('Error fetching member data:', error);
+                showNotification('Error loading member data', 'error');
+            });
+    } else {
+        modalTitle.textContent = 'Add New Member';
+        memberForm.reset();
+        document.getElementById('member-id').value = '';
+    }
+    
+    memberModal.style.display = 'block';
+}
             
             // Open modal when "Add New Member" button is clicked
             if (addMemberBtn) {
@@ -1992,22 +1980,165 @@
             }
             
             // Save member when "Save" button is clicked
-            if (saveMemberBtn) {
-                saveMemberBtn.addEventListener('click', () => {
-                    // In a real app, you would validate and save to database
-                    // For demo, we'll just show a success message
-                    const memberId = document.getElementById('member-id').value;
-                    const isEdit = memberId !== '';
-                    
-                    if (isEdit) {
-                        showNotification('Member updated successfully', 'success');
-                    } else {
-                        showNotification('New member added successfully', 'success');
-                    }
-                    
-                    memberModal.style.display = 'none';
+            // Save member when "Save" button is clicked
+if (saveMemberBtn) {
+    saveMemberBtn.addEventListener('click', async () => {
+        // Get form data
+        const memberId = document.getElementById('member-id').value;
+        const isEdit = memberId !== '';
+        
+        // Create data object from form inputs
+        const memberData = {
+            name: document.getElementById('member-name').value,
+            email: document.getElementById('member-email').value,
+            phone: document.getElementById('member-phone').value,
+            membership_type: document.getElementById('member-membership').value,
+            password: document.getElementById('member-password').value,
+            is_active: document.querySelector('input[name="is_active"]:checked').value === 'true'
+        };
+        
+        // Validate required fields
+        if (!memberData.name || !memberData.email || !memberData.membership_type) {
+            showNotification('Please fill in all required fields', 'error');
+            return;
+        }
+        
+        // Show loading state
+        saveMemberBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        saveMemberBtn.disabled = true;
+        
+        try {
+            let response;
+            
+            if (isEdit) {
+                // Update existing member
+                response = await fetch(`/api/members/${memberId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(memberData)
+                });
+            } else {
+                // Create new member
+                response = await fetch('/api/members', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(memberData)
                 });
             }
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // Close modal
+            memberModal.style.display = 'none';
+            
+            // Show success message
+            if (isEdit) {
+                showNotification('Member updated successfully', 'success');
+                
+                // Update the member row in the table
+                const row = document.querySelector(`tr[data-id="${memberId}"]`);
+                if (row) {
+                    row.cells[1].textContent = memberData.name;
+                    row.cells[2].textContent = memberData.email;
+                    row.cells[3].textContent = memberData.membership_type;
+                    
+                    const statusBadge = row.cells[5].querySelector('.status-badge');
+                    if (statusBadge) {
+                        statusBadge.className = memberData.is_active ? 'status-badge active' : 'status-badge inactive';
+                        statusBadge.textContent = memberData.is_active ? 'Active' : 'Inactive';
+                    }
+                }
+            } else {
+                showNotification('New member added successfully', 'success');
+                
+                // Add the new member to the table
+                const memberTable = document.querySelector('#members-content .data-table tbody');
+                if (memberTable && data.id) {
+                    const newRow = document.createElement('tr');
+                    newRow.setAttribute('data-id', data.id);
+                    
+                    // Format date to match the display format
+                    const joinDate = new Date();
+                    const formattedDate = joinDate.toISOString().split('T')[0];
+                    
+                    newRow.innerHTML = `
+                        <td>${data.id}</td>
+                        <td>${memberData.name}</td>
+                        <td>${memberData.email}</td>
+                        <td>${memberData.membership_type}</td>
+                        <td>${formattedDate}</td>
+                        <td>
+                            <span class="status-badge ${memberData.is_active ? 'active' : 'inactive'}">
+                                ${memberData.is_active ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="action-btn edit-member" data-id="${data.id}">Edit</button>
+                            <button class="action-btn delete-member" data-id="${data.id}">Delete</button>
+                        </td>
+                    `;
+                    
+                    // Add event listeners to the new buttons
+                    const editBtn = newRow.querySelector('.edit-member');
+                    const deleteBtn = newRow.querySelector('.delete-member');
+                    
+                    editBtn.addEventListener('click', function() {
+                        openMemberModal(true, data.id);
+                    });
+                    
+                    deleteBtn.addEventListener('click', function() {
+                        const memberId = this.getAttribute('data-id');
+                        const memberName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+                        
+                        if (confirm(`Are you sure you want to delete ${memberName}? This action cannot be undone.`)) {
+                            // Delete API call
+                            fetch(`/api/members/${memberId}`, {
+                                method: 'DELETE'
+                            }).then(response => {
+                                if (response.ok) {
+                                    this.closest('tr').remove();
+                                    showNotification(`Member ${memberName} deleted successfully`, 'success');
+                                } else {
+                                    showNotification('Failed to delete member', 'error');
+                                }
+                            }).catch(error => {
+                                showNotification('Error deleting member', 'error');
+                            });
+                        }
+                    });
+                    
+                    memberTable.appendChild(newRow);
+                    
+                    // Update stats
+                    const memberCountElement = document.querySelector('.stat-value');
+                    if (memberCountElement) {
+                        const currentCount = parseInt(memberCountElement.textContent);
+                        memberCountElement.textContent = currentCount + 1;
+                    }
+                }
+            }
+            
+            // Reset form
+            document.getElementById('member-form').reset();
+            
+        } catch (error) {
+            console.error('Error saving member:', error);
+            showNotification('Error saving member: ' + error.message, 'error');
+        } finally {
+            // Restore save button
+            saveMemberBtn.innerHTML = 'Save Member';
+            saveMemberBtn.disabled = false;
+        }
+    });
+}
             
             // Modal functionality for Workouts
             const workoutModal = document.getElementById('workout-modal');
@@ -2110,22 +2241,174 @@
             }
             
             // Save workout when "Save" button is clicked
-            if (saveWorkoutBtn) {
-                saveWorkoutBtn.addEventListener('click', () => {
-                    // In a real app, you would validate and save to database
-                    // For demo, we'll just show a success message
-                    const workoutId = document.getElementById('workout-id').value;
-                    const isEdit = workoutId !== '';
-                    
-                    if (isEdit) {
-                        showNotification('Workout updated successfully', 'success');
-                    } else {
-                        showNotification('New workout added successfully', 'success');
-                    }
-                    
-                    workoutModal.style.display = 'none';
+if (saveWorkoutBtn) {
+    saveWorkoutBtn.addEventListener('click', async () => {
+        // Get form data
+        const workoutId = document.getElementById('workout-id').value;
+        const isEdit = workoutId !== '';
+        
+        // Get selected difficulty (from the active option)
+        const activeDifficultyOption = document.querySelector('.difficulty-option.active');
+        let difficulty = '';
+        if (activeDifficultyOption) {
+            difficulty = activeDifficultyOption.getAttribute('data-difficulty');
+        } else {
+            showNotification('Please select a difficulty level', 'error');
+            return;
+        }
+        
+        // Create data object from form inputs
+        const workoutData = {
+            name: document.getElementById('workout-name').value,
+            description: document.getElementById('workout-description').value,
+            difficulty: difficulty,
+            duration: parseInt(document.getElementById('workout-duration').value),
+            category: document.getElementById('workout-category').value
+        };
+        
+        // Validate required fields
+        if (!workoutData.name || !workoutData.description || !workoutData.difficulty) {
+            showNotification('Please fill in all required fields', 'error');
+            return;
+        }
+        
+        // Show loading state
+        saveWorkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        saveWorkoutBtn.disabled = true;
+        
+        try {
+            let response;
+            
+            if (isEdit) {
+                // Update existing workout
+                response = await fetch(`/api/workouts/${workoutId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(workoutData)
+                });
+            } else {
+                // Create new workout
+                response = await fetch('/api/workouts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(workoutData)
                 });
             }
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // Close modal
+            workoutModal.style.display = 'none';
+            
+            // Show success message
+            if (isEdit) {
+                showNotification('Workout updated successfully', 'success');
+                
+                // Update the workout row in the table
+                const row = document.querySelector(`tr[data-id="${workoutId}"]`);
+                if (row) {
+                    row.cells[1].textContent = workoutData.name;
+                    row.cells[2].textContent = workoutData.difficulty;
+                    row.cells[3].textContent = `${workoutData.duration} min`;
+                    row.cells[4].textContent = workoutData.category;
+                }
+            } else {
+                showNotification('New workout added successfully', 'success');
+                
+                // Add the new workout to the table
+                const workoutTable = document.querySelector('#workouts-content .data-table tbody');
+                if (workoutTable && data.id) {
+                    const newRow = document.createElement('tr');
+                    newRow.setAttribute('data-id', data.id);
+                    
+                    newRow.innerHTML = `
+                        <td>${data.id}</td>
+                        <td>${workoutData.name}</td>
+                        <td>${workoutData.difficulty}</td>
+                        <td>${workoutData.duration} min</td>
+                        <td>${workoutData.category}</td>
+                        <td>
+                            <button class="action-btn edit-workout" data-id="${data.id}">Edit</button>
+                            <button class="action-btn delete-workout" data-id="${data.id}">Delete</button>
+                            <button class="action-btn view-workout" data-id="${data.id}">View</button>
+                        </td>
+                    `;
+                    
+                    // Add event listeners to the new buttons
+                    const editBtn = newRow.querySelector('.edit-workout');
+                    const deleteBtn = newRow.querySelector('.delete-workout');
+                    const viewBtn = newRow.querySelector('.view-workout');
+                    
+                    editBtn.addEventListener('click', function() {
+                        openWorkoutModal(true, data.id);
+                    });
+                    
+                    deleteBtn.addEventListener('click', function() {
+                        const workoutId = this.getAttribute('data-id');
+                        const workoutName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+                        
+                        if (confirm(`Are you sure you want to delete "${workoutName}"? This action cannot be undone.`)) {
+                            // Delete API call
+                            fetch(`/api/workouts/${workoutId}`, {
+                                method: 'DELETE'
+                            }).then(response => {
+                                if (response.ok) {
+                                    this.closest('tr').remove();
+                                    showNotification(`Workout "${workoutName}" deleted successfully`, 'success');
+                                } else {
+                                    showNotification('Failed to delete workout', 'error');
+                                }
+                            }).catch(error => {
+                                showNotification('Error deleting workout', 'error');
+                            });
+                        }
+                    });
+                    
+                    viewBtn.addEventListener('click', function() {
+                        const workoutId = this.getAttribute('data-id');
+                        const workoutName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+                        
+                        showNotification(`Viewing details for "${workoutName}"`, 'info');
+                        // In a full implementation, this would open a workout details page
+                    });
+                    
+                    workoutTable.appendChild(newRow);
+                    
+                    // Update stats
+                    const workoutCountElement = document.querySelectorAll('.stat-value')[1]; // Second stat card
+                    if (workoutCountElement) {
+                        const currentCount = parseInt(workoutCountElement.textContent);
+                        workoutCountElement.textContent = currentCount + 1;
+                    }
+                }
+            }
+            
+            // Reset form
+            document.getElementById('workout-form').reset();
+            
+            // Reset difficulty options
+            document.querySelectorAll('.difficulty-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            
+        } catch (error) {
+            console.error('Error saving workout:', error);
+            showNotification('Error saving workout: ' + error.message, 'error');
+        } finally {
+            // Restore save button
+            saveWorkoutBtn.innerHTML = 'Save Workout';
+            saveWorkoutBtn.disabled = false;
+        }
+    });
+}
             
             // Modal functionality for Classes
             const classModal = document.getElementById('class-modal');
@@ -2405,6 +2688,73 @@
                 }, 5000);
             }
         });
+
+        // Function to fetch member data when editing
+async function fetchMemberData(memberId) {
+    try {
+        const response = await fetch(`/api/members/${memberId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const memberData = await response.json();
+        return memberData;
+    } catch (error) {
+        console.error('Error fetching member data:', error);
+        showNotification('Error fetching member data', 'error');
+        return null;
+    }
+}
+
+// Function to populate member form with fetched data
+function populateMemberForm(memberData) {
+    if (!memberData) return;
+    
+    document.getElementById('member-name').value = memberData.name || '';
+    document.getElementById('member-email').value = memberData.email || '';
+    document.getElementById('member-phone').value = memberData.phone || '';
+    document.getElementById('member-membership').value = memberData.membership_type || 'Bronze';
+    
+    // Set active status
+    const activeRadio = memberData.is_active ? 'true' : 'false';
+    document.querySelector(`input[name="is_active"][value="${activeRadio}"]`).checked = true;
+}
+
+// Function to fetch workout data when editing
+async function fetchWorkoutData(workoutId) {
+    try {
+        const response = await fetch(`/api/workouts/${workoutId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const workoutData = await response.json();
+        return workoutData;
+    } catch (error) {
+        console.error('Error fetching workout data:', error);
+        showNotification('Error fetching workout data', 'error');
+        return null;
+    }
+}
+
+// Function to populate workout form with fetched data
+function populateWorkoutForm(workoutData) {
+    if (!workoutData) return;
+    
+    document.getElementById('workout-name').value = workoutData.name || '';
+    document.getElementById('workout-description').value = workoutData.description || '';
+    document.getElementById('workout-duration').value = workoutData.duration || 45;
+    document.getElementById('workout-category').value = workoutData.category || 'Full Body';
+    
+    // Set difficulty
+    if (workoutData.difficulty) {
+        const difficultyOption = document.querySelector(`.difficulty-option[data-difficulty="${workoutData.difficulty}"]`);
+        if (difficultyOption) {
+            difficultyOption.classList.add('active');
+            document.querySelector(`input[name="difficulty"][value="${workoutData.difficulty}"]`).checked = true;
+        }
+    }
+}
     </script>
 </body>
 </html>
