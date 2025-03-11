@@ -3,10 +3,10 @@ from typing import List, Optional, Union, ForwardRef
 from datetime import datetime
 import re
 
-# Forward reference for Transaction to solve circular dependency
+# Forward reference for circular dependencies
 Transaction = ForwardRef('Transaction')
 
-# Transaction Schemas - Define these first
+# Transaction Schemas
 class TransactionBase(BaseModel):
     member_id: Optional[int] = None
     amount: float
@@ -34,25 +34,6 @@ class MemberBase(BaseModel):
 
 class MemberCreate(MemberBase):
     password: str
-    
-    @validator('email')
-    def email_must_be_valid(cls, v):
-        if not re.match(r"[^@]+@[^@]+\.[^@]+", v):
-            raise ValueError('Invalid email format')
-        return v
-    
-    @validator('name')
-    def name_must_not_be_empty(cls, v):
-        if not v.strip():
-            raise ValueError('Name cannot be empty')
-        return v
-    
-    @validator('membership_type')
-    def validate_membership_type(cls, v):
-        allowed_types = ["Bronze", "Silver", "Gold", "Platinum", "None"]
-        if v not in allowed_types:
-            raise ValueError(f'Membership type must be one of: {", ".join(allowed_types)}')
-        return v
 
 class MemberUpdate(BaseModel):
     name: Optional[str] = None
@@ -76,11 +57,10 @@ class WorkoutBase(BaseModel):
     description: str
     difficulty: str
     category: Optional[str] = None
-    duration: Optional[int] = 45
-    calories: Optional[int] = 300
 
 class WorkoutCreate(WorkoutBase):
-    pass
+    duration: Optional[int] = 45
+    calories: Optional[int] = 300
 
 class WorkoutUpdate(BaseModel):
     name: Optional[str] = None
@@ -89,13 +69,12 @@ class WorkoutUpdate(BaseModel):
     category: Optional[str] = None
     duration: Optional[int] = None
     calories: Optional[int] = None
-    
-    class Config:
-        orm_mode = True
 
 class Workout(WorkoutBase):
     id: int
-    coach_id: Optional[int] = None  # This will be populated from the relationship
+    duration: Optional[int] = 45
+    calories: Optional[int] = 300
+    coach_id: Optional[int] = None
     
     class Config:
         orm_mode = True
@@ -188,5 +167,5 @@ class CoachWorkout(CoachWorkoutBase):
     class Config:
         orm_mode = True
 
-# Update ForwardRef
+# Update forward references
 Member.update_forward_refs()
