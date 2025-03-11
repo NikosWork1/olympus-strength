@@ -690,31 +690,48 @@ async def not_found_exception_handler(request: Request, exc: HTTPException):
 # This endpoint handles POST requests to create a new booking
 # It validates request data, authenticates the user, and saves the booking to the database
 # Returns the created booking object or an error message
-@app.post("/api/bookings", response_model=schemas.Booking)
-async def create_booking_api(request: Request, 
-                            booking_data: dict, 
-                            db: Session = Depends(get_db)):
+@app.post("/api/classes/book")
+async def book_class(
+    request: Request,
+    booking_data: dict,
+    db: Session = Depends(get_db)
+):
     try:
-        logger.info(f"Received booking data: {booking_data}")
-        
         # Get current user
         current_user = await get_optional_user(request, db)
         if not current_user:
             raise HTTPException(status_code=401, detail="Not authenticated")
+            
+        # Prevent coaches from booking classes
+        if current_user.role == 'coach':
+            raise HTTPException(status_code=403, detail="Coaches cannot book classes")
         
-        # Create booking object
+        # Create booking
         booking = schemas.BookingCreate(
-            class_id=booking_data["class_id"],
             member_id=current_user.id,
-            class_date=booking_data["class_date"]
+            class_id=booking_data["class_id"],
+            booking_date=datetime.datetime.now(),
+            class_date=booking_data["class_date"],
+            status="confirmed"
         )
+        
+        # Check if class exists and has space
+        gym_class = crud.get_class(db, booking.class_id)
+        if not gym_class:
+            raise HTTPException(status_code=404, detail="Class not found")
+            
+        if gym_class.current_capacity >= gym_class.max_capacity:
+            raise HTTPException(status_code=400, detail="Class is full")
         
         # Create the booking
         db_booking = crud.create_booking(db=db, booking=booking)
         
+        # Update class capacity
+        crud.update_class_capacity(db=db, class_id=booking.class_id, increment=True)
+        
         return db_booking
     except Exception as e:
-        logger.error(f"Error creating booking: {str(e)}")
+        logger.error(f"Error booking class: {str(e)}")
         raise HTTPException(status_code=400, detail=f"Error booking class: {str(e)}")
 
 # Route to view all bookings (admin & coach access only)
@@ -1022,6 +1039,21 @@ async def create_workout_with_coach(
         current_user = await get_optional_user(request, db)
         if not current_user:
             raise HTTPException(status_code=401, detail="Not authenticated")
+            
+        # Only allow admin and coach to create workouts
+        if current_user.role not in ['admin', 'coach']:
+            raise HTTPException(status_code=403, detail="Only coaches and administrators can create workouts")
+        
+        # Validate required fields
+        required_fields = ['name', 'description', 'difficulty']
+        for field in required_fields:
+            if field not in workout_data or not workout_data[field]:
+                raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+        
+        # Validate difficulty level
+        valid_difficulties = ['Beginner', 'Intermediate', 'Advanced']
+        if workout_data['difficulty'] not in valid_difficulties:
+            raise HTTPException(status_code=400, detail=f"Invalid difficulty level. Must be one of: {', '.join(valid_difficulties)}")
         
         # Create workout object
         workout = schemas.WorkoutCreate(
@@ -1041,12 +1073,18 @@ async def create_workout_with_coach(
             crud.assign_workout_to_coach(db, db_workout.id, current_user.id)
         # If user is admin and workout has a coach_id, assign to that coach
         elif current_user.role == "admin" and "coach_id" in workout_data:
+            # Validate coach exists
+            coach = crud.get_member(db, workout_data["coach_id"])
+            if not coach or coach.role != 'coach':
+                raise HTTPException(status_code=400, detail="Invalid coach ID")
             crud.assign_workout_to_coach(db, db_workout.id, workout_data["coach_id"])
         
         return db_workout
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error creating workout: {str(e)}")
-        raise HTTPException(status_code=400, detail=f"Error creating workout: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error while creating workout")
 
 # Add this route to main.py for getting coach workouts
 
@@ -1136,6 +1174,7 @@ async def my_bookings(request: Request, db: Session = Depends(get_db)):
             "error_message": "There was an error loading your bookings. Please try again later.",
             "current_user": current_user
         })
+
 # Run the app
 if __name__ == "__main__":
     import uvicorn
