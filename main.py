@@ -1177,6 +1177,23 @@ def create_member_api(member: schemas.MemberCreate, db: Session = Depends(get_db
         logger.error(f"Error creating member: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error creating member: {str(e)}")
         
+@app.get("/api/finances/summary")
+def get_financial_summary_api(year: int = None, month: int = None, db: Session = Depends(get_db)):
+    if year is None:
+        year = datetime.datetime.now().year
+    if month is None:
+        month = datetime.datetime.now().month
+        
+    return crud.get_financial_summary(db, year, month)
+
+@app.get("/api/transactions", response_model=List[schemas.Transaction])
+def get_transactions_api(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_transactions(db, skip=skip, limit=limit)
+
+@app.post("/api/transactions", response_model=schemas.Transaction)
+def create_transaction_api(transaction: schemas.TransactionCreate, db: Session = Depends(get_db)):
+    return crud.create_transaction(db=db, transaction=transaction)
+
 # Run the app
 if __name__ == "__main__":
     import uvicorn
