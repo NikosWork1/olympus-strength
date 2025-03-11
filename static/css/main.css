@@ -1979,18 +1979,16 @@ footer {
 }
 
 .social-icon {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-}
+       width: 32px;
+       height: 32px;
+       object-fit: contain;
+       padding: 4px;
+   }
 
-@media (max-width: 768px) {
-    .social-links {
-        justify-content: center;
-    }
-    
-    .social-icon {
-        width: 20px;
-        height: 20px;
-    }
-}
+   @media (max-width: 768px) {
+       .social-icon {
+           width: 28px;
+           height: 28px;
+           padding: 3px;
+       }
+   }
