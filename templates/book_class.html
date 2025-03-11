@@ -153,7 +153,7 @@
                         <a href="/" class="nav-link">HOME</a>
                         <a href="/members" class="nav-link">MEMBERS</a>
                         <a href="/workouts" class="nav-link">WORKOUTS</a>
-                        <a href="/classes" class="nav-link">BOOK CLASS</a>
+                        <a href="/book_class" class="nav-link">BOOK CLASS</a>
                         <a href="/logout" class="nav-link">LOGOUT</a>
                         <a href="/profile" class="profile-icon" title="My Profile">👤</a>
                     {% elif current_user.role == 'admin' %}
@@ -310,282 +310,105 @@
 
     <script src="/static/js/main.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Modal functionality
-        const modal = document.getElementById('booking-modal');
-        const closeModal = document.querySelector('.close-modal');
-        const bookButtons = document.querySelectorAll('.book-btn');
-        
-        // Close modal when clicking X
-        if (closeModal) {
-            closeModal.addEventListener('click', function() {
-                modal.style.display = 'none';
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get DOM elements
+            const modal = document.getElementById('booking-modal');
+            const bookingForm = document.getElementById('booking-form');
+            const bookButtons = document.querySelectorAll('.book-btn');
+
+            // Setup booking buttons
+            bookButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const classCard = this.closest('.program-card');
+                    const classId = this.getAttribute('data-class-id');
+                    const className = classCard.querySelector('h3').textContent;
+                    const instructorText = classCard.querySelector('.program-details span:first-child').textContent;
+                    const scheduleText = classCard.querySelector('.program-details span:last-child').textContent;
+                    
+                    // Populate modal
+                    document.getElementById('class-id').value = classId;
+                    document.getElementById('class-name').textContent = className;
+                    document.getElementById('class-instructor').textContent = instructorText;
+                    document.getElementById('class-schedule').textContent = scheduleText;
+                    
+                    // Initialize calendar
+                    const calendarContainer = document.getElementById('booking-calendar');
+                    calendarContainer.innerHTML = '';
+                    createCalendar(calendarContainer);
+                    
+                    // Clear time slots
+                    document.getElementById('time-slots-container').innerHTML = 
+                        '<p>Please select a date first</p>';
+                    
+                    // Show modal
+                    modal.style.display = 'block';
+                });
             });
-        }
-        
-        // Close modal when clicking outside
-        window.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-        
-        // Calendar setup
-        function createCalendar(element) {
-            const date = new Date();
-            const currentMonth = date.getMonth();
-            const currentYear = date.getFullYear();
-            
-            // Create the calendar header
-            const calendarHeader = document.createElement('div');
-            calendarHeader.className = 'calendar-header';
-            
-            const prevBtn = document.createElement('button');
-            prevBtn.className = 'calendar-nav';
-            prevBtn.innerHTML = '&laquo;';
-            
-            const nextBtn = document.createElement('button');
-            nextBtn.className = 'calendar-nav';
-            nextBtn.innerHTML = '&raquo;';
-            
-            const monthDisplay = document.createElement('div');
-            monthDisplay.className = 'current-month';
-            monthDisplay.textContent = `${new Date(currentYear, currentMonth, 1).toLocaleString('default', { month: 'long' })} ${currentYear}`;
-            
-            calendarHeader.appendChild(prevBtn);
-            calendarHeader.appendChild(monthDisplay);
-            calendarHeader.appendChild(nextBtn);
-            
-            // Create the calendar body
-            const calendarBody = document.createElement('div');
-            calendarBody.className = 'calendar-body';
-            
-            // Weekday headers
-            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            const weekdaysRow = document.createElement('div');
-            weekdaysRow.className = 'weekday-row';
-            
-            weekdays.forEach(day => {
-                const dayEl = document.createElement('div');
-                dayEl.className = 'weekday';
-                dayEl.textContent = day;
-                weekdaysRow.appendChild(dayEl);
-            });
-            
-            calendarBody.appendChild(weekdaysRow);
-            
-            // Create dates grid
-            const datesGrid = document.createElement('div');
-            datesGrid.className = 'dates-grid';
-            
-            // Get first day of month
-            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-            
-            // Get number of days in month
-            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            
-            // Create calendar days
-            for (let i = 0; i < firstDay; i++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.className = 'calendar-day empty';
-                datesGrid.appendChild(emptyDay);
-            }
-            
-            const today = new Date().getDate();
-            
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayEl = document.createElement('div');
-                dayEl.className = 'calendar-day';
-                dayEl.textContent = day;
-                
-                // Highlight today
-                if (day === today) {
-                    dayEl.classList.add('today');
-                }
-                
-                // Make days in the past not selectable
-                const dayDate = new Date(currentYear, currentMonth, day);
-                if (dayDate < new Date().setHours(0,0,0,0)) {
-                    dayEl.classList.add('past');
-                } else {
-                    dayEl.addEventListener('click', function() {
-                        // Remove selected class from all days
-                        document.querySelectorAll('.calendar-day').forEach(d => {
-                            d.classList.remove('selected');
+
+            // Handle booking form submission
+            if (bookingForm) {
+                bookingForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const classId = document.getElementById('class-id').value;
+                    const bookingDate = document.getElementById('booking-date').value;
+                    const bookingTime = document.getElementById('booking-time').value;
+                    
+                    if (!bookingDate || !bookingTime) {
+                        alert('Please select both a date and time for your booking');
+                        return;
+                    }
+                    
+                    try {
+                        const response = await fetch('/api/bookings', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                class_id: parseInt(classId),
+                                member_id: {{ current_user.id }},
+                                class_date: `${bookingDate}T${convertTo24Hour(bookingTime)}`
+                            })
                         });
                         
-                        // Add selected class to clicked day
-                        this.classList.add('selected');
-                        
-                        // Update hidden input with selected date
-                        const selectedDate = new Date(currentYear, currentMonth, day);
-                        document.getElementById('booking-date').value = selectedDate.toISOString().split('T')[0];
-                        
-                        // Generate time slots for this date
-                        generateTimeSlots(selectedDate);
-                    });
-                }
-                
-                datesGrid.appendChild(dayEl);
-            }
-            
-            calendarBody.appendChild(datesGrid);
-            
-            // Append everything to container
-            element.appendChild(calendarHeader);
-            element.appendChild(calendarBody);
-            
-            // Event listeners for previous/next buttons
-            prevBtn.addEventListener('click', function() {
-                date.setMonth(date.getMonth() - 1);
-                updateCalendar();
-            });
-            
-            nextBtn.addEventListener('click', function() {
-                date.setMonth(date.getMonth() + 1);
-                updateCalendar();
-            });
-            
-            function updateCalendar() {
-                // Clear existing calendar
-                element.innerHTML = '';
-                
-                // Recreate calendar with new date
-                createCalendar(element);
-            }
-        }
-        
-        // Generate available time slots based on selected date
-        function generateTimeSlots(date) {
-            const timeSlotContainer = document.getElementById('time-slots-container');
-            timeSlotContainer.innerHTML = '';
-            
-            // Sample time slots (in real app, you'd fetch from the server)
-            const availableSlots = [
-                '07:00 AM', '08:00 AM', '09:00 AM', 
-                '10:00 AM', '11:00 AM', '12:00 PM',
-                '01:00 PM', '02:00 PM', '03:00 PM',
-                '04:00 PM', '05:00 PM', '06:00 PM',
-                '07:00 PM', '08:00 PM'
-            ];
-            
-            // Create time slot elements
-            availableSlots.forEach(time => {
-                const timeSlot = document.createElement('div');
-                timeSlot.className = 'time-slot';
-                timeSlot.textContent = time;
-                
-                timeSlot.addEventListener('click', function() {
-                    // Remove selected class from all time slots
-                    document.querySelectorAll('.time-slot').forEach(slot => {
-                        slot.classList.remove('selected');
-                    });
-                    
-                    // Add selected class to clicked time slot
-                    this.classList.add('selected');
-                    
-                    // Update hidden input with selected time
-                    document.getElementById('booking-time').value = time;
-                });
-                
-                timeSlotContainer.appendChild(timeSlot);
-            });
-        }
-        
-        // Open modal when book button is clicked
-        bookButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const classId = this.getAttribute('data-class-id');
-                const classCard = this.closest('.program-card');
-                const className = classCard.querySelector('h3').textContent;
-                const instructorText = classCard.querySelector('.program-details span:first-child').textContent;
-                const scheduleText = classCard.querySelector('.program-details span:last-child').textContent;
-                
-                // Populate modal
-                document.getElementById('class-id').value = classId;
-                document.getElementById('class-name').textContent = className;
-                document.getElementById('class-instructor').textContent = instructorText;
-                document.getElementById('class-schedule').textContent = scheduleText;
-                
-                // Initialize calendar
-                const calendarContainer = document.getElementById('booking-calendar');
-                calendarContainer.innerHTML = '';
-                createCalendar(calendarContainer);
-                
-                // Clear time slots
-                document.getElementById('time-slots-container').innerHTML = 
-                    '<p>Please select a date first</p>';
-                
-                // Show modal
-                modal.style.display = 'block';
-            });
-        });
-        
-        // Handle booking form submission
-        const bookingForm = document.getElementById('booking-form');
-        if (bookingForm) {
-            bookingForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const classId = document.getElementById('class-id').value;
-                const bookingDate = document.getElementById('booking-date').value;
-                const bookingTime = document.getElementById('booking-time').value;
-                
-                if (!bookingDate || !bookingTime) {
-                    alert('Please select both a date and time for your booking');
-                    return;
-                }
-                
-                try {
-                    const response = await fetch('/api/bookings', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            class_id: parseInt(classId),
-                            member_id: {{ current_user.id }},
-                            class_date: `${bookingDate}T${convertTo24Hour(bookingTime)}`,
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        // Close modal
-                        modal.style.display = 'none';
-                        
-                        // Show success message
-                        alert('Class booked successfully!');
-                        
-                        // Reload page after short delay
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1000);
-                    } else {
+                        if (response.ok) {
+                            // Close modal
+                            modal.style.display = 'none';
+                            
+                            // Show success message
+                            alert('Class booked successfully!');
+                            
+                            // Reload page after short delay
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            alert('Error booking class. Please try again.');
+                        }
+                    } catch (error) {
+                        console.error('Booking error:', error);
                         alert('Error booking class. Please try again.');
                     }
-                } catch (error) {
-                    console.error('Booking error:', error);
-                    alert('Error booking class. Please try again.');
+                });
+            }
+
+            // Helper function to convert 12-hour time to 24-hour
+            function convertTo24Hour(time12h) {
+                const [time, modifier] = time12h.split(' ');
+                let [hours, minutes] = time.split(':');
+                
+                if (hours === '12') {
+                    hours = '00';
                 }
-            });
-        }
-        
-        // Helper function to convert 12-hour time to 24-hour
-        function convertTo24Hour(time12h) {
-            const [time, modifier] = time12h.split(' ');
-            let [hours, minutes] = time.split(':');
-            
-            if (hours === '12') {
-                hours = '00';
+                
+                if (modifier === 'PM') {
+                    hours = parseInt(hours, 10) + 12;
+                }
+                
+                return `${hours}:${minutes}:00`;
             }
-            
-            if (modifier === 'PM') {
-                hours = parseInt(hours, 10) + 12;
-            }
-            
-            return `${hours}:${minutes}:00`;
-        }
-    });
+        });
     </script>
 </body>
 </html>
