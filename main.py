@@ -1060,6 +1060,49 @@ async def my_bookings(request: Request, db: Session = Depends(get_db)):
             "error_message": "There was an error loading your bookings. Please try again later.",
             "current_user": current_user
         })
+    
+# About page
+@app.get("/about", response_class=HTMLResponse)
+async def about_page(request: Request, db: Session = Depends(get_db)):
+    try:
+        current_user = await get_optional_user(request, db)
+        return templates.TemplateResponse("about.html", {
+            "request": request,
+            "current_user": current_user,
+            "title": "About Us"
+        })
+    except Exception as e:
+        logger.error(f"Error rendering about page: {e}")
+        return HTMLResponse(content=f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        body {{
+            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }}
+        .error {{
+            color: #F44336;
+        }}
+    </style>
+</head>
+<body>
+    <h1 class="error">Internal Server Error</h1>
+    <p>We're sorry, something went wrong on our end. Please try again later.</p>
+    <p>Error details: {str(e)}</p>
+</body>
+</html>
+        """)
+    
+    
 # Run the app
 if __name__ == "__main__":
     import uvicorn
