@@ -163,7 +163,17 @@ def delete_class(db: Session, class_id: int):
 
 # --- Booking CRUD operations ---
 def get_booking(db: Session, booking_id: int):
-    return db.query(models.Booking).filter(models.Booking.id == booking_id).first()
+    # Join Booking with GymClass to get class details
+    booking = db.query(models.Booking).filter(models.Booking.id == booking_id).first()
+    
+    if booking:
+        # Get class details
+        gym_class = db.query(models.GymClass).filter(models.GymClass.id == booking.class_id).first()
+        if gym_class:
+            booking.class_name = gym_class.name
+            booking.class_instructor = gym_class.instructor
+            
+    return booking
 
 def get_member_bookings(db: Session, member_id: int, skip: int = 0, limit: int = 100):
     return db.query(models.Booking).filter(models.Booking.member_id == member_id).offset(skip).limit(limit).all()
