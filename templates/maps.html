@@ -27,53 +27,81 @@
 
         /* Header styles */
         header {
-            background-color: #212121;
+            background-color: #212121 !important;
             color: white;
             padding: 1rem 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: relative;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif !important;
         }
 
         .container {
-            width: 85%;
+            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 15px;
+            padding: 0 1.5rem;
         }
 
         .header-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0.5rem 2rem;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            font-weight: bold;
             font-size: 1.5rem;
+            font-weight: 700 !important;
             color: white;
+            text-decoration: none;
+            letter-spacing: 1px;
         }
 
         .logo-img {
-            width: 100px;
-            height: auto;
-        }
-
-        .nav-link {
-            color: white;
-            margin-left: 20px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-link:hover {
-            color: #4CAF50;
+            height: 40px;
+            width: auto;
+            object-fit: contain;
         }
 
         .nav {
             display: flex;
             align-items: center;
+        }
+
+        .nav-link {
+            color: white !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            position: relative !important;
+            transition: color 0.3s !important;
+            text-transform: uppercase !important;
+            font-size: 0.9rem !important;
+            letter-spacing: 0.5px !important;
+            margin-left: 2rem !important;
+        }
+
+        .nav-link:hover {
+            color: #4CAF50 !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #4CAF50;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
         }
 
         .btn {
@@ -95,6 +123,7 @@
         .btn-sm {
             font-size: 0.9rem;
             padding: 0.4rem 1.2rem;
+            margin-left: 2rem;
         }
 
         /* Page header */
