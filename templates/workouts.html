@@ -416,6 +416,7 @@
                 </div>
             </div>
             
+            {% if current_user and current_user.role in ['admin', 'coach'] %}
             <div class="add-workout-container">
                 <h2>Create New Workout</h2>
                 <form id="add-workout-form" class="form">
@@ -473,6 +474,7 @@
                     </div>
                 </form>
             </div>
+            {% endif %}
         </div>
     </section>
 
