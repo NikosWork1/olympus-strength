@@ -280,10 +280,9 @@
 
         /* Footer */
         footer {
-            background-color: #212121;
-            color: white;
-            padding: 3rem 0 1.5rem;
-            margin-top: 3rem;
+            background-color: var(--secondary);
+            color: var(--white);
+            padding: 4rem 0 2rem;
         }
 
         .footer-content {
@@ -342,6 +341,33 @@
             border-top: 1px solid rgba(255,255,255,0.1);
             color: #bbb;
             font-size: 0.9rem;
+        }
+
+        /* Social Media Icons Styling */
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        .social-link:hover {
+            background-color: var(--primary);
+        }
+
+        .social-icon {
+            width: 16px;
+            height: 16px;
         }
 
         /* Responsive adjustments */
