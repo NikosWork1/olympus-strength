@@ -123,6 +123,13 @@ class Booking(BookingBase):
     booking_date: datetime
     status: str
     
+    # Additional fields for display in the UI
+    class_name: Optional[str] = None
+    class_instructor: Optional[str] = None
+    
+    class Config:
+        from_attributes = True  # Changed from orm_mode for Pydantic v2
+    
     class Config:
         from_attributes = True  # Changed from orm_mode for Pydantic v2
 
