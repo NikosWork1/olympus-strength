@@ -172,6 +172,67 @@ def get_class_bookings(db: Session, class_id: int, skip: int = 0, limit: int = 1
     return db.query(models.Booking).filter(models.Booking.class_id == class_id).offset(skip).limit(limit).all()
 
 def create_booking(db: Session, booking: schemas.BookingCreate):
+    """
+    Creates a new booking for a member in a specific class at a specific date/time
+    
+    Args:
+        db: Database session
+        booking: BookingCreate schema with member_id, class_id, and class_date
+        
+    Returns:
+        Created Booking object
+    """
+    try:
+        # Create the booking with all required fields
+        db_booking = models.Booking(
+            member_id=booking.member_id,
+            class_id=booking.class_id,
+            class_date=booking.class_date,
+            status="confirmed",
+            booking_date=datetime.now()
+        )
+        
+        # Add to database session
+        db.add(db_booking)
+        
+        # Commit the transaction
+        db.commit()
+        
+        # Refresh the model (populates the id field)
+        db.refresh(db_booking)
+        
+        return db_booking
+    except Exception as e:
+        # In case of error, rollback the transaction
+        db.rollback()
+        # Re-raise the exception
+        raise e
+
+def update_booking(db: Session, booking_id: int, booking: schemas.BookingUpdate):
+    db_booking = db.query(models.Booking).filter(models.Booking.id == booking_id).first()
+    if db_booking:
+        update_data = booking.dict(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_booking, key, value)
+        db.commit()
+        db.refresh(db_booking)
+    return db_booking
+
+def delete_booking(db: Session, booking_id: int):
+    db_booking = db.query(models.Booking).filter(models.Booking.id == booking_id).first()
+    if db_booking:
+        db.delete(db_booking)
+        db.commit()
+        return True
+    return False
+
+def get_member_bookings(db: Session, member_id: int, skip: int = 0, limit: int = 100):
+    return db.query(models.Booking).filter(models.Booking.member_id == member_id).offset(skip).limit(limit).all()
+
+def get_class_bookings(db: Session, class_id: int, skip: int = 0, limit: int = 100):
+    return db.query(models.Booking).filter(models.Booking.class_id == class_id).offset(skip).limit(limit).all()
+
+def create_booking(db: Session, booking: schemas.BookingCreate):
     try:
         db_booking = models.Booking(
             member_id=booking.member_id,
