@@ -691,9 +691,11 @@ async def not_found_exception_handler(request: Request, exc: HTTPException):
 # It validates request data, authenticates the user, and saves the booking to the database
 # Returns the created booking object or an error message
 @app.post("/api/bookings", response_model=schemas.Booking)
-async def create_booking_api(request: Request, 
-                            booking_data: dict, 
-                            db: Session = Depends(get_db)):
+async def create_booking_api(
+    request: Request, 
+    booking_data: dict,
+    db: Session = Depends(get_db)
+):
     try:
         logger.info(f"Received booking data: {booking_data}")
         
@@ -702,20 +704,65 @@ async def create_booking_api(request: Request,
         if not current_user:
             raise HTTPException(status_code=401, detail="Not authenticated")
         
+        logger.info(f"Current user: {current_user.name} (ID: {current_user.id})")
+        
+        # Verify the required fields are present
+        if 'class_id' not in booking_data:
+            raise HTTPException(status_code=400, detail="Missing class_id field")
+        if 'class_date' not in booking_data:
+            raise HTTPException(status_code=400, detail="Missing class_date field")
+            
+        # Parse the class_date into a datetime object
+        try:
+            class_date = datetime.fromisoformat(booking_data["class_date"])
+            logger.info(f"Parsed class_date: {class_date}")
+        except ValueError as e:
+            logger.error(f"Error parsing date: {e}")
+            raise HTTPException(status_code=400, detail=f"Invalid date format: {e}")
+            
         # Create booking object
         booking = schemas.BookingCreate(
             class_id=booking_data["class_id"],
             member_id=current_user.id,
-            class_date=booking_data["class_date"]
+            class_date=class_date
         )
+        
+        # Check if the class exists
+        gym_class = db.query(models.GymClass).filter(models.GymClass.id == booking.class_id).first()
+        if not gym_class:
+            raise HTTPException(status_code=404, detail=f"Class with ID {booking.class_id} not found")
+        
+        # Check if there's already a booking for this user, class, and date
+        existing_booking = db.query(models.Booking).filter(
+            models.Booking.member_id == booking.member_id,
+            models.Booking.class_id == booking.class_id,
+            models.Booking.class_date == booking.class_date
+        ).first()
+        
+        if existing_booking:
+            raise HTTPException(status_code=400, detail="You've already booked this class for this date and time")
+            
+        # Check if class is full (compare against max_capacity)
+        bookings_count = db.query(models.Booking).filter(
+            models.Booking.class_id == booking.class_id,
+            models.Booking.class_date == booking.class_date,
+            models.Booking.status != "cancelled"
+        ).count()
+        
+        if bookings_count >= gym_class.max_capacity:
+            raise HTTPException(status_code=400, detail="This class is full for the selected date and time")
         
         # Create the booking
         db_booking = crud.create_booking(db=db, booking=booking)
+        logger.info(f"Booking created: {db_booking.id}")
         
         return db_booking
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
     except Exception as e:
-        logger.error(f"Error creating booking: {str(e)}")
-        raise HTTPException(status_code=400, detail=f"Error booking class: {str(e)}")
+        logger.error(f"Unexpected error creating booking: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 # Route to view all bookings (admin & coach access only)
 # This endpoint displays all bookings in the system with member and class details
