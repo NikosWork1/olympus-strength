@@ -1171,6 +1171,29 @@ async def my_bookings(request: Request, db: Session = Depends(get_db)):
             "error_message": "There was an error loading your bookings. Please try again later.",
             "current_user": current_user
         })
+
+# Route to view current user's bookings
+# This endpoint displays all bookings for the currently logged-in user
+# Authentication is required to access this endpoint
+@app.get("/my-bookings", response_class=HTMLResponse)
+async def my_bookings(request: Request, db: Session = Depends(get_db)):
+    # Get the current authenticated user
+    current_user = await get_optional_user(request, db)
+    
+    # Check if user is authenticated
+    if not current_user:
+        return RedirectResponse(url="/login", status_code=303)
+    
+    # Use the enhanced get_member_bookings function that includes class details
+    bookings = crud.get_member_bookings(db, current_user.id)
+    
+    # Render the template with the enhanced bookings
+    return templates.TemplateResponse("my_bookings.html", {
+        "request": request,
+        "current_user": current_user,
+        "bookings": bookings
+    })
+
 # Run the app
 if __name__ == "__main__":
     import uvicorn
