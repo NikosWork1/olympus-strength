@@ -150,8 +150,8 @@
                 {% else %}
                     <!-- Visitor navigation (unauthenticated state) -->
                     <a href="/" class="nav-link">HOME</a>
-                    <a href="/maps" class="nav-link">FIND US</a>
-                    <a href="/contact" class="nav-link">CONTACT US</a>
+                    <a href="/maps" class="nav-link" onclick="event.preventDefault(); window.location.href='/maps'">FIND US</a>
+                    <a href="/contact" class="nav-link" onclick="event.preventDefault(); window.location.href='/contact'">CONTACT US</a>
                     <a href="/login" class="nav-link">LOGIN</a>
                     <a href="/signup" class="btn btn-sm">Join Now</a>
                 {% endif %}
