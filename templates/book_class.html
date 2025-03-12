@@ -620,66 +620,35 @@
 
             // Handle booking form submission
             if (bookingForm) {
-    bookingForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const classId = document.getElementById('class-id').value;
-        const bookingDate = document.getElementById('booking-date').value;
-        const bookingTime = document.getElementById('booking-time').value;
-        
-        if (!bookingDate || !bookingTime) {
-            showNotification('Please select both a date and time for your booking', 'error');
-            return;
-        }
-        
-        // Show loading state for the submit button
-        const submitButton = this.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
-        submitButton.innerHTML = 'Processing...';
-        submitButton.disabled = true;
-        
-        try {
-            // Fix: Format the datetime properly and ensure it's in the right JSON structure
-            const formattedDateTime = `${bookingDate}T${convertTo24Hour(bookingTime)}`;
-            
-            const response = await fetch('/api/bookings', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    class_id: parseInt(classId),
-                    class_date: formattedDateTime
-                })
-            });
-            
-            if (response.ok) {
-                // Close modal
-                modal.style.display = 'none';
-                
-                // Show success message
-                showNotification('Class booked successfully!', 'success');
-                
-                // Redirect to my bookings page
-                setTimeout(() => {
-                    window.location.href = '/my-bookings';
-                }, 1500);
-            } else {
-                const data = await response.json();
-                const errorMessage = data.detail || 'Error booking class. Please try again.';
-                console.error('Booking error:', errorMessage);
-                showNotification(errorMessage, 'error');
-            }
-        } catch (error) {
-            console.error('Booking error:', error);
-            showNotification('Error booking class. Please try again.', 'error');
-        } finally {
-            // Restore button state
-            submitButton.innerHTML = originalText;
-            submitButton.disabled = false;
-        }
-    });
-};
+                bookingForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const classId = document.getElementById('class-id').value;
+                    const bookingDate = document.getElementById('booking-date').value;
+                    const bookingTime = document.getElementById('booking-time').value;
+                    
+                    if (!bookingDate || !bookingTime) {
+                        showNotification('Please select both a date and time for your booking', 'error');
+                        return;
+                    }
+                    
+                    // Show loading state for the submit button
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    const originalText = submitButton.textContent;
+                    submitButton.innerHTML = 'Processing...';
+                    submitButton.disabled = true;
+                    
+                    try {
+                        const response = await fetch('/api/bookings', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                class_id: parseInt(classId),
+                                class_date: `${bookingDate}T${convertTo24Hour(bookingTime)}`
+                            })
+                        });
                         
                         if (response.ok) {
                             // Close modal
