@@ -254,6 +254,25 @@
             font-size: 0.85rem;
             color: #757575;
         }
+
+        /* Profile icon in navbar */
+        .profile-icon {
+            display: flex;
+            align-items: center;
+            background-color: #4CAF50;
+            border-radius: 25px;
+            padding: 5px 15px;
+            margin-left: 2rem;
+            color: white;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .profile-icon:hover {
+            background-color: #388E3C;
+        }
     </style>
 </head>
 <body>
@@ -273,21 +292,21 @@
                         <a href="/workouts" class="nav-link">WORKOUTS</a>
                         <a href="/book_class" class="nav-link">BOOK CLASS</a>
                         <a href="/logout" class="nav-link">LOGOUT</a>
-                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤 ({{ current_user.name }})</a>
                     {% elif current_user.role == 'admin' %}
                         <a href="/" class="nav-link">HOME</a>
                         <a href="/members" class="nav-link">MEMBERS</a>
                         <a href="/workouts" class="nav-link">WORKOUTS</a>
                         <a href="/admin/dashboard" class="nav-link">ADMIN DASHBOARD</a>
                         <a href="/logout" class="nav-link">LOGOUT</a>
-                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤 ({{ current_user.name }})</a>
                     {% elif current_user.role == 'coach' %}
                         <a href="/" class="nav-link">HOME</a>
                         <a href="/members" class="nav-link">MEMBERS</a>
                         <a href="/workouts" class="nav-link">WORKOUTS</a>
                         <a href="/coach/dashboard" class="nav-link">COACH DASHBOARD</a>
                         <a href="/logout" class="nav-link">LOGOUT</a>
-                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤 ({{ current_user.name }})</a>
                     {% endif %}
                 {% else %}
                     <a href="/" class="nav-link">HOME</a>
