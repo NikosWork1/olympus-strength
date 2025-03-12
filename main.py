@@ -805,9 +805,6 @@ async def view_bookings(request: Request, db: Session = Depends(get_db)):
         "bookings": booking_details
     })
 
-# Route to view current user's bookings
-# This endpoint displays all bookings for the currently logged-in user
-# Authentication is required to access this endpoint
 @app.get("/my-bookings", response_class=HTMLResponse)
 async def my_bookings(request: Request, db: Session = Depends(get_db)):
     # Get the current authenticated user
@@ -817,24 +814,15 @@ async def my_bookings(request: Request, db: Session = Depends(get_db)):
     if not current_user:
         return RedirectResponse(url="/login", status_code=303)
     
-    # Retrieve only the current user's bookings from the database
-    bookings = db.query(models.Booking).filter(models.Booking.member_id == current_user.id).all()
+    # Use the enhanced get_member_bookings function that includes class details
+    bookings = crud.get_member_bookings(db, current_user.id)
     
-    # Prepare data with additional details for template rendering
-    booking_details = []
-    for booking in bookings:
-        # Get class details for this booking
-        gym_class = db.query(models.GymClass).filter(models.GymClass.id == booking.class_id).first()
-        
-        # Add enriched booking information to our list
-        booking_details.append({
-            "id": booking.id,
-            "class_name": gym_class.name if gym_class else "Unknown",
-            "class_instructor": gym_class.instructor if gym_class else "Unknown",
-            "booking_date": booking.booking_date,
-            "class_date": booking.class_date,
-            "status": booking.status
-        })
+    # Render the template with the enhanced bookings
+    return templates.TemplateResponse("my_bookings.html", {
+        "request": request,
+        "current_user": current_user,
+        "bookings": bookings
+    })
     
     # Render the template with the user's booking details
     return templates.TemplateResponse("my_bookings.html", {
