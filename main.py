@@ -1121,23 +1121,23 @@ async def get_coach_workouts(
 async def my_bookings(request: Request, db: Session = Depends(get_db)):
     # Get the current authenticated user
     current_user = await get_optional_user(request, db)
-    
+
     # Check if user is authenticated
     if not current_user:
         return RedirectResponse(url="/login", status_code=303)
-    
+
     # Retrieve bookings from the database with error handling
     try:
         # Get all bookings for this user
         bookings = db.query(models.Booking).filter(models.Booking.member_id == current_user.id).all()
-        
+
         # Safely get class details with error handling
         booking_details = []
         for booking in bookings:
-            # Get class details for this booking with error handling
             try:
+                # Get class details for this booking with error handling
                 gym_class = db.query(models.GymClass).filter(models.GymClass.id == booking.class_id).first()
-                
+
                 booking_details.append({
                     "id": booking.id,
                     "class_name": gym_class.name if gym_class else "Unknown",
@@ -1157,7 +1157,7 @@ async def my_bookings(request: Request, db: Session = Depends(get_db)):
                     "class_date": booking.class_date,
                     "status": "Error"
                 })
-        
+
         # Render the template with the user's booking details
         return templates.TemplateResponse("my_bookings.html", {
             "request": request,
@@ -1171,7 +1171,6 @@ async def my_bookings(request: Request, db: Session = Depends(get_db)):
             "error_message": "There was an error loading your bookings. Please try again later.",
             "current_user": current_user
         })
-
 
 # Run the app
 if __name__ == "__main__":
