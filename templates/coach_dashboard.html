@@ -423,6 +423,89 @@
             .coach-stats {
                 grid-template-columns: 1fr;
             }
+            
+            .schedule-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .schedule-time {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--gray-300);
+                padding-bottom: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .schedule-details {
+                padding: 0;
+            }
+            
+            .client-item {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .client-avatar {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* Notification system */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .notification {
+            margin-bottom: 10px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease forwards;
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            background-color: #4CAF50;
+        }
+
+        .notification.error {
+            background-color: #F44336;
+        }
+
+        .notification.info {
+            background-color: #2196F3;
+        }
+
+        .notification-close {
+            position: absolute;
+            top: 7px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
         }
     </style>
 </head>
@@ -504,46 +587,62 @@
                             <h2 class="coach-section-title">Today's Schedule</h2>
                             
                             <div class="schedule-list">
-                                <div class="schedule-item">
-                                    <div class="schedule-time">{{ booking.class_date.strftime('%H:%M') }} - {{ (booking.class_date + timedelta(hours=1)).strftime('%H:%M') }}</div>
-                                    <div class="schedule-details">
-                                        <div class="schedule-title">{{ gym_class.name }}</div>
-                                        <div class="schedule-meta">{{ member.name }} • {{ gym_class.level }}</div>
+                                {% if today_schedule and today_schedule|length > 0 %}
+                                    {% for booking_tuple in today_schedule %}
+                                        <div class="schedule-item">
+                                            <div class="schedule-time">
+                                                {{ booking_tuple[0].class_date.strftime('%H:%M') }} - 
+                                                {{ (booking_tuple[0].class_date + timedelta(hours=1)).strftime('%H:%M') }}
+                                            </div>
+                                            <div class="schedule-details">
+                                                <div class="schedule-title">{{ booking_tuple[1].name }}</div>
+                                                <div class="schedule-meta">{{ booking_tuple[2].name }} • {{ booking_tuple[1].level }}</div>
+                                            </div>
+                                            <div class="schedule-status 
+                                                {% if booking_tuple[0].status == 'completed' %}completed
+                                                {% elif booking_tuple[0].status == 'confirmed' and booking_tuple[0].class_date <= now %}active
+                                                {% else %}upcoming{% endif %}">
+                                                {{ booking_tuple[0].status|title if booking_tuple[0].status == 'completed' else 'In Progress' if booking_tuple[0].status == 'confirmed' and booking_tuple[0].class_date <= now else 'Upcoming' }}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="schedule-item">
+                                        <div class="schedule-time">08:00 - 09:00</div>
+                                        <div class="schedule-details">
+                                            <div class="schedule-title">Personal Training</div>
+                                            <div class="schedule-meta">Sarah Johnson • Strength Focus</div>
+                                        </div>
+                                        <div class="schedule-status completed">Completed</div>
                                     </div>
-                                    <div class="schedule-status  
-                                        {% if booking.status == 'completed' %}completed
-                                        {% elif booking.status == 'confirmed' and booking.class_date <= now %}active
-                                        {% else %}upcoming{% endif %}">
-                                        {{ booking.status|title if booking.status == 'completed' else 'In Progress' if booking.status == 'confirmed' and booking.class_date <= now else 'Upcoming' }}
+                                    
+                                    <div class="schedule-item">
+                                        <div class="schedule-time">10:00 - 11:00</div>
+                                        <div class="schedule-details">
+                                            <div class="schedule-title">Olympic Weightlifting</div>
+                                            <div class="schedule-meta">Group Class • 8 participants</div>
+                                        </div>
+                                        <div class="schedule-status active">In Progress</div>
                                     </div>
-                                </div>
-                                
-                                <div class="schedule-item">
-                                    <div class="schedule-time">10:00 - 11:00</div>
-                                    <div class="schedule-details">
-                                        <div class="schedule-title">Olympic Weightlifting</div>
-                                        <div class="schedule-meta">Group Class • 8 participants</div>
+                                    
+                                    <div class="schedule-item">
+                                        <div class="schedule-time">13:00 - 14:00</div>
+                                        <div class="schedule-details">
+                                            <div class="schedule-title">Personal Training</div>
+                                            <div class="schedule-meta">Mike Roberts • HIIT Session</div>
+                                        </div>
+                                        <div class="schedule-status upcoming">Upcoming</div>
                                     </div>
-                                    <div class="schedule-status active">In Progress</div>
-                                </div>
-                                
-                                <div class="schedule-item">
-                                    <div class="schedule-time">13:00 - 14:00</div>
-                                    <div class="schedule-details">
-                                        <div class="schedule-title">Personal Training</div>
-                                        <div class="schedule-meta">Mike Roberts • HIIT Session</div>
+                                    
+                                    <div class="schedule-item">
+                                        <div class="schedule-time">16:00 - 17:00</div>
+                                        <div class="schedule-details">
+                                            <div class="schedule-title">Strength Foundations</div>
+                                            <div class="schedule-meta">Group Class • 12 participants</div>
+                                        </div>
+                                        <div class="schedule-status upcoming">Upcoming</div>
                                     </div>
-                                    <div class="schedule-status upcoming">Upcoming</div>
-                                </div>
-                                
-                                <div class="schedule-item">
-                                    <div class="schedule-time">16:00 - 17:00</div>
-                                    <div class="schedule-details">
-                                        <div class="schedule-title">Strength Foundations</div>
-                                        <div class="schedule-meta">Group Class • 12 participants</div>
-                                    </div>
-                                    <div class="schedule-status upcoming">Upcoming</div>
-                                </div>
+                                {% endif %}
                             </div>
                         </div>
                         
@@ -604,22 +703,22 @@
                                 <thead>
                                     <tr>
                                         <th>Name</th>
-                                        <th>Difficulty</th>
-                                        <th>Category</th>
-                                        <th>Duration</th>
+                                        <th>Email</th>
+                                        <th>Membership</th>
+                                        <th>Join Date</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for workout in workouts %}
-                                        <tr data-id="{{ workout.id }}">
-                                            <td>{{ workout.name }}</td>
-                                            <td>{{ workout.difficulty }}</td>
-                                            <td>{{ workout.category }}</td>
-                                            <td>{{ workout.duration }} min</td>
+                                    {% for client in clients %}
+                                        <tr data-id="{{ client.id }}">
+                                            <td>{{ client.name }}</td>
+                                            <td>{{ client.email }}</td>
+                                            <td>{{ client.membership_type }}</td>
+                                            <td>{{ client.join_date.strftime('%Y-%m-%d') }}</td>
                                             <td>
-                                                <button class="action-btn edit-btn" data-id="{{ workout.id }}">Edit</button>
-                                                <button class="action-btn delete-btn" data-id="{{ workout.id }}">Delete</button>
+                                                <button class="action-btn view-client-btn" data-id="{{ client.id }}">View</button>
+                                                <button class="action-btn assign-workout-btn" data-id="{{ client.id }}">Assign Workout</button>
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -747,46 +846,60 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Olympic Weightlifting</td>
-                                        <td>Advanced</td>
-                                        <td>Strength</td>
-                                        <td>60 min</td>
-                                        <td>
-                                            <button class="action-btn edit-btn">Edit</button>
-                                            <button class="action-btn delete-btn">Delete</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Spartan HIIT</td>
-                                        <td>Intermediate</td>
-                                        <td>Cardio</td>
-                                        <td>45 min</td>
-                                        <td>
-                                            <button class="action-btn edit-btn">Edit</button>
-                                            <button class="action-btn delete-btn">Delete</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Strength Foundations</td>
-                                        <td>Beginner</td>
-                                        <td>Strength</td>
-                                        <td>50 min</td>
-                                        <td>
-                                            <button class="action-btn edit-btn">Edit</button>
-                                            <button class="action-btn delete-btn">Delete</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Core Crusher</td>
-                                        <td>Intermediate</td>
-                                        <td>Core</td>
-                                        <td>30 min</td>
-                                        <td>
-                                            <button class="action-btn edit-btn">Edit</button>
-                                            <button class="action-btn delete-btn">Delete</button>
-                                        </td>
-                                    </tr>
+                                    {% for workout in workouts %}
+                                        <tr data-id="{{ workout.id }}">
+                                            <td>{{ workout.name }}</td>
+                                            <td>{{ workout.difficulty }}</td>
+                                            <td>{{ workout.category }}</td>
+                                            <td>{{ workout.duration }} min</td>
+                                            <td>
+                                                <button class="action-btn edit-btn" data-id="{{ workout.id }}">Edit</button>
+                                                <button class="action-btn delete-btn" data-id="{{ workout.id }}">Delete</button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% if not workouts or workouts|length == 0 %}
+                                        <tr>
+                                            <td>Olympic Weightlifting</td>
+                                            <td>Advanced</td>
+                                            <td>Strength</td>
+                                            <td>60 min</td>
+                                            <td>
+                                                <button class="action-btn edit-btn" data-id="1">Edit</button>
+                                                <button class="action-btn delete-btn" data-id="1">Delete</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Spartan HIIT</td>
+                                            <td>Intermediate</td>
+                                            <td>Cardio</td>
+                                            <td>45 min</td>
+                                            <td>
+                                                <button class="action-btn edit-btn" data-id="2">Edit</button>
+                                                <button class="action-btn delete-btn" data-id="2">Delete</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Strength Foundations</td>
+                                            <td>Beginner</td>
+                                            <td>Strength</td>
+                                            <td>50 min</td>
+                                            <td>
+                                                <button class="action-btn edit-btn" data-id="3">Edit</button>
+                                                <button class="action-btn delete-btn" data-id="3">Delete</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Core Crusher</td>
+                                            <td>Intermediate</td>
+                                            <td>Core</td>
+                                            <td>30 min</td>
+                                            <td>
+                                                <button class="action-btn edit-btn" data-id="4">Edit</button>
+                                                <button class="action-btn delete-btn" data-id="4">Delete</button>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
                                 </tbody>
                             </table>
                         </div>
@@ -897,7 +1010,8 @@
                 });
                 
                 if (cancelWorkoutBtn) {
-                    cancelWorkoutBtn.addEventListener('click', function() {
+                    cancelWorkoutBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
                         addWorkoutForm.style.display = 'none';
                         addWorkoutBtn.style.display = 'block';
                     });
@@ -907,7 +1021,7 @@
             // Form submission handling
             const workoutForm = document.querySelector('#add-workout-form form');
             if (workoutForm) {
-                workoutForm.addEventListener('submit', function(e) {
+                workoutForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
                     
                     // Get form values
@@ -917,18 +1031,175 @@
                     const category = document.getElementById('workout-category').value;
                     const duration = document.getElementById('workout-duration').value;
                     
-                    // Here you would normally save this data to the server via API
-                    // For demonstration, we'll just show a success notification
-                    showNotification(`Workout "${name}" created successfully!`, 'success');
+                    // Validate form
+                    if (!name || !description || !difficulty || !category) {
+                        showNotification('Please fill in all required fields', 'error');
+                        return;
+                    }
                     
-                    // Reset form and hide it
-                    workoutForm.reset();
-                    addWorkoutForm.style.display = 'none';
-                    addWorkoutBtn.style.display = 'block';
+                    // Show loading state
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Saving...';
+                    submitBtn.disabled = true;
                     
-                    // You could also add the new workout to the table dynamically here
+                    try {
+                        // Send data to server
+                        const response = await fetch('/api/workouts/create', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                name: name,
+                                description: description,
+                                difficulty: difficulty,
+                                category: category,
+                                duration: parseInt(duration),
+                                calories: calculateCalories(parseInt(duration), difficulty)
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Failed to create workout');
+                        }
+                        
+                        const data = await response.json();
+                        
+                        // Add the new workout to the table
+                        const workoutTable = document.querySelector('#workouts-content .data-table tbody');
+                        const newRow = document.createElement('tr');
+                        newRow.setAttribute('data-id', data.id);
+                        
+                        newRow.innerHTML = `
+                            <td>${data.name}</td>
+                            <td>${data.difficulty}</td>
+                            <td>${data.category}</td>
+                            <td>${data.duration} min</td>
+                            <td>
+                                <button class="action-btn edit-btn" data-id="${data.id}">Edit</button>
+                                <button class="action-btn delete-btn" data-id="${data.id}">Delete</button>
+                            </td>
+                        `;
+                        
+                        workoutTable.appendChild(newRow);
+                        
+                        // Add event listeners to new buttons
+                        setupActionButtons(newRow);
+                        
+                        // Show success message
+                        showNotification(`Workout "${name}" created successfully!`, 'success');
+                        
+                        // Reset form and hide it
+                        workoutForm.reset();
+                        addWorkoutForm.style.display = 'none';
+                        addWorkoutBtn.style.display = 'block';
+                        
+                    } catch (error) {
+                        console.error('Error creating workout:', error);
+                        showNotification('Error creating workout. Please try again.', 'error');
+                    } finally {
+                        // Restore button state
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    }
                 });
             }
+            
+            // Helper function to estimate calories burned based on duration and difficulty
+            function calculateCalories(duration, difficulty) {
+                let caloriesPerMinute = 7; // Base value
+                
+                if (difficulty === 'Intermediate') {
+                    caloriesPerMinute = 10;
+                } else if (difficulty === 'Advanced') {
+                    caloriesPerMinute = 13;
+                }
+                
+                return Math.round(duration * caloriesPerMinute);
+            }
+            
+            // Delete workout functionality
+            function setupActionButtons(container = document) {
+                container.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', async function() {
+                        const row = this.closest('tr');
+                        const id = row.getAttribute('data-id') || this.getAttribute('data-id');
+                        const name = row.querySelector('td:first-child').textContent;
+                        
+                        if (confirm(`Are you sure you want to delete "${name}"?`)) {
+                            try {
+                                // Send delete request to server
+                                const response = await fetch(`/api/workouts/${id}`, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    }
+                                });
+                                
+                                if (!response.ok) {
+                                    throw new Error('Failed to delete workout');
+                                }
+                                
+                                // Animation to remove the row
+                                row.style.opacity = '0';
+                                row.style.height = '0';
+                                row.style.transition = 'opacity 0.3s, height 0.3s';
+                                
+                                setTimeout(() => {
+                                    row.remove();
+                                }, 300);
+                                
+                                showNotification(`"${name}" has been deleted.`, 'success');
+                                
+                            } catch (error) {
+                                console.error('Error deleting workout:', error);
+                                showNotification('Error deleting workout. Please try again.', 'error');
+                            }
+                        }
+                    });
+                });
+                
+                // Setup edit buttons
+                container.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const row = this.closest('tr');
+                        const id = row.getAttribute('data-id') || this.getAttribute('data-id');
+                        const name = row.querySelector('td:nth-child(1)').textContent;
+                        const difficulty = row.querySelector('td:nth-child(2)').textContent;
+                        const category = row.querySelector('td:nth-child(3)').textContent;
+                        const durationText = row.querySelector('td:nth-child(4)').textContent;
+                        const duration = parseInt(durationText.replace(' min', ''));
+                        
+                        // Show the form
+                        addWorkoutForm.style.display = 'block';
+                        addWorkoutBtn.style.display = 'none';
+                        
+                        // Populate form with workout data
+                        document.getElementById('workout-name').value = name;
+                        document.getElementById('workout-difficulty').value = difficulty;
+                        document.getElementById('workout-category').value = category;
+                        document.getElementById('workout-duration').value = duration;
+                        
+                        // TODO: Also load description from API if needed
+                        
+                        // Update form to be in edit mode
+                        const form = document.querySelector('#add-workout-form form');
+                        form.setAttribute('data-mode', 'edit');
+                        form.setAttribute('data-id', id);
+                        
+                        // Scroll to form
+                        addWorkoutForm.scrollIntoView({ behavior: 'smooth' });
+                        
+                        // Change submit button text
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        submitBtn.textContent = 'Update Workout';
+                    });
+                });
+            }
+            
+            // Initialize action buttons
+            setupActionButtons();
             
             // Notification function
             window.showNotification = function(message, type = 'success') {
@@ -964,36 +1235,6 @@
                 }, 5000);
             };
             
-            // Handle edit and delete actions
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    const name = row.querySelector('td:first-child').textContent;
-                    showNotification(`Editing ${name}`, 'info');
-                    // In a real app, you would populate the form with this item's data
-                });
-            });
-            
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    const name = row.querySelector('td:first-child').textContent;
-                    
-                    if (confirm(`Are you sure you want to delete "${name}"?`)) {
-                        // In a real app, you would call an API to delete the item
-                        row.style.opacity = '0';
-                        row.style.height = '0';
-                        row.style.transition = 'opacity 0.3s, height 0.3s';
-                        
-                        setTimeout(() => {
-                            row.remove();
-                        }, 300);
-                        
-                        showNotification(`"${name}" has been deleted.`, 'success');
-                    }
-                });
-            });
-            
             // Setup mobile toggle
             const mobileToggle = document.querySelector('.mobile-toggle');
             const nav = document.querySelector('.nav');
@@ -1003,138 +1244,25 @@
                     nav.classList.toggle('active');
                 });
             }
-        });
-
-    // Add workout AJAX functionality
-const workoutForm = document.querySelector('#add-workout-form form');
-if (workoutForm) {
-    workoutForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        // Get form values
-        const name = document.getElementById('workout-name').value;
-        const description = document.getElementById('workout-description').value;
-        const difficulty = document.getElementById('workout-difficulty').value;
-        const category = document.getElementById('workout-category').value;
-        const duration = document.getElementById('workout-duration').value;
-        
-        try {
-            // Send data to server
-            const response = await fetch('/api/workouts/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: name,
-                    description: description,
-                    difficulty: difficulty,
-                    category: category,
-                    duration: parseInt(duration)
-                })
+            
+            // Client-related functionality
+            const viewClientBtns = document.querySelectorAll('.view-client-btn');
+            const assignWorkoutBtns = document.querySelectorAll('.assign-workout-btn');
+            
+            viewClientBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const clientId = this.getAttribute('data-id');
+                    window.location.href = `/coach/client/${clientId}`;
+                });
             });
             
-            if (!response.ok) {
-                throw new Error('Failed to create workout');
-            }
-            
-            const data = await response.json();
-            
-            // Add the new workout to the table
-            const workoutTable = document.querySelector('#workouts-content .data-table tbody');
-            const newRow = document.createElement('tr');
-            newRow.setAttribute('data-id', data.id);
-            
-            newRow.innerHTML = `
-                <td>${data.name}</td>
-                <td>${data.difficulty}</td>
-                <td>${data.category}</td>
-                <td>${data.duration} min</td>
-                <td>
-                    <button class="action-btn edit-btn" data-id="${data.id}">Edit</button>
-                    <button class="action-btn delete-btn" data-id="${data.id}">Delete</button>
-                </td>
-            `;
-            
-            workoutTable.appendChild(newRow);
-            
-            // Add event listeners to new buttons
-            setupActionButtons(newRow);
-            
-            // Show success message
-            showNotification(`Workout "${name}" created successfully!`, 'success');
-            
-            // Reset form and hide it
-            workoutForm.reset();
-            document.getElementById('add-workout-form').style.display = 'none';
-            document.getElementById('add-workout-btn').style.display = 'block';
-            
-        } catch (error) {
-            console.error('Error creating workout:', error);
-            showNotification('Error creating workout. Please try again.', 'error');
-        }
-    });
-}
-
-// Delete workout functionality
-function setupActionButtons(container = document) {
-    container.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', async function() {
-            const row = this.closest('tr');
-            const id = row.getAttribute('data-id');
-            const name = row.querySelector('td:first-child').textContent;
-            
-            if (confirm(`Are you sure you want to delete "${name}"?`)) {
-                try {
-                    // Send delete request to server
-                    const response = await fetch(`/api/workouts/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('Failed to delete workout');
-                    }
-                    
-                    // Animation to remove the row
-                    row.style.opacity = '0';
-                    row.style.height = '0';
-                    row.style.transition = 'opacity 0.3s, height 0.3s';
-                    
-                    setTimeout(() => {
-                        row.remove();
-                    }, 300);
-                    
-                    showNotification(`"${name}" has been deleted.`, 'success');
-                    
-                } catch (error) {
-                    console.error('Error deleting workout:', error);
-                    showNotification('Error deleting workout. Please try again.', 'error');
-                }
-            }
+            assignWorkoutBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const clientId = this.getAttribute('data-id');
+                    showNotification('Workout assignment feature coming soon!', 'info');
+                });
+            });
         });
-    });
-    
-    // Setup edit buttons (similar implementation)
-    container.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const row = this.closest('tr');
-            const id = row.getAttribute('data-id');
-            const name = row.querySelector('td:first-child').textContent;
-            
-            // In a real app, you would load the workout data and populate the form
-            showNotification(`Loading "${name}" for editing...`, 'info');
-            
-            // Here you would make an API call to get the workout details
-            // Then populate the form fields
-        });
-    });
-}
-
-// Initialize action buttons
-setupActionButtons();
     </script>
 </body>
 </html>
