@@ -36,6 +36,343 @@
             object-fit: contain;
         }
 
+        /* Admin & Coach Dashboard Styles */
+        .coach-container {
+            padding: 3rem 0;
+            margin-top: 70px;
+        }
+
+        .coach-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+
+        /* Sidebar Navigation */
+        .coach-sidebar {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .coach-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .coach-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .coach-menu-item:hover,
+        .coach-menu-item.active {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .coach-menu-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Main Content Area */
+        .coach-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Stats Cards */
+        .coach-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Section Styling */
+        .coach-section {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+        }
+
+        .coach-section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        /* Tab content styling */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Schedule List */
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background-color: var(--gray-100);
+            transition: var(--transition);
+        }
+
+        .schedule-item:hover {
+            background-color: var(--gray-200);
+        }
+
+        .schedule-time {
+            width: 120px;
+            font-weight: 600;
+            padding-right: 1rem;
+            border-right: 2px solid var(--gray-300);
+        }
+
+        .schedule-details {
+            flex: 1;
+            padding: 0 1rem;
+        }
+
+        .schedule-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .schedule-meta {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .schedule-status {
+            padding: 0.3rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .schedule-status.completed {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .schedule-status.active {
+            background-color: #fdf2cc;
+            color: #f59f00;
+        }
+
+        .schedule-status.upcoming {
+            background-color: #e3f2fd;
+            color: #2196f3;
+        }
+
+        /* Client Progress */
+        .clients-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .client-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background-color: var(--gray-100);
+            transition: var(--transition);
+        }
+
+        .client-item:hover {
+            background-color: var(--gray-200);
+        }
+
+        .client-avatar {
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .client-details {
+            flex: 1;
+        }
+
+        .client-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .client-progress {
+            margin-top: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: var(--gray-300);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.25rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 4px;
+        }
+
+        .progress-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* Add workout form */
+        .workout-form {
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .form-control textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Data tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th, 
+        .data-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .data-table th {
+            background-color: var(--gray-100);
+            font-weight: 600;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: var(--gray-100);
+        }
+
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .edit-btn {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .edit-btn:hover {
+            background-color: #bbdefb;
+        }
+
+        .delete-btn {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .delete-btn:hover {
+            background-color: #ffcdd2;
+        }
+
         /* Footer styles */
         footer {
             background-color: var(--secondary);
@@ -68,6 +405,24 @@
         .social-icon {
             width: 16px;
             height: 16px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .coach-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .coach-sidebar {
+                height: auto;
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .coach-stats {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -103,147 +458,366 @@
             <div class="coach-grid">
                 <div class="coach-sidebar">
                     <div class="coach-menu">
-                        <a href="#" class="coach-menu-item active">
+                        <a href="#" class="coach-menu-item active" data-tab="overview">
                             <span class="coach-menu-icon">📊</span>
                             <span class="coach-menu-text">Overview</span>
                         </a>
-                        <a href="#" class="coach-menu-item">
+                        <a href="#" class="coach-menu-item" data-tab="clients">
                             <span class="coach-menu-icon">👥</span>
                             <span class="coach-menu-text">My Clients</span>
                         </a>
-                        <a href="#" class="coach-menu-item">
+                        <a href="#" class="coach-menu-item" data-tab="schedule">
                             <span class="coach-menu-icon">📅</span>
                             <span class="coach-menu-text">Schedule</span>
                         </a>
-                        <a href="#" class="coach-menu-item">
+                        <a href="#" class="coach-menu-item" data-tab="workouts">
                             <span class="coach-menu-icon">💪</span>
                             <span class="coach-menu-text">Workouts</span>
-                        </a>
-                        <a href="#" class="coach-menu-item">
-                            <span class="coach-menu-icon">📝</span>
-                            <span class="coach-menu-text">Assessments</span>
-                        </a>
-                        <a href="#" class="coach-menu-item">
-                            <span class="coach-menu-icon">⚙️</span>
-                            <span class="coach-menu-text">Settings</span>
                         </a>
                     </div>
                 </div>
                 
                 <div class="coach-content">
-                    <div class="coach-stats">
-                        <div class="stat-card">
-                            <div class="stat-icon">👥</div>
-                            <div class="stat-value">12</div>
-                            <div class="stat-label">Active Clients</div>
+                    <!-- Overview Tab (default visible) -->
+                    <div id="overview-content" class="tab-content active">
+                        <div class="coach-stats">
+                            <div class="stat-card">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-value">12</div>
+                                <div class="stat-label">Active Clients</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon">📅</div>
+                                <div class="stat-value">8</div>
+                                <div class="stat-label">Sessions Today</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon">💪</div>
+                                <div class="stat-value">24</div>
+                                <div class="stat-label">Custom Workouts</div>
+                            </div>
                         </div>
                         
-                        <div class="stat-card">
-                            <div class="stat-icon">📅</div>
-                            <div class="stat-value">8</div>
-                            <div class="stat-label">Sessions Today</div>
+                        <div class="coach-section">
+                            <h2 class="coach-section-title">Today's Schedule</h2>
+                            
+                            <div class="schedule-list">
+                                <div class="schedule-item">
+                                    <div class="schedule-time">08:00 - 09:00</div>
+                                    <div class="schedule-details">
+                                        <div class="schedule-title">Personal Training</div>
+                                        <div class="schedule-meta">Sarah Johnson • Strength Focus</div>
+                                    </div>
+                                    <div class="schedule-status completed">Completed</div>
+                                </div>
+                                
+                                <div class="schedule-item">
+                                    <div class="schedule-time">10:00 - 11:00</div>
+                                    <div class="schedule-details">
+                                        <div class="schedule-title">Olympic Weightlifting</div>
+                                        <div class="schedule-meta">Group Class • 8 participants</div>
+                                    </div>
+                                    <div class="schedule-status active">In Progress</div>
+                                </div>
+                                
+                                <div class="schedule-item">
+                                    <div class="schedule-time">13:00 - 14:00</div>
+                                    <div class="schedule-details">
+                                        <div class="schedule-title">Personal Training</div>
+                                        <div class="schedule-meta">Mike Roberts • HIIT Session</div>
+                                    </div>
+                                    <div class="schedule-status upcoming">Upcoming</div>
+                                </div>
+                                
+                                <div class="schedule-item">
+                                    <div class="schedule-time">16:00 - 17:00</div>
+                                    <div class="schedule-details">
+                                        <div class="schedule-title">Strength Foundations</div>
+                                        <div class="schedule-meta">Group Class • 12 participants</div>
+                                    </div>
+                                    <div class="schedule-status upcoming">Upcoming</div>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="stat-card">
-                            <div class="stat-icon">💪</div>
-                            <div class="stat-value">24</div>
-                            <div class="stat-label">Custom Workouts</div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon">⭐</div>
-                            <div class="stat-value">4.9</div>
-                            <div class="stat-label">Rating</div>
+                        <div class="coach-section">
+                            <h2 class="coach-section-title">Client Progress</h2>
+                            
+                            <div class="clients-list">
+                                <div class="client-item">
+                                    <div class="client-avatar">👤</div>
+                                    <div class="client-details">
+                                        <div class="client-name">Sarah Johnson</div>
+                                        <div class="client-progress">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 75%;"></div>
+                                            </div>
+                                            <div class="progress-label">75% Goal Completion</div>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="btn btn-sm">Update</a>
+                                </div>
+                                
+                                <div class="client-item">
+                                    <div class="client-avatar">👤</div>
+                                    <div class="client-details">
+                                        <div class="client-name">Mike Roberts</div>
+                                        <div class="client-progress">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 60%;"></div>
+                                            </div>
+                                            <div class="progress-label">60% Goal Completion</div>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="btn btn-sm">Update</a>
+                                </div>
+                                
+                                <div class="client-item">
+                                    <div class="client-avatar">👤</div>
+                                    <div class="client-details">
+                                        <div class="client-name">Emma Davis</div>
+                                        <div class="client-progress">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 90%;"></div>
+                                            </div>
+                                            <div class="progress-label">90% Goal Completion</div>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="btn btn-sm">Update</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="coach-section">
-                        <h2 class="coach-section-title">Today's Schedule</h2>
-                        
-                        <div class="schedule-list">
-                            <div class="schedule-item">
-                                <div class="schedule-time">08:00 - 09:00</div>
-                                <div class="schedule-details">
-                                    <div class="schedule-title">Personal Training</div>
-                                    <div class="schedule-meta">Sarah Johnson • Strength Focus</div>
-                                </div>
-                                <div class="schedule-status completed">Completed</div>
-                            </div>
+                    <!-- Clients Tab -->
+                    <div id="clients-content" class="tab-content">
+                        <div class="coach-section">
+                            <h2 class="coach-section-title">My Clients</h2>
                             
-                            <div class="schedule-item">
-                                <div class="schedule-time">10:00 - 11:00</div>
-                                <div class="schedule-details">
-                                    <div class="schedule-title">Olympic Weightlifting</div>
-                                    <div class="schedule-meta">Group Class • 8 participants</div>
-                                </div>
-                                <div class="schedule-status active">In Progress</div>
-                            </div>
-                            
-                            <div class="schedule-item">
-                                <div class="schedule-time">13:00 - 14:00</div>
-                                <div class="schedule-details">
-                                    <div class="schedule-title">Personal Training</div>
-                                    <div class="schedule-meta">Mike Roberts • HIIT Session</div>
-                                </div>
-                                <div class="schedule-status upcoming">Upcoming</div>
-                            </div>
-                            
-                            <div class="schedule-item">
-                                <div class="schedule-time">16:00 - 17:00</div>
-                                <div class="schedule-details">
-                                    <div class="schedule-title">Strength Foundations</div>
-                                    <div class="schedule-meta">Group Class • 12 participants</div>
-                                </div>
-                                <div class="schedule-status upcoming">Upcoming</div>
-                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Membership</th>
+                                        <th>Join Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Sarah Johnson</td>
+                                        <td>sarah.j@example.com</td>
+                                        <td>Gold</td>
+                                        <td>2024-12-15</td>
+                                        <td>Active</td>
+                                        <td>
+                                            <button class="action-btn edit-btn">Edit</button>
+                                            <button class="action-btn view-btn">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mike Roberts</td>
+                                        <td>mike.r@example.com</td>
+                                        <td>Silver</td>
+                                        <td>2025-01-05</td>
+                                        <td>Active</td>
+                                        <td>
+                                            <button class="action-btn edit-btn">Edit</button>
+                                            <button class="action-btn view-btn">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Emma Davis</td>
+                                        <td>emma.d@example.com</td>
+                                        <td>Gold</td>
+                                        <td>2025-02-10</td>
+                                        <td>Active</td>
+                                        <td>
+                                            <button class="action-btn edit-btn">Edit</button>
+                                            <button class="action-btn view-btn">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>John Smith</td>
+                                        <td>john.s@example.com</td>
+                                        <td>Bronze</td>
+                                        <td>2025-01-15</td>
+                                        <td>Active</td>
+                                        <td>
+                                            <button class="action-btn edit-btn">Edit</button>
+                                            <button class="action-btn view-btn">View</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     
-                    <div class="coach-section">
-                        <h2 class="coach-section-title">Client Progress</h2>
-                        
-                        <div class="clients-list">
-                            <div class="client-item">
-                                <div class="client-avatar">👤</div>
-                                <div class="client-details">
-                                    <div class="client-name">Sarah Johnson</div>
-                                    <div class="client-progress">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width: 75%;"></div>
-                                        </div>
-                                        <div class="progress-label">75% Goal Completion</div>
+                    <!-- Schedule Tab -->
+                    <div id="schedule-content" class="tab-content">
+                        <div class="coach-section">
+                            <h2 class="coach-section-title">Weekly Schedule</h2>
+                            
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Time</th>
+                                        <th>Class/Client</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Monday</td>
+                                        <td>08:00 - 09:00</td>
+                                        <td>Sarah Johnson</td>
+                                        <td>Personal Training</td>
+                                        <td>Confirmed</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Monday</td>
+                                        <td>10:00 - 11:00</td>
+                                        <td>Olympic Weightlifting</td>
+                                        <td>Group Class</td>
+                                        <td>Confirmed</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Monday</td>
+                                        <td>16:00 - 17:00</td>
+                                        <td>Strength Foundations</td>
+                                        <td>Group Class</td>
+                                        <td>Confirmed</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tuesday</td>
+                                        <td>09:00 - 10:00</td>
+                                        <td>Mike Roberts</td>
+                                        <td>Personal Training</td>
+                                        <td>Confirmed</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tuesday</td>
+                                        <td>14:00 - 15:00</td>
+                                        <td>Emma Davis</td>
+                                        <td>Personal Training</td>
+                                        <td>Confirmed</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Workouts Tab -->
+                    <div id="workouts-content" class="tab-content">
+                        <div class="coach-section">
+                            <h2 class="coach-section-title">My Workouts</h2>
+                            
+                            <button id="add-workout-btn" class="btn" style="margin-bottom: 1rem;">Add New Workout</button>
+                            
+                            <div id="add-workout-form" class="workout-form" style="display: none;">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="workout-name">Workout Name</label>
+                                        <input type="text" id="workout-name" class="form-control" required>
                                     </div>
-                                </div>
-                                <a href="#" class="btn btn-sm">Update</a>
+                                    
+                                    <div class="form-group">
+                                        <label for="workout-description">Description</label>
+                                        <textarea id="workout-description" class="form-control" required></textarea>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="workout-difficulty">Difficulty</label>
+                                        <select id="workout-difficulty" class="form-control" required>
+                                            <option value="">Select Difficulty</option>
+                                            <option value="Beginner">Beginner</option>
+                                            <option value="Intermediate">Intermediate</option>
+                                            <option value="Advanced">Advanced</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="workout-category">Category</label>
+                                        <select id="workout-category" class="form-control" required>
+                                            <option value="">Select Category</option>
+                                            <option value="Strength">Strength</option>
+                                            <option value="Cardio">Cardio</option>
+                                            <option value="Flexibility">Flexibility</option>
+                                            <option value="Full Body">Full Body</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="workout-duration">Duration (minutes)</label>
+                                        <input type="number" id="workout-duration" class="form-control" value="45" min="5" max="120">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <button type="submit" class="btn">Save Workout</button>
+                                        <button type="button" id="cancel-workout" class="btn btn-outline">Cancel</button>
+                                    </div>
+                                </form>
                             </div>
                             
-                            <div class="client-item">
-                                <div class="client-avatar">👤</div>
-                                <div class="client-details">
-                                    <div class="client-name">Mike Roberts</div>
-                                    <div class="client-progress">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width: 60%;"></div>
-                                        </div>
-                                        <div class="progress-label">60% Goal Completion</div>
-                                    </div>
-                                </div>
-                                <a href="#" class="btn btn-sm">Update</a>
-                            </div>
-                            
-                            <div class="client-item">
-                                <div class="client-avatar">👤</div>
-                                <div class="client-details">
-                                    <div class="client-name">Emma Davis</div>
-                                    <div class="client-progress">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width: 90%;"></div>
-                                        </div>
-                                        <div class="progress-label">90% Goal Completion</div>
-                                    </div>
-                                </div>
-                                <a href="#" class="btn btn-sm">Update</a>
-                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Difficulty</th>
+                                        <th>Category</th>
+                                        <th>Duration</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Olympic Weightlifting</td>
+                                        <td>Advanced</td>
+                                        <td>Strength</td>
+                                        <td>60 min</td>
+                                        <td>
+                                            <button class="action-btn edit-btn">Edit</button>
+                                            <button class="action-btn delete-btn">Delete</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Spartan HIIT</td>
+                                        <td>Intermediate</td>
+                                        <td>Cardio</td>
+                                        <td>45 min</td>
+                                        <td>
+                                            <button class="action-btn edit-btn">Edit</button>
+                                            <button class="action-btn delete-btn">Delete</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Strength Foundations</td>
+                                        <td>Beginner</td>
+                                        <td>Strength</td>
+                                        <td>50 min</td>
+                                        <td>
+                                            <button class="action-btn edit-btn">Edit</button>
+                                            <button class="action-btn delete-btn">Delete</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Core Crusher</td>
+                                        <td>Intermediate</td>
+                                        <td>Core</td>
+                                        <td>30 min</td>
+                                        <td>
+                                            <button class="action-btn edit-btn">Edit</button>
+                                            <button class="action-btn delete-btn">Delete</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -278,6 +852,7 @@
                         <li><a href="/">Home</a></li>
                         <li><a href="/members">Members</a></li>
                         <li><a href="/workouts">Workouts</a></li>
+                        <li><a href="/login">Login</a></li>
                     </ul>
                 </div>
                 
@@ -294,9 +869,9 @@
                 <div class="footer-links">
                     <h4>Contact Us</h4>
                     <ul>
-                        <li>📞 (555) 123-4567</li>
-                        <li>📧 info@olympusstrength.com</li>
-                        <li>📍 123 Fitness Ave, Olympia</li>
+                        <li>📞 +30 210 810 3410</li>
+                        <li>📧 info@olympusstrength.gr</li>
+                        <li>📍 Patision 223, Athens 112 53, Greece</li>
                     </ul>
                 </div>
             </div>
@@ -307,6 +882,157 @@
         </div>
     </footer>
 
+    <div class="notification-container"></div>
+
     <script src="/static/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab navigation functionality
+            const tabLinks = document.querySelectorAll('.coach-menu-item');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all tabs
+                    tabLinks.forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all tab contents
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Show corresponding tab content
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-content`).classList.add('active');
+                });
+            });
+            
+            // Add workout form toggle
+            const addWorkoutBtn = document.getElementById('add-workout-btn');
+            const addWorkoutForm = document.getElementById('add-workout-form');
+            const cancelWorkoutBtn = document.getElementById('cancel-workout');
+            
+            if (addWorkoutBtn && addWorkoutForm) {
+                addWorkoutBtn.addEventListener('click', function() {
+                    addWorkoutForm.style.display = 'block';
+                    addWorkoutBtn.style.display = 'none';
+                });
+                
+                if (cancelWorkoutBtn) {
+                    cancelWorkoutBtn.addEventListener('click', function() {
+                        addWorkoutForm.style.display = 'none';
+                        addWorkoutBtn.style.display = 'block';
+                    });
+                }
+            }
+            
+            // Form submission handling
+            const workoutForm = document.querySelector('#add-workout-form form');
+            if (workoutForm) {
+                workoutForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Get form values
+                    const name = document.getElementById('workout-name').value;
+                    const description = document.getElementById('workout-description').value;
+                    const difficulty = document.getElementById('workout-difficulty').value;
+                    const category = document.getElementById('workout-category').value;
+                    const duration = document.getElementById('workout-duration').value;
+                    
+                    // Here you would normally save this data to the server via API
+                    // For demonstration, we'll just show a success notification
+                    showNotification(`Workout "${name}" created successfully!`, 'success');
+                    
+                    // Reset form and hide it
+                    workoutForm.reset();
+                    addWorkoutForm.style.display = 'none';
+                    addWorkoutBtn.style.display = 'block';
+                    
+                    // You could also add the new workout to the table dynamically here
+                });
+            }
+            
+            // Notification function
+            window.showNotification = function(message, type = 'success') {
+                // Check if notification container exists, if not create it
+                let notificationContainer = document.querySelector('.notification-container');
+                
+                if (!notificationContainer) {
+                    notificationContainer = document.createElement('div');
+                    notificationContainer.className = 'notification-container';
+                    document.body.appendChild(notificationContainer);
+                }
+                
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                
+                // Add close button
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'notification-close';
+                closeBtn.innerHTML = '&times;';
+                closeBtn.onclick = () => notification.remove();
+                notification.appendChild(closeBtn);
+                
+                // Add to container
+                notificationContainer.appendChild(notification);
+                
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 5000);
+            };
+            
+            // Handle edit and delete actions
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const name = row.querySelector('td:first-child').textContent;
+                    showNotification(`Editing ${name}`, 'info');
+                    // In a real app, you would populate the form with this item's data
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const name = row.querySelector('td:first-child').textContent;
+                    
+                    if (confirm(`Are you sure you want to delete "${name}"?`)) {
+                        // In a real app, you would call an API to delete the item
+                        row.style.opacity = '0';
+                        row.style.height = '0';
+                        row.style.transition = 'opacity 0.3s, height 0.3s';
+                        
+                        setTimeout(() => {
+                            row.remove();
+                        }, 300);
+                        
+                        showNotification(`"${name}" has been deleted.`, 'success');
+                    }
+                });
+            });
+            
+            // Setup mobile toggle
+            const mobileToggle = document.querySelector('.mobile-toggle');
+            const nav = document.querySelector('.nav');
+            
+            if (mobileToggle && nav) {
+                mobileToggle.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                });
+            }
+        });
+    </script>
 </body>
 </html>
