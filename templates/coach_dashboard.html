@@ -483,19 +483,19 @@
                         <div class="coach-stats">
                             <div class="stat-card">
                                 <div class="stat-icon">👥</div>
-                                <div class="stat-value">12</div>
+                                <div class="stat-value">{{client_count}}</div>
                                 <div class="stat-label">Active Clients</div>
                             </div>
                             
                             <div class="stat-card">
                                 <div class="stat-icon">📅</div>
-                                <div class="stat-value">8</div>
+                                <div class="stat-value">{{ session_count }}</div>
                                 <div class="stat-label">Sessions Today</div>
                             </div>
                             
                             <div class="stat-card">
                                 <div class="stat-icon">💪</div>
-                                <div class="stat-value">24</div>
+                                <div class="stat-value">{{ workout_count }}</div>
                                 <div class="stat-label">Custom Workouts</div>
                             </div>
                         </div>
@@ -505,12 +505,17 @@
                             
                             <div class="schedule-list">
                                 <div class="schedule-item">
-                                    <div class="schedule-time">08:00 - 09:00</div>
+                                    <div class="schedule-time">{{ booking.class_date.strftime('%H:%M') }} - {{ (booking.class_date + timedelta(hours=1)).strftime('%H:%M') }}</div>
                                     <div class="schedule-details">
-                                        <div class="schedule-title">Personal Training</div>
-                                        <div class="schedule-meta">Sarah Johnson • Strength Focus</div>
+                                        <div class="schedule-title">{{ gym_class.name }}</div>
+                                        <div class="schedule-meta">{{ member.name }} • {{ gym_class.level }}</div>
                                     </div>
-                                    <div class="schedule-status completed">Completed</div>
+                                    <div class="schedule-status  
+                                        {% if booking.status == 'completed' %}completed
+                                        {% elif booking.status == 'confirmed' and booking.class_date <= now %}active
+                                        {% else %}upcoming{% endif %}">
+                                        {{ booking.status|title if booking.status == 'completed' else 'In Progress' if booking.status == 'confirmed' and booking.class_date <= now else 'Upcoming' }}
+                                    </div>
                                 </div>
                                 
                                 <div class="schedule-item">
@@ -595,63 +600,29 @@
                     <div id="clients-content" class="tab-content">
                         <div class="coach-section">
                             <h2 class="coach-section-title">My Clients</h2>
-                            
                             <table class="data-table">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Membership</th>
-                                        <th>Join Date</th>
-                                        <th>Status</th>
+                                        <th>Difficulty</th>
+                                        <th>Category</th>
+                                        <th>Duration</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Sarah Johnson</td>
-                                        <td>sarah.j@example.com</td>
-                                        <td>Gold</td>
-                                        <td>2024-12-15</td>
-                                        <td>Active</td>
-                                        <td>
-                                            <button class="action-btn edit-btn">Edit</button>
-                                            <button class="action-btn view-btn">View</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Mike Roberts</td>
-                                        <td>mike.r@example.com</td>
-                                        <td>Silver</td>
-                                        <td>2025-01-05</td>
-                                        <td>Active</td>
-                                        <td>
-                                            <button class="action-btn edit-btn">Edit</button>
-                                            <button class="action-btn view-btn">View</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Emma Davis</td>
-                                        <td>emma.d@example.com</td>
-                                        <td>Gold</td>
-                                        <td>2025-02-10</td>
-                                        <td>Active</td>
-                                        <td>
-                                            <button class="action-btn edit-btn">Edit</button>
-                                            <button class="action-btn view-btn">View</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>John Smith</td>
-                                        <td>john.s@example.com</td>
-                                        <td>Bronze</td>
-                                        <td>2025-01-15</td>
-                                        <td>Active</td>
-                                        <td>
-                                            <button class="action-btn edit-btn">Edit</button>
-                                            <button class="action-btn view-btn">View</button>
-                                        </td>
-                                    </tr>
+                                    {% for workout in workouts %}
+                                        <tr data-id="{{ workout.id }}">
+                                            <td>{{ workout.name }}</td>
+                                            <td>{{ workout.difficulty }}</td>
+                                            <td>{{ workout.category }}</td>
+                                            <td>{{ workout.duration }} min</td>
+                                            <td>
+                                                <button class="action-btn edit-btn" data-id="{{ workout.id }}">Edit</button>
+                                                <button class="action-btn delete-btn" data-id="{{ workout.id }}">Delete</button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -1033,6 +1004,137 @@
                 });
             }
         });
+
+    // Add workout AJAX functionality
+const workoutForm = document.querySelector('#add-workout-form form');
+if (workoutForm) {
+    workoutForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Get form values
+        const name = document.getElementById('workout-name').value;
+        const description = document.getElementById('workout-description').value;
+        const difficulty = document.getElementById('workout-difficulty').value;
+        const category = document.getElementById('workout-category').value;
+        const duration = document.getElementById('workout-duration').value;
+        
+        try {
+            // Send data to server
+            const response = await fetch('/api/workouts/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    description: description,
+                    difficulty: difficulty,
+                    category: category,
+                    duration: parseInt(duration)
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to create workout');
+            }
+            
+            const data = await response.json();
+            
+            // Add the new workout to the table
+            const workoutTable = document.querySelector('#workouts-content .data-table tbody');
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-id', data.id);
+            
+            newRow.innerHTML = `
+                <td>${data.name}</td>
+                <td>${data.difficulty}</td>
+                <td>${data.category}</td>
+                <td>${data.duration} min</td>
+                <td>
+                    <button class="action-btn edit-btn" data-id="${data.id}">Edit</button>
+                    <button class="action-btn delete-btn" data-id="${data.id}">Delete</button>
+                </td>
+            `;
+            
+            workoutTable.appendChild(newRow);
+            
+            // Add event listeners to new buttons
+            setupActionButtons(newRow);
+            
+            // Show success message
+            showNotification(`Workout "${name}" created successfully!`, 'success');
+            
+            // Reset form and hide it
+            workoutForm.reset();
+            document.getElementById('add-workout-form').style.display = 'none';
+            document.getElementById('add-workout-btn').style.display = 'block';
+            
+        } catch (error) {
+            console.error('Error creating workout:', error);
+            showNotification('Error creating workout. Please try again.', 'error');
+        }
+    });
+}
+
+// Delete workout functionality
+function setupActionButtons(container = document) {
+    container.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const row = this.closest('tr');
+            const id = row.getAttribute('data-id');
+            const name = row.querySelector('td:first-child').textContent;
+            
+            if (confirm(`Are you sure you want to delete "${name}"?`)) {
+                try {
+                    // Send delete request to server
+                    const response = await fetch(`/api/workouts/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to delete workout');
+                    }
+                    
+                    // Animation to remove the row
+                    row.style.opacity = '0';
+                    row.style.height = '0';
+                    row.style.transition = 'opacity 0.3s, height 0.3s';
+                    
+                    setTimeout(() => {
+                        row.remove();
+                    }, 300);
+                    
+                    showNotification(`"${name}" has been deleted.`, 'success');
+                    
+                } catch (error) {
+                    console.error('Error deleting workout:', error);
+                    showNotification('Error deleting workout. Please try again.', 'error');
+                }
+            }
+        });
+    });
+    
+    // Setup edit buttons (similar implementation)
+    container.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const row = this.closest('tr');
+            const id = row.getAttribute('data-id');
+            const name = row.querySelector('td:first-child').textContent;
+            
+            // In a real app, you would load the workout data and populate the form
+            showNotification(`Loading "${name}" for editing...`, 'info');
+            
+            // Here you would make an API call to get the workout details
+            // Then populate the form fields
+        });
+    });
+}
+
+// Initialize action buttons
+setupActionButtons();
     </script>
 </body>
 </html>
