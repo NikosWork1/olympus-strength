@@ -1212,8 +1212,6 @@ async def my_bookings(request: Request, db: Session = Depends(get_db)):
             "request": request,
             "current_user": current_user,
             "bookings": booking_details
-            "timedelta": timedelta,  
-            "now": datetime.now()    
         })
     except Exception as e:
         logger.error(f"Error in my_bookings route: {e}")
