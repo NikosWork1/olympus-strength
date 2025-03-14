@@ -280,67 +280,116 @@ async def coach_dashboard(request: Request, db: Session = Depends(get_db)):
         
         if current_user.role != "coach":
             return HTMLResponse(content=f"""
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Denied</title>
-    <style>
-        body {{
-            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }}
-        .error {{
-            color: #F44336;
-        }}
-    </style>
-</head>
-<body>
-    <h1 class="error">Access Denied</h1>
-    <p>You do not have permission to access this page. This area is restricted to coaches only.</p>
-    <p><a href="/">Return to Home</a></p>
-</body>
-</html>
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Access Denied</title>
+                <style>
+                    body {{
+                        font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+                        line-height: 1.6;
+                        color: #333;
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: 20px;
+                    }}
+                    .error {{
+                        color: #F44336;
+                    }}
+                </style>
+            </head>
+            <body>
+                <h1 class="error">Access Denied</h1>
+                <p>You do not have permission to access this page. This area is restricted to coaches only.</p>
+                <p><a href="/">Return to Home</a></p>
+            </body>
+            </html>
             """, status_code=403)
+        
+        # Get real data for the dashboard
+        # 1. Get coach's clients
+        clients = db.query(models.Member).filter(
+            models.Member.role == "customer"
+        ).limit(10).all()
+        
+        # 2. Get total client count
+        client_count = db.query(models.Member).filter(
+            models.Member.role == "customer"
+        ).count()
+        
+        # 3. Get workout count for this coach
+        workout_count = db.query(models.CoachWorkout).filter(
+            models.CoachWorkout.coach_id == current_user.id
+        ).count()
+        
+        # 4. Get today's session count (bookings)
+        today = datetime.now().date()
+        today_start = datetime.combine(today, datetime.min.time())
+        today_end = datetime.combine(today, datetime.max.time())
+        
+        session_count = db.query(models.Booking).filter(
+            models.Booking.class_date >= today_start,
+            models.Booking.class_date <= today_end
+        ).count()
+        
+        # 5. Get today's schedule (bookings)
+        today_schedule = db.query(models.Booking, models.GymClass, models.Member).join(
+            models.GymClass, models.Booking.class_id == models.GymClass.id
+        ).join(
+            models.Member, models.Booking.member_id == models.Member.id
+        ).filter(
+            models.Booking.class_date >= today_start,
+            models.Booking.class_date <= today_end
+        ).all()
+        
+        # 6. Get coach's workouts
+        workouts = db.query(models.Workout).join(
+            models.CoachWorkout, models.Workout.id == models.CoachWorkout.workout_id
+        ).filter(
+            models.CoachWorkout.coach_id == current_user.id
+        ).all()
         
         return templates.TemplateResponse("coach_dashboard.html", {
             "request": request,
-            "current_user": current_user
+            "current_user": current_user,
+            "clients": clients,
+            "client_count": client_count,
+            "workout_count": workout_count,
+            "session_count": session_count,
+            "today_schedule": today_schedule,
+            "workouts": workouts
         })
     except Exception as e:
         logger.error(f"Error rendering coach dashboard: {e}")
         return HTMLResponse(content=f"""
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error</title>
-    <style>
-        body {{
-            font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }}
-        .error {{
-            color: #F44336;
-        }}
-    </style>
-</head>
-<body>
-    <h1 class="error">Internal Server Error</h1>
-    <p>We're sorry, something went wrong on our end. Please try again later.</p>
-    <p>Error details: {str(e)}</p>
-</body>
-</html>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Error</title>
+            <style>
+                body {{
+                    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }}
+                .error {{
+                    color: #F44336;
+                }}
+            </style>
+        </head>
+        <body>
+            <h1 class="error">Internal Server Error</h1>
+            <p>We're sorry, something went wrong on our end. Please try again later.</p>
+            <p>Error details: {str(e)}</p>
+        </body>
+        </html>
         """)
 
 
