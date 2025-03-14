@@ -1221,6 +1221,64 @@ async def my_bookings(request: Request, db: Session = Depends(get_db)):
             "current_user": current_user
         })
 
+@app.post("/api/workouts/create", response_model=schemas.Workout)
+async def create_workout_api(
+    request: Request, 
+    workout_data: schemas.WorkoutCreate,
+    db: Session = Depends(get_db)
+):
+    try:
+        # Get current user
+        current_user = await get_optional_user(request, db)
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        # Create workout object
+        db_workout = crud.create_workout(db=db, workout=workout_data)
+        
+        # If user is a coach, assign workout to them
+        if current_user.role == "coach":
+            crud.assign_workout_to_coach(db, db_workout.id, current_user.id)
+        
+        return db_workout
+    except Exception as e:
+        logger.error(f"Error creating workout: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Error creating workout: {str(e)}")
+
+@app.delete("/api/workouts/{workout_id}")
+async def delete_workout_api(
+    workout_id: int,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    try:
+        # Get current user
+        current_user = await get_optional_user(request, db)
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        # Check if workout exists and belongs to this coach
+        if current_user.role == "coach":
+            coach_workout = db.query(models.CoachWorkout).filter(
+                models.CoachWorkout.workout_id == workout_id,
+                models.CoachWorkout.coach_id == current_user.id
+            ).first()
+            
+            if not coach_workout:
+                raise HTTPException(status_code=404, detail="Workout not found or you don't have permission")
+        
+        # Delete the workout
+        success = crud.delete_workout(db, workout_id=workout_id)
+        if not success:
+            raise HTTPException(status_code=404, detail="Workout not found or could not be deleted")
+        
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting workout: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error deleting workout: {str(e)}")
+
 # Run the app
 if __name__ == "__main__":
     import uvicorn
