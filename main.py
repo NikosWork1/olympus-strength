@@ -231,6 +231,7 @@ async def admin_dashboard(request: Request, db: Session = Depends(get_db)):
         workouts = crud.get_workouts(db)
         classes = crud.get_classes(db)
         financial_summary = crud.get_financial_summary(db)
+        recent_transactions = crud.get_recent_transactions(db, limit=10)
         
         return templates.TemplateResponse("admin_dashboard.html", {
             "request": request,
@@ -238,7 +239,8 @@ async def admin_dashboard(request: Request, db: Session = Depends(get_db)):
             "members": members,
             "workouts": workouts,
             "classes": classes,
-            "financial_summary": financial_summary
+            "financial_summary": financial_summary,
+            "recent_transactions": recent_transactions
         })
     except Exception as e:
         logger.error(f"Error rendering admin dashboard: {e}")
