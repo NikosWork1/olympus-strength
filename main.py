@@ -365,6 +365,8 @@ async def coach_dashboard(request: Request, db: Session = Depends(get_db)):
             "session_count": session_count,
             "today_schedule": today_schedule,
             "workouts": workouts
+            "calculate_end_time": calculate_end_time,  
+            "now": datetime.now() 
             })
     except Exception as e:
         logger.error(f"Error rendering coach dashboard: {e}")
