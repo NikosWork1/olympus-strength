@@ -1,4 +1,3 @@
-import datetime
 from datetime import datetime
 from sqlalchemy.orm import Session
 import models, schemas
@@ -432,11 +431,11 @@ def create_transaction(db: Session, transaction: schemas.TransactionCreate):
     return db_transaction
 
 def get_monthly_revenue(db: Session, year: int =datetime.now().year, month: int = datetime.now().month):
-    start_date = datetime.datetime(year, month, 1)
+    start_date = datetime(year, month, 1)
     if month == 12:
-        end_date = datetime.datetime(year + 1, 1, 1)
+        end_date = datetime(year + 1, 1, 1)
     else:
-        end_date = datetime.datetime(year, month + 1, 1)
+        end_date = datetime(year, month + 1, 1)
     
     result = db.query(func.sum(models.Transaction.amount)).filter(
         models.Transaction.date >= start_date,
@@ -448,11 +447,11 @@ def get_monthly_revenue(db: Session, year: int =datetime.now().year, month: int 
 
 def get_financial_summary(db: Session, year: int = datetime.now().year, month: int = datetime.now().month):
     # Get start and end dates for the month
-    start_date = datetime.datetime(year, month, 1)
+    start_date = datetime(year, month, 1)
     if month == 12:
-        end_date = datetime.datetime(year + 1, 1, 1)
+        end_date = datetime(year + 1, 1, 1)
     else:
-        end_date = datetime.datetime(year, month + 1, 1)
+        end_date = datetime(year, month + 1, 1)
     
     # Get all active members and their membership types
     active_members = db.query(models.Member).filter(models.Member.is_active == True).all()
