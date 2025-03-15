@@ -1601,46 +1601,21 @@ FF<!DOCTYPE html>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for transaction in recent_transactions %}
                                     <tr>
-                                        <td>1001</td>
-                                        <td>2025-03-10</td>
-                                        <td>John Doe</td>
-                                        <td>Membership Fee</td>
-                                        <td>$79.99</td>
-                                        <td><span class="status-badge active">Completed</span></td>
+                                        <td>{{ transaction.id }}</td>
+                                        <td>{{ transaction.date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                        <td>{{ transaction.member_name }}</td>
+                                        <td>{{ transaction.type }}</td>
+                                        <td>€{{ "{:,.2f}".format(transaction.amount) }}</td>
+                                        <td><span class="status-badge {{ 'active' if transaction.status == 'completed' else 'inactive' }}">{{ transaction.status.title() }}</span></td>
                                     </tr>
+                                    {% endfor %}
+                                    {% if not recent_transactions %}
                                     <tr>
-                                        <td>1002</td>
-                                        <td>2025-03-10</td>
-                                        <td>Jane Smith</td>
-                                        <td>Personal Training</td>
-                                        <td>$120.00</td>
-                                        <td><span class="status-badge active">Completed</span></td>
+                                        <td colspan="6" class="text-center">No recent transactions found</td>
                                     </tr>
-                                    <tr>
-                                        <td>1003</td>
-                                        <td>2025-03-09</td>
-                                        <td>Emily Davis</td>
-                                        <td>Membership Fee</td>
-                                        <td>$79.99</td>
-                                        <td><span class="status-badge active">Completed</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>1004</td>
-                                        <td>2025-03-09</td>
-                                        <td>Robert Wilson</td>
-                                        <td>Merchandise</td>
-                                        <td>$45.50</td>
-                                        <td><span class="status-badge active">Completed</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>1005</td>
-                                        <td>2025-03-08</td>
-                                        <td>Michael Johnson</td>
-                                        <td>Class Booking</td>
-                                        <td>$25.00</td>
-                                        <td><span class="status-badge inactive">Refunded</span></td>
-                                    </tr>
+                                    {% endif %}
                                 </tbody>
                             </table>
                         </div>
