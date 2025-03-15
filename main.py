@@ -1279,6 +1279,15 @@ async def delete_workout_api(
         logger.error(f"Error deleting workout: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error deleting workout: {str(e)}")
 
+#Gallery section
+@app.get("/gallery", response_class=HTMLResponse)
+async def gallery(request: Request, db: Session = Depends(get_db)):
+    current_user = await get_optional_user(request, db)
+    return templates.TemplateResponse("gallery.html", {
+        "request": request,
+        "current_user": current_user
+    })
+
 # Run the app
 if __name__ == "__main__":
     import uvicorn
