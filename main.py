@@ -39,6 +39,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+#Calculating time function
+def calculate_end_time(start_time):
+    """Calculate end time by adding one hour to start time"""
+    end_time = start_time + timedelta(hours=1)
+    return end_time
 #Create route handlers
 @app.get("/workouts/personal", response_class=HTMLResponse)
 async def my_workouts(request: Request, db: Session = Depends(get_db)):
