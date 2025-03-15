@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Place - Olympus Strength</title>
+    <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <style>
+        /* Modern Variables */
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --primary-light: #C8E6C9;
+            --secondary: #212121;
+            --text-dark: #212121;
+            --text-light: #757575;
+            --background: #f8f9fa;
+            --white: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --accent: #FFC107;
+            --success: #28a745;
+            --danger: #dc3545;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Gallery specific styles */
+        .gallery-container {
+            padding: 3rem 0;
+            margin-top: 70px;
+        }
+
+        .gallery-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .gallery-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .gallery-header p {
+            max-width: 700px;
+            margin: 0 auto;
+            color: var(--text-light);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-gap: 20px;
+            margin-bottom: 3rem;
+        }
+
+        .gallery-item {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            aspect-ratio: 3/2;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: filter 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-img {
+            filter: brightness(1.1);
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        /* Lightbox styles */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 80vh;
+        }
+
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .lightbox-caption {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            padding: 10px;
+            font-size: 1rem;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .lightbox-close:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .lightbox-prev,
+        .lightbox-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .lightbox-prev {
+            left: 20px;
+        }
+
+        .lightbox-next {
+            right: 20px;
+        }
+
+        .lightbox-prev:hover,
+        .lightbox-next:hover {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        /* Category filter */
+        .gallery-filter {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background-color: var(--gray-200);
+            color: var(--text-dark);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            background-color: var(--gray-300);
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .lightbox-prev, 
+            .lightbox-next {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .gallery-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <img src="/static/img/logo.png" alt="Olympus Strength" class="logo-img">
+            </a>
+            
+            <button class="mobile-toggle">☰</button>
+            
+            <nav class="nav">
+                {% if current_user %}
+                    {% if current_user.role == 'customer' %}
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/gallery" class="nav-link">OUR PLACE</a>
+                        <a href="/book_class" class="nav-link">BOOK CLASS</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
+                    {% elif current_user.role == 'admin' %}
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/gallery" class="nav-link">OUR PLACE</a>
+                        <a href="/admin/dashboard" class="nav-link">ADMIN DASHBOARD</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
+                    {% elif current_user.role == 'coach' %}
+                        <a href="/" class="nav-link">HOME</a>
+                        <a href="/members" class="nav-link">MEMBERS</a>
+                        <a href="/workouts" class="nav-link">WORKOUTS</a>
+                        <a href="/gallery" class="nav-link">OUR PLACE</a>
+                        <a href="/coach/dashboard" class="nav-link">COACH DASHBOARD</a>
+                        <a href="/logout" class="nav-link">LOGOUT</a>
+                        <a href="/profile" class="profile-icon" title="My Profile">👤</a>
+                    {% endif %}
+                {% else %}
+                    <a href="/" class="nav-link">HOME</a>
+                    <a href="/members" class="nav-link">MEMBERS</a>
+                    <a href="/workouts" class="nav-link">WORKOUTS</a>
+                    <a href="/gallery" class="nav-link">OUR PLACE</a>
+                    <a href="/login" class="nav-link">LOGIN</a>
+                    <a href="/signup" class="btn btn-sm">Join Now</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">Our Place</h1>
+            <p class="page-subtitle">Take a virtual tour of our state-of-the-art facilities</p>
+        </div>
+    </section>
+
+    <section class="gallery-container">
+        <div class="container">
+            <div class="gallery-header">
+                <h1>Explore Olympus Strength</h1>
+                <p>Step inside and see where legends are made. Our premium equipment, specialized training zones, and inspiring atmosphere are designed to help you forge your legacy.</p>
+            </div>
+            
+            <div class="gallery-filter">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="facility">Facility</button>
+                <button class="filter-btn" data-filter="equipment">Equipment</button>
+                <button class="filter-btn" data-filter="classes">Classes</button>
+            </div>
+            
+            <div class="gallery-grid">
+                <!-- Gallery items -->
+                <div class="gallery-item" data-category="facility">
+                    <img src="/static/img/gallery/gym-entrance.jpg" alt="Gym Entrance" class="gallery-img">
+                    <div class="gallery-caption">Welcome to Olympus Strength</div>
+                </div>
+                
+                <div class="gallery-item" data-category="facility">
+                    <img src="/static/img/gallery/weight-area.jpg" alt="Free Weight Area" class="gallery-img">
+                    <div class="gallery-caption">Free Weight Training Zone</div>
+                </div>
+                
+                <div class="gallery-item" data-category="equipment">
+                    <img src="/static/img/gallery/squat-racks.jpg" alt="Squat Racks" class="gallery-img">
+                    <div class="gallery-caption">Olympic Lifting Platforms</div>
+                </div>
+                
+                <div class="gallery-item" data-category="classes">
+                    <img src="/static/img/gallery/group-class.jpg" alt="Group Fitness Class" class="gallery-img">
+                    <div class="gallery-caption">Spartan HIIT Class in Action</div>
+                </div>
+                
+                <div class="gallery-item" data-category="facility">
+                    <img src="/static/img/gallery/cardio-zone.jpg" alt="Cardio Zone" class="gallery-img">
+                    <div class="gallery-caption">State-of-the-Art Cardio Zone</div>
+                </div>
+                
+                <div class="gallery-item" data-category="equipment">
+                    <img src="/static/img/gallery/dumbbells.jpg" alt="Dumbbell Rack" class="gallery-img">
+                    <div class="gallery-caption">Full Range of Dumbbells</div>
+                </div>
+                
+                <div class="gallery-item" data-category="classes">
+                    <img src="/static/img/gallery/personal-training.jpg" alt="Personal Training" class="gallery-img">
+                    <div class="gallery-caption">One-on-One Coaching</div>
+                </div>
+                
+                <div class="gallery-item" data-category="facility">
+                    <img src="/static/img/gallery/stretching-area.jpg" alt="Stretching Area" class="gallery-img">
+                    <div class="gallery-caption">Dedicated Stretching and Recovery Zone</div>
+                </div>
+                
+                <div class="gallery-item" data-category="equipment">
+                    <img src="/static/img/gallery/cable-machines.jpg" alt="Cable Machines" class="gallery-img">
+                    <div class="gallery-caption">Multi-Functional Cable Stations</div>
+                </div>
+                
+                <div class="gallery-item" data-category="classes">
+                    <img src="/static/img/gallery/yoga-class.jpg" alt="Yoga Class" class="gallery-img">
+                    <div class="gallery-caption">Olympian Recovery Session</div>
+                </div>
+                
+                <div class="gallery-item" data-category="facility">
+                    <img src="/static/img/gallery/locker-rooms.jpg" alt="Locker Rooms" class="gallery-img">
+                    <div class="gallery-caption">Premium Locker Rooms</div>
+                </div>
+                
+                <div class="gallery-item" data-category="equipment">
+                    <img src="/static/img/gallery/functional-zone.jpg" alt="Functional Training Zone" class="gallery-img">
+                    <div class="gallery-caption">Functional Training Equipment</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox container -->
+    <div class="lightbox">
+        <div class="lightbox-content">
+            <img src="" alt="" class="lightbox-img">
+            <div class="lightbox-caption"></div>
+        </div>
+        <button class="lightbox-close">&times;</button>
+        <button class="lightbox-prev">&#10094;</button>
+        <button class="lightbox-next">&#10095;</button>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">
+                        <img src="/static/img/logo.png" alt="Olympus Strength" class="logo-img">
+                    </a>
+                    <p>Forge your legacy at Olympus Strength. We provide the tools, knowledge, and community you need to reach your fitness goals.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">
+                            <img src="/static/img/fb.png" alt="Facebook" class="social-icon">
+                        </a>
+                        <a href="#" class="social-link">
+                            <img src="/static/img/x.png" alt="X (Twitter)" class="social-icon">
+                        </a>
+                        <a href="#" class="social-link">
+                            <img src="/static/img/instagram.png" alt="Instagram" class="social-icon">
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/members">Members</a></li>
+                        <li><a href="/workouts">Workouts</a></li>
+                        <li><a href="/gallery">Our Place</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="#">Olympic Weightlifting</a></li>
+                        <li><a href="#">Spartan HIIT</a></li>
+                        <li><a href="#">Strength Foundations</a></li>
+                        <li><a href="#">All Programs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li>📞 +30 210 810 3410</li>
+                        <li>📧 info@olympusstrength.gr</li>
+                        <li>📍 Patision 223, Athens 112 53, Greece</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Olympus Strength. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileToggle = document.querySelector('.mobile-toggle');
+            const nav = document.querySelector('.nav');
+            
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                });
+            }
+            
+            // Gallery filtering functionality
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Get filter value
+                    const filterValue = this.getAttribute('data-filter');
+                    
+                    // Filter gallery items
+                    galleryItems.forEach(item => {
+                        if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Lightbox functionality
+            const lightbox = document.querySelector('.lightbox');
+            const lightboxImg = document.querySelector('.lightbox-img');
+            const lightboxCaption = document.querySelector('.lightbox-caption');
+            const lightboxClose = document.querySelector('.lightbox-close');
+            const lightboxPrev = document.querySelector('.lightbox-prev');
+            const lightboxNext = document.querySelector('.lightbox-next');
+            
+            let currentIndex = 0;
+            const visibleItems = () => Array.from(galleryItems).filter(item => item.style.display !== 'none');
+            
+            galleryItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const img = this.querySelector('.gallery-img');
+                    const caption = this.querySelector('.gallery-caption').textContent;
+                    const items = visibleItems();
+                    
+                    currentIndex = items.indexOf(this);
+                    
+                    lightboxImg.src = img.src;
+                    lightboxImg.alt = img.alt;
+                    lightboxCaption.textContent = caption;
+                    
+                    lightbox.classList.add('active');
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling
+                });
+            });
+            
+            // Close lightbox
+            lightboxClose.addEventListener('click', function() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = ''; // Enable scrolling
+            });
+            
+            // Close lightbox when clicking outside image
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = ''; // Enable scrolling
+                }
+            });
+            
+            // Previous image
+            lightboxPrev.addEventListener('click', function() {
+                const items = visibleItems();
+                currentIndex = (currentIndex - 1 + items.length) % items.length;
+                
+                const item = items[currentIndex];
+                const img = item.querySelector('.gallery-img');
+                const caption = item.querySelector('.gallery-caption').textContent;
+                
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = caption;
+            });
+            
+            // Next image
+            lightboxNext.addEventListener('click', function() {
+                const items = visibleItems();
+                currentIndex = (currentIndex + 1) % items.length;
+                
+                const item = items[currentIndex];
+                const img = item.querySelector('.gallery-img');
+                const caption = item.querySelector('.gallery-caption').textContent;
+                
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = caption;
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (!lightbox.classList.contains('active')) return;
+                
+                if (e.key === 'Escape') {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = ''; // Enable scrolling
+                } else if (e.key === 'ArrowLeft') {
+                    lightboxPrev.click();
+                } else if (e.key === 'ArrowRight') {
+                    lightboxNext.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
