@@ -447,16 +447,37 @@ def get_monthly_revenue(db: Session, year: int =datetime.now().year, month: int 
     return result or 0
 
 def get_financial_summary(db: Session, year: int = datetime.now().year, month: int = datetime.now().month):
-    # Get revenue
-    revenue = get_monthly_revenue(db, year, month)
-    
-    # Get expenses (assuming expenses are negative transactions)
+    # Get start and end dates for the month
     start_date = datetime.datetime(year, month, 1)
     if month == 12:
         end_date = datetime.datetime(year + 1, 1, 1)
     else:
         end_date = datetime.datetime(year, month + 1, 1)
     
+    # Get all active members and their membership types
+    active_members = db.query(models.Member).filter(models.Member.is_active == True).all()
+    
+    # Calculate revenue from memberships
+    membership_prices = {
+        "Bronze": 29.99,
+        "Silver": 49.99,
+        "Gold": 79.99
+    }
+    
+    membership_revenue = sum(membership_prices[member.membership_type] for member in active_members)
+    
+    # Get other transactions (e.g., personal training, merchandise)
+    other_transactions = db.query(func.sum(models.Transaction.amount)).filter(
+        models.Transaction.date >= start_date,
+        models.Transaction.date < end_date,
+        models.Transaction.status == "completed",
+        models.Transaction.type != "Membership Fee"
+    ).scalar() or 0
+    
+    # Total revenue
+    revenue = membership_revenue + other_transactions
+    
+    # Get expenses
     expenses = db.query(func.sum(models.Transaction.amount)).filter(
         models.Transaction.date >= start_date,
         models.Transaction.date < end_date,
@@ -466,6 +487,13 @@ def get_financial_summary(db: Session, year: int = datetime.now().year, month: i
     
     # Calculate net profit
     net_profit = revenue + expenses  # expenses are negative
+    
+    # Calculate membership statistics
+    membership_stats = {
+        "Bronze": len([m for m in active_members if m.membership_type == "Bronze"]),
+        "Silver": len([m for m in active_members if m.membership_type == "Silver"]),
+        "Gold": len([m for m in active_members if m.membership_type == "Gold"])
+    }
     
     # Calculate growth compared to previous month
     prev_month = month - 1
@@ -483,6 +511,9 @@ def get_financial_summary(db: Session, year: int = datetime.now().year, month: i
         "revenue": revenue,
         "expenses": abs(expenses),  # Convert to positive for display
         "net_profit": net_profit,
-        "growth": growth
+        "growth": growth,
+        "membership_revenue": membership_revenue,
+        "other_revenue": other_transactions,
+        "membership_stats": membership_stats
     }
 
