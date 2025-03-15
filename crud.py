@@ -616,3 +616,28 @@ def get_financial_summary(db: Session, year: int = datetime.now().year, month: i
             }
         }
 
+def get_recent_transactions(db: Session, limit: int = 10):
+    """
+    Get recent transactions with member details
+    """
+    transactions = (
+        db.query(models.Transaction, models.Member)
+        .join(models.Member, models.Transaction.member_id == models.Member.id)
+        .order_by(models.Transaction.date.desc())
+        .limit(limit)
+        .all()
+    )
+    
+    return [
+        {
+            "id": trans.id,
+            "date": trans.date,
+            "member_name": member.name,
+            "type": trans.type,
+            "amount": trans.amount,
+            "status": trans.status,
+            "description": trans.description
+        }
+        for trans, member in transactions
+    ]
+
