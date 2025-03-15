@@ -21,32 +21,93 @@ def get_members(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Member).offset(skip).limit(limit).all()
 
 def create_member(db: Session, member: schemas.MemberCreate):
-    hashed_password = pwd_context.hash(member.password)
-    db_member = models.Member(
-        name=member.name,
-        email=member.email,
-        password_hash=hashed_password,
-        phone=member.phone,
-        membership_type=member.membership_type,
-        role=member.role
-    )
-    db.add(db_member)
-    db.commit()
-    db.refresh(db_member)
-    return db_member
-
-def update_member(db: Session, member_id: int, member: schemas.MemberUpdate):
-    db_member = db.query(models.Member).filter(models.Member.id == member_id).first()
-    if db_member:
-        update_data = member.dict(exclude_unset=True)
-        for key, value in update_data.items():
-            if key == "password" and value:
-                value = pwd_context.hash(value)
-                key = "password_hash"
-            setattr(db_member, key, value)
+    try:
+        # Hash the password
+        hashed_password = pwd_context.hash(member.password)
+        
+        # Create the member object
+        db_member = models.Member(
+            name=member.name,
+            email=member.email,
+            password_hash=hashed_password,
+            phone=member.phone,
+            membership_type=member.membership_type,
+            role=member.role,
+            join_date=datetime.now(),
+            is_active=True
+        )
+        
+        # Add member to database
+        db.add(db_member)
         db.commit()
         db.refresh(db_member)
-    return db_member
+
+        # Create initial membership transaction
+        membership_prices = {
+            "Bronze": 29.99,
+            "Silver": 49.99,
+            "Gold": 79.99
+        }
+        
+        if member.membership_type in membership_prices:
+            transaction = models.Transaction(
+                member_id=db_member.id,
+                amount=membership_prices[member.membership_type],
+                type="Membership Fee",
+                description=f"Initial {member.membership_type} membership subscription",
+                status="completed",
+                date=datetime.now()
+            )
+            db.add(transaction)
+            db.commit()
+
+        return db_member
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Database error creating member: {e}")
+        raise e
+
+def update_member(db: Session, member_id: int, member: schemas.MemberUpdate):
+    try:
+        db_member = db.query(models.Member).filter(models.Member.id == member_id).first()
+        if db_member:
+            # Store the old membership type
+            old_membership_type = db_member.membership_type
+            
+            # Update member data
+            update_data = member.dict(exclude_unset=True)
+            for key, value in update_data.items():
+                if key == "password" and value:
+                    value = pwd_context.hash(value)
+                    key = "password_hash"
+                setattr(db_member, key, value)
+            
+            # If membership type changed, create a new transaction
+            if "membership_type" in update_data and old_membership_type != update_data["membership_type"]:
+                membership_prices = {
+                    "Bronze": 29.99,
+                    "Silver": 49.99,
+                    "Gold": 79.99
+                }
+                
+                if update_data["membership_type"] in membership_prices:
+                    transaction = models.Transaction(
+                        member_id=member_id,
+                        amount=membership_prices[update_data["membership_type"]],
+                        type="Membership Fee",
+                        description=f"Membership upgrade from {old_membership_type} to {update_data['membership_type']}",
+                        status="completed",
+                        date=datetime.now()
+                    )
+                    db.add(transaction)
+            
+            db.commit()
+            db.refresh(db_member)
+        return db_member
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Database error updating member: {e}")
+        raise e
 
 def delete_member(db: Session, member_id: int):
     db_member = db.query(models.Member).filter(models.Member.id == member_id).first()
@@ -366,6 +427,26 @@ def create_member(db: Session, member: schemas.MemberCreate):
         db.add(db_member)
         db.commit()
         db.refresh(db_member)
+
+        # Create initial membership transaction
+        membership_prices = {
+            "Bronze": 29.99,
+            "Silver": 49.99,
+            "Gold": 79.99
+        }
+        
+        if member.membership_type in membership_prices:
+            transaction = models.Transaction(
+                member_id=db_member.id,
+                amount=membership_prices[member.membership_type],
+                type="Membership Fee",
+                description=f"Initial {member.membership_type} membership subscription",
+                status="completed",
+                date=datetime.now()
+            )
+            db.add(transaction)
+            db.commit()
+
         return db_member
     except Exception as e:
         db.rollback()
@@ -454,24 +535,19 @@ def get_financial_summary(db: Session, year: int = datetime.now().year, month: i
         else:
             end_date = datetime(year, month + 1, 1)
         
-        # Get all active members and their membership types
+        # Get all active members for membership stats
         active_members = db.query(models.Member).filter(
             models.Member.is_active == True,
             models.Member.role == "customer"  # Only count customers
         ).all()
         
-        # Calculate revenue from memberships
-        membership_prices = {
-            "Bronze": 29.99,
-            "Silver": 49.99,
-            "Gold": 79.99
-        }
-        
-        # Calculate membership revenue safely
-        membership_revenue = 0
-        for member in active_members:
-            if member.membership_type and member.membership_type in membership_prices:
-                membership_revenue += membership_prices[member.membership_type]
+        # Get membership revenue from transactions
+        membership_revenue = db.query(func.sum(models.Transaction.amount)).filter(
+            models.Transaction.date >= start_date,
+            models.Transaction.date < end_date,
+            models.Transaction.status == "completed",
+            models.Transaction.type == "Membership Fee"
+        ).scalar() or 0
         
         # Get other transactions (e.g., personal training, merchandise)
         other_transactions = db.query(func.sum(models.Transaction.amount)).filter(
@@ -492,10 +568,7 @@ def get_financial_summary(db: Session, year: int = datetime.now().year, month: i
             models.Transaction.amount < 0
         ).scalar() or 0
         
-        # Calculate net profit
-        net_profit = revenue + expenses  # expenses are negative
-        
-        # Calculate membership statistics safely
+        # Calculate membership statistics
         membership_stats = {
             "Bronze": 0,
             "Silver": 0,
@@ -521,7 +594,7 @@ def get_financial_summary(db: Session, year: int = datetime.now().year, month: i
         return {
             "revenue": revenue,
             "expenses": abs(expenses),  # Convert to positive for display
-            "net_profit": net_profit,
+            "net_profit": revenue + expenses,  # expenses are negative
             "growth": growth,
             "membership_revenue": membership_revenue,
             "other_revenue": other_transactions,
@@ -529,7 +602,6 @@ def get_financial_summary(db: Session, year: int = datetime.now().year, month: i
         }
     except Exception as e:
         logger.error(f"Error in get_financial_summary: {str(e)}")
-        # Return default values in case of error
         return {
             "revenue": 0,
             "expenses": 0,
