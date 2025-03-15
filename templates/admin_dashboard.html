@@ -1913,652 +1913,583 @@
     <div class="notification-container"></div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tab navigation functionality
-            const tabLinks = document.querySelectorAll('.admin-menu-item');
-            const tabContents = document.querySelectorAll('.tab-content');
+          document.addEventListener('DOMContentLoaded', function() {
+    // Tab navigation functionality
+    const tabLinks = document.querySelectorAll('.admin-menu-item');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
             
-            tabLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Remove active class from all tabs
-                    tabLinks.forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    
-                    // Add active class to clicked tab
-                    this.classList.add('active');
-                    
-                    // Hide all tab contents
-                    tabContents.forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    
-                    // Show corresponding tab content
-                    const tabId = this.getAttribute('data-tab');
-                    document.getElementById(`${tabId}-content`).classList.add('active');
-                });
+            // Remove active class from all tabs
+            tabLinks.forEach(item => {
+                item.classList.remove('active');
             });
             
-            // Modal functionality for Members
-            const memberModal = document.getElementById('member-modal');
-            const addMemberBtn = document.getElementById('add-member-btn');
-            const quickAddMemberBtn = document.getElementById('quick-add-member');
-            const cancelMemberBtn = document.getElementById('cancel-member');
-            const saveMemberBtn = document.getElementById('save-member');
-            const editMemberBtns = document.querySelectorAll('.edit-member');
-            const deleteMemberBtns = document.querySelectorAll('.delete-member');
-            const closeModalBtns = document.querySelectorAll('.close-modal');
+            // Add active class to clicked tab
+            this.classList.add('active');
             
-            // Function to open member modal
-            function openMemberModal(isEdit = false, memberId = null) {
-                const modalTitle = document.getElementById('member-modal-title');
-                const memberForm = document.getElementById('member-form');
-                
-                if (isEdit) {
-                    modalTitle.textContent = 'Edit Member';
-                    document.getElementById('member-id').value = memberId;
-                    
-                    // In a real application, you would fetch member data here
-                    // For demo purposes, we'll fill with dummy data
-                    if (memberId === '1') {
-                        document.getElementById('member-name').value = 'John Doe';
-                        document.getElementById('member-email').value = 'john.doe@example.com';
-                        document.getElementById('member-phone').value = '(555) 123-4567';
-                        document.getElementById('member-membership').value = 'Gold';
-                        document.querySelector('input[name="is_active"][value="true"]').checked = true;
-                    } else if (memberId === '2') {
-                        document.getElementById('member-name').value = 'Jane Smith';
-                        document.getElementById('member-email').value = 'jane.smith@example.com';
-                        document.getElementById('member-phone').value = '(555) 987-6543';
-                        document.getElementById('member-membership').value = 'Silver';
-                        document.querySelector('input[name="is_active"][value="true"]').checked = true;
-                    } else if (memberId === '3') {
-                        document.getElementById('member-name').value = 'Michael Johnson';
-                        document.getElementById('member-email').value = 'michael.j@example.com';
-                        document.getElementById('member-phone').value = '(555) 246-8135';
-                        document.getElementById('member-membership').value = 'Bronze';
-                        document.querySelector('input[name="is_active"][value="false"]').checked = true;
-                    }
-                } else {
-                    modalTitle.textContent = 'Add New Member';
-                    memberForm.reset();
-                    document.getElementById('member-id').value = '';
-                }
-                
-                memberModal.style.display = 'block';
-            }
-            
-            // Open modal when "Add New Member" button is clicked
-            if (addMemberBtn) {
-                addMemberBtn.addEventListener('click', () => openMemberModal());
-            }
-            
-            // Open modal when quick action is clicked
-            if (quickAddMemberBtn) {
-                quickAddMemberBtn.addEventListener('click', () => openMemberModal());
-            }
-            
-            // Edit member button click
-            editMemberBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const memberId = this.getAttribute('data-id');
-                    openMemberModal(true, memberId);
-                });
+            // Hide all tab contents
+            tabContents.forEach(content => {
+                content.classList.remove('active');
             });
             
-            // Delete member button click
-            deleteMemberBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const memberId = this.getAttribute('data-id');
-                    const memberName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+            // Show corresponding tab content
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(`${tabId}-content`).classList.add('active');
+        });
+    });
+    
+    // Modal functionality for Members
+    const memberModal = document.getElementById('member-modal');
+    const addMemberBtn = document.getElementById('add-member-btn');
+    const quickAddMemberBtn = document.getElementById('quick-add-member');
+    const cancelMemberBtn = document.getElementById('cancel-member');
+    const saveMemberBtn = document.getElementById('save-member');
+    const editMemberBtns = document.querySelectorAll('.edit-member');
+    const deleteMemberBtns = document.querySelectorAll('.delete-member');
+    const closeModalBtns = document.querySelectorAll('.close-modal');
+    
+    // Function to open member modal
+    function openMemberModal(isEdit = false, memberId = null) {
+        const modalTitle = document.getElementById('member-modal-title');
+        const memberForm = document.getElementById('member-form');
+        
+        if (isEdit) {
+            modalTitle.textContent = 'Edit Member';
+            document.getElementById('member-id').value = memberId;
+            
+            // In a real application, you would fetch member data here
+            // For demo purposes, we'll fill with dummy data
+            if (memberId === '1') {
+                document.getElementById('member-name').value = 'John Doe';
+                document.getElementById('member-email').value = 'john.doe@example.com';
+                document.getElementById('member-phone').value = '(555) 123-4567';
+                document.getElementById('member-membership').value = 'Gold';
+                document.querySelector('input[name="is_active"][value="true"]').checked = true;
+            } else if (memberId === '2') {
+                document.getElementById('member-name').value = 'Jane Smith';
+                document.getElementById('member-email').value = 'jane.smith@example.com';
+                document.getElementById('member-phone').value = '(555) 987-6543';
+                document.getElementById('member-membership').value = 'Silver';
+                document.querySelector('input[name="is_active"][value="true"]').checked = true;
+            } else if (memberId === '3') {
+                document.getElementById('member-name').value = 'Michael Johnson';
+                document.getElementById('member-email').value = 'michael.j@example.com';
+                document.getElementById('member-phone').value = '(555) 246-8135';
+                document.getElementById('member-membership').value = 'Bronze';
+                document.querySelector('input[name="is_active"][value="false"]').checked = true;
+            }
+        } else {
+            modalTitle.textContent = 'Add New Member';
+            memberForm.reset();
+            document.getElementById('member-id').value = '';
+        }
+        
+        memberModal.style.display = 'block';
+    }
+    
+    // Open modal when "Add New Member" button is clicked
+    if (addMemberBtn) {
+        addMemberBtn.addEventListener('click', () => openMemberModal());
+    }
+    
+    // Open modal when quick action is clicked
+    if (quickAddMemberBtn) {
+        quickAddMemberBtn.addEventListener('click', () => openMemberModal());
+    }
+    
+    // Edit member button click
+    editMemberBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const memberId = this.getAttribute('data-id');
+            openMemberModal(true, memberId);
+        });
+    });
+    
+    // Delete member button click
+    deleteMemberBtns.forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const memberId = this.getAttribute('data-id');
+            const memberName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+            
+            if (confirm(`Are you sure you want to delete ${memberName}? This action cannot be undone.`)) {
+                try {
+                    const response = await fetch(`/api/members/${memberId}`, {
+                        method: 'DELETE'
+                    });
                     
-                    if (confirm(`Are you sure you want to delete ${memberName}? This action cannot be undone.`)) {
-                        // In a real app, you would delete the member via API
-                        // For demo, we'll just remove the row
+                    if (response.ok) {
+                        // Remove the row from the table
                         this.closest('tr').remove();
                         showNotification(`Member ${memberName} deleted successfully`, 'success');
-                    }
-                });
-            });
-            
-            // Close modal when "Cancel" button is clicked
-            if (cancelMemberBtn) {
-                cancelMemberBtn.addEventListener('click', () => {
-                    memberModal.style.display = 'none';
-                });
-            }
-            
-            // Save member when "Save" button is clicked
-            if (saveMemberBtn) {
-                saveMemberBtn.addEventListener('click', () => {
-                    // In a real app, you would validate and save to database
-                    // For demo, we'll just show a success message
-                    const memberId = document.getElementById('member-id').value;
-                    const isEdit = memberId !== '';
-                    
-                    if (isEdit) {
-                        showNotification('Member updated successfully', 'success');
-                    } else {
-                        showNotification('New member added successfully', 'success');
-                    }
-                    
-                    memberModal.style.display = 'none';
-                });
-            }
-            
-            // Modal functionality for Workouts
-            const workoutModal = document.getElementById('workout-modal');
-            const addWorkoutBtn = document.getElementById('add-workout-btn');
-            const cancelWorkoutBtn = document.getElementById('cancel-workout');
-            const saveWorkoutBtn = document.getElementById('save-workout');
-            const editWorkoutBtns = document.querySelectorAll('.edit-workout');
-            const deleteWorkoutBtns = document.querySelectorAll('.delete-workout');
-            const viewWorkoutBtns = document.querySelectorAll('.view-workout');
-            
-            // Function to open workout modal
-            function openWorkoutModal(isEdit = false, workoutId = null) {
-                const modalTitle = document.getElementById('workout-modal-title');
-                const workoutForm = document.getElementById('workout-form');
-                
-                // Reset difficulty options
-                document.querySelectorAll('.difficulty-option').forEach(option => {
-                    option.classList.remove('active');
-                });
-                
-                if (isEdit) {
-                    modalTitle.textContent = 'Edit Workout';
-                    document.getElementById('workout-id').value = workoutId;
-                    
-                    // In a real application, you would fetch workout data here
-                    // For demo purposes, we'll fill with dummy data
-                    if (workoutId === '1') {
-                        document.getElementById('workout-name').value = 'Olympic Weightlifting';
-                        document.getElementById('workout-description').value = 'Master the snatch and clean & jerk with expert technique coaching for maximum power development.';
-                        document.getElementById('workout-duration').value = '60';
-                        document.getElementById('workout-category').value = 'Strength';
                         
-                        // Set difficulty
-                        document.querySelector('.difficulty-option[data-difficulty="Advanced"]').classList.add('active');
-                        document.querySelector('input[name="difficulty"][value="Advanced"]').checked = true;
-                    } else if (workoutId === '2') {
-                        document.getElementById('workout-name').value = 'Spartan HIIT';
-                        document.getElementById('workout-description').value = 'High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.';
-                        document.getElementById('workout-duration').value = '45';
-                        document.getElementById('workout-category').value = 'Cardio';
-                        
-                        // Set difficulty
-                        document.querySelector('.difficulty-option[data-difficulty="Intermediate"]').classList.add('active');
-                        document.querySelector('input[name="difficulty"][value="Intermediate"]').checked = true;
-                    }
-                } else {
-                    modalTitle.textContent = 'Add New Workout';
-                    workoutForm.reset();
-                    document.getElementById('workout-id').value = '';
-                }
-                
-                workoutModal.style.display = 'block';
-            }
-            
-            // Open modal when "Add New Workout" button is clicked
-            if (addWorkoutBtn) {
-                addWorkoutBtn.addEventListener('click', () => openWorkoutModal());
-            }
-            
-            // Edit workout button click
-            editWorkoutBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const workoutId = this.getAttribute('data-id');
-                    openWorkoutModal(true, workoutId);
-                });
-            });
-            
-            // Delete workout button click
-            deleteWorkoutBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const workoutId = this.getAttribute('data-id');
-                    const workoutName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
-                    
-                    if (confirm(`Are you sure you want to delete "${workoutName}"? This action cannot be undone.`)) {
-                        // In a real app, you would delete the workout via API
-                        // For demo, we'll just remove the row
-                        this.closest('tr').remove();
-                        showNotification(`Workout "${workoutName}" deleted successfully`, 'success');
-                    }
-                });
-            });
-            
-            // View workout button click
-            viewWorkoutBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const workoutId = this.getAttribute('data-id');
-                    const workoutName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
-                    
-                    // In a real app, you would redirect to workout detail page
-                    // For demo, just show a notification
-                    showNotification(`Viewing details for "${workoutName}"`, 'info');
-                });
-            });
-            
-            // Close modal when "Cancel" button is clicked
-            if (cancelWorkoutBtn) {
-                cancelWorkoutBtn.addEventListener('click', () => {
-                    workoutModal.style.display = 'none';
-                });
-            }
-            
-            // Save workout when "Save" button is clicked
-            if (saveWorkoutBtn) {
-                saveWorkoutBtn.addEventListener('click', () => {
-                    // In a real app, you would validate and save to database
-                    // For demo, we'll just show a success message
-                    const workoutId = document.getElementById('workout-id').value;
-                    const isEdit = workoutId !== '';
-                    
-                    if (isEdit) {
-                        showNotification('Workout updated successfully', 'success');
+                        // Update the member count in the overview
+                        const memberCountElement = document.querySelector('.stat-card .stat-value');
+                        if (memberCountElement) {
+                            const currentCount = parseInt(memberCountElement.textContent);
+                            memberCountElement.textContent = currentCount - 1;
+                        }
                     } else {
-                        showNotification('New workout added successfully', 'success');
+                        const errorData = await response.json().catch(() => ({}));
+                        showNotification(errorData.detail || 'Failed to delete member', 'error');
                     }
-                    
-                    workoutModal.style.display = 'none';
-                });
-            }
-            
-            // Modal functionality for Classes
-            const classModal = document.getElementById('class-modal');
-            const addClassBtn = document.getElementById('add-class-btn');
-            const quickAddClassBtn = document.getElementById('quick-add-class');
-            const cancelClassBtn = document.getElementById('cancel-class');
-            const saveClassBtn = document.getElementById('save-class');
-            const editClassBtns = document.querySelectorAll('.edit-class');
-            const deleteClassBtns = document.querySelectorAll('.delete-class');
-            
-            // Function to open class modal
-            function openClassModal(isEdit = false, classId = null) {
-                const modalTitle = document.getElementById('class-modal-title');
-                const classForm = document.getElementById('class-form');
-                
-                if (isEdit) {
-                    modalTitle.textContent = 'Edit Class';
-                    document.getElementById('class-id').value = classId;
-                    
-                    // In a real application, you would fetch class data here
-                    // For demo purposes, we'll fill with dummy data
-                    if (classId === '1') {
-                        document.getElementById('class-name').value = 'Olympic Lifting';
-                        document.getElementById('class-description').value = 'Master the snatch and clean & jerk with expert technique coaching for maximum power development.';
-                        document.getElementById('class-instructor').value = 'Alex Hermes';
-                        document.getElementById('class-schedule').value = 'Mon, Wed, Fri - 7:00 AM';
-                        document.getElementById('class-level').value = 'All Levels';
-                        document.getElementById('class-capacity').value = '15';
-                    } else if (classId === '2') {
-                        document.getElementById('class-name').value = 'Spartan HIIT';
-                        document.getElementById('class-description').value = 'High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.';
-                        document.getElementById('class-instructor').value = 'Marcus Leonidas';
-                        document.getElementById('class-schedule').value = 'Tue, Thu - 6:00 PM';
-                        document.getElementById('class-level').value = 'Intermediate';
-                        document.getElementById('class-capacity').value = '20';
-                    }
-                } else {
-                    modalTitle.textContent = 'Add New Class';
-                    classForm.reset();
-                    document.getElementById('class-id').value = '';
+                } catch (error) {
+                    console.error('Error deleting member:', error);
+                    showNotification('An error occurred while deleting the member', 'error');
                 }
+            }
+        });
+    });
+    
+    // Close modal when "Cancel" button is clicked
+    if (cancelMemberBtn) {
+        cancelMemberBtn.addEventListener('click', () => {
+            memberModal.style.display = 'none';
+        });
+    }
+    
+    // Save member when "Save" button is clicked
+    if (saveMemberBtn) {
+        saveMemberBtn.addEventListener('click', () => {
+            // In a real app, you would validate and save to database
+            // For demo, we'll just show a success message
+            const memberId = document.getElementById('member-id').value;
+            const isEdit = memberId !== '';
+            
+            if (isEdit) {
+                showNotification('Member updated successfully', 'success');
+            } else {
+                showNotification('New member added successfully', 'success');
+            }
+            
+            memberModal.style.display = 'none';
+        });
+    }
+    
+    // Modal functionality for Workouts
+    const workoutModal = document.getElementById('workout-modal');
+    const addWorkoutBtn = document.getElementById('add-workout-btn');
+    const cancelWorkoutBtn = document.getElementById('cancel-workout');
+    const saveWorkoutBtn = document.getElementById('save-workout');
+    const editWorkoutBtns = document.querySelectorAll('.edit-workout');
+    const deleteWorkoutBtns = document.querySelectorAll('.delete-workout');
+    const viewWorkoutBtns = document.querySelectorAll('.view-workout');
+    
+    // Function to open workout modal
+    function openWorkoutModal(isEdit = false, workoutId = null) {
+        const modalTitle = document.getElementById('workout-modal-title');
+        const workoutForm = document.getElementById('workout-form');
+        
+        // Reset difficulty options
+        document.querySelectorAll('.difficulty-option').forEach(option => {
+            option.classList.remove('active');
+        });
+        
+        if (isEdit) {
+            modalTitle.textContent = 'Edit Workout';
+            document.getElementById('workout-id').value = workoutId;
+            
+            // In a real application, you would fetch workout data here
+            // For demo purposes, we'll fill with dummy data
+            if (workoutId === '1') {
+                document.getElementById('workout-name').value = 'Olympic Weightlifting';
+                document.getElementById('workout-description').value = 'Master the snatch and clean & jerk with expert technique coaching for maximum power development.';
+                document.getElementById('workout-duration').value = '60';
+                document.getElementById('workout-category').value = 'Strength';
                 
-                classModal.style.display = 'block';
+                // Set difficulty
+                document.querySelector('.difficulty-option[data-difficulty="Advanced"]').classList.add('active');
+                document.querySelector('input[name="difficulty"][value="Advanced"]').checked = true;
+            } else if (workoutId === '2') {
+                document.getElementById('workout-name').value = 'Spartan HIIT';
+                document.getElementById('workout-description').value = 'High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.';
+                document.getElementById('workout-duration').value = '45';
+                document.getElementById('workout-category').value = 'Cardio';
+                
+                // Set difficulty
+                document.querySelector('.difficulty-option[data-difficulty="Intermediate"]').classList.add('active');
+                document.querySelector('input[name="difficulty"][value="Intermediate"]').checked = true;
             }
+        } else {
+            modalTitle.textContent = 'Add New Workout';
+            workoutForm.reset();
+            document.getElementById('workout-id').value = '';
+        }
+        
+        workoutModal.style.display = 'block';
+    }
+    
+    // Open modal when "Add New Workout" button is clicked
+    if (addWorkoutBtn) {
+        addWorkoutBtn.addEventListener('click', () => openWorkoutModal());
+    }
+    
+    // Edit workout button click
+    editWorkoutBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const workoutId = this.getAttribute('data-id');
+            openWorkoutModal(true, workoutId);
+        });
+    });
+    
+    // Delete workout button click
+    deleteWorkoutBtns.forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const workoutId = this.getAttribute('data-id');
+            const workoutName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
             
-            // Open modal when "Add New Class" button is clicked
-            if (addClassBtn) {
-                addClassBtn.addEventListener('click', () => openClassModal());
-            }
-            
-            // Open modal when quick action is clicked
-            if (quickAddClassBtn) {
-                quickAddClassBtn.addEventListener('click', () => openClassModal());
-            }
-            
-            // Edit class button click
-            editClassBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const classId = this.getAttribute('data-id');
-                    openClassModal(true, classId);
-                });
-            });
-            
-            // Delete class button click
-            deleteClassBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const classId = this.getAttribute('data-id');
-                    const className = this.closest('tr').querySelector('td:nth-child(2)').textContent;
-                    
-                    if (confirm(`Are you sure you want to delete "${className}"? This action cannot be undone.`)) {
-                        // In a real app, you would delete the class via API
-                        // For demo, we'll just remove the row
-                        this.closest('tr').remove();
-                        showNotification(`Class "${className}" deleted successfully`, 'success');
-                    }
-                });
-            });
-            
-            // Close modal when "Cancel" button is clicked
-            if (cancelClassBtn) {
-                cancelClassBtn.addEventListener('click', () => {
-                    classModal.style.display = 'none';
-                });
-            }
-            
-            // Save class when "Save" button is clicked
-            if (saveClassBtn) {
-                saveClassBtn.addEventListener('click', () => {
-                    // In a real app, you would validate and save to database
-                    // For demo, we'll just show a success message
-                    const classId = document.getElementById('class-id').value;
-                    const isEdit = classId !== '';
-                    
-                    if (isEdit) {
-                        showNotification('Class updated successfully', 'success');
-                    } else {
-                        showNotification('New class added successfully', 'success');
-                    }
-                    
-                    classModal.style.display = 'none';
-                });
-            }
-            
-            // Close all modals when clicking the close button
-            closeModalBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const modal = this.closest('.modal');
-                    if (modal) {
-                        modal.style.display = 'none';
-                    }
-                });
-            });
-            
-            // Close modal when clicking outside the modal content
-            window.addEventListener('click', function(event) {
-                if (event.target.classList.contains('modal')) {
-                    event.target.style.display = 'none';
-                }
-            });
-            
-            // Finance functions
-            const runFinancialReportBtn = document.getElementById('run-financial-report');
-            if (runFinancialReportBtn) {
-                runFinancialReportBtn.addEventListener('click', function() {
-                    showNotification('Generating financial report...', 'info');
-                    setTimeout(() => {
-                        showNotification('Financial report generated successfully!', 'success');
-                    }, 2000);
-                });
-            }
-            
-            // Settings functions
-            const saveSettingsBtn = document.getElementById('save-settings');
-            if (saveSettingsBtn) {
-                saveSettingsBtn.addEventListener('click', function() {
-                    showNotification('Settings saved successfully', 'success');
-                });
-            }
-            
-            // Difficulty option selection
-            const difficultyOptions = document.querySelectorAll('.difficulty-option');
-            difficultyOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // Remove active class from all options
-                    difficultyOptions.forEach(opt => {
-                        opt.classList.remove('active');
+            if (confirm(`Are you sure you want to delete "${workoutName}"? This action cannot be undone.`)) {
+                try {
+                    const response = await fetch(`/api/workouts/${workoutId}`, {
+                        method: 'DELETE'
                     });
                     
-                    // Add active class to clicked option
-                    this.classList.add('active');
-                    
-                    // Check the corresponding radio button
-                    const difficulty = this.getAttribute('data-difficulty');
-                    document.querySelector(`input[name="difficulty"][value="${difficulty}"]`).checked = true;
-                });
-            });
-            
-            // Quick actions
-            const quickRunReportsBtn = document.getElementById('quick-run-reports');
-            if (quickRunReportsBtn) {
-                quickRunReportsBtn.addEventListener('click', function() {
-                    showNotification('Generating reports...', 'info');
-                    setTimeout(() => {
-                        showNotification('Reports generated successfully!', 'success');
-                    }, 2000);
-                });
-            }
-            
-            const quickSendEmailBtn = document.getElementById('quick-send-email');
-            if (quickSendEmailBtn) {
-                quickSendEmailBtn.addEventListener('click', function() {
-                    showNotification('Email feature coming soon!', 'info');
-                });
-            }
-            
-            // Filter functions for tables
-            const searchMembersInput = document.getElementById('search-members');
-            const membershipFilterSelect = document.getElementById('membership-filter');
-            
-            if (searchMembersInput) {
-                searchMembersInput.addEventListener('input', filterMembers);
-            }
-            
-            if (membershipFilterSelect) {
-                membershipFilterSelect.addEventListener('change', filterMembers);
-            }
-            
-            function filterMembers() {
-                const searchTerm = searchMembersInput.value.toLowerCase();
-                const membershipType = membershipFilterSelect.value;
-                const memberRows = document.querySelectorAll('#members-content .data-table tbody tr');
-                
-                memberRows.forEach(row => {
-                    const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                    const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-                    const membership = row.querySelector('td:nth-child(4)').textContent;
-                    
-                    const nameMatch = name.includes(searchTerm);
-                    const emailMatch = email.includes(searchTerm);
-                    const membershipMatch = !membershipType || membership === membershipType;
-                    
-                    if ((nameMatch || emailMatch) && membershipMatch) {
-                        row.style.display = '';
+                    if (response.ok) {
+                        // Remove the row from the table
+                        this.closest('tr').remove();
+                        showNotification(`Workout "${workoutName}" deleted successfully`, 'success');
                     } else {
-                        row.style.display = 'none';
+                        const errorData = await response.json().catch(() => ({}));
+                        showNotification(errorData.detail || 'Failed to delete workout', 'error');
                     }
-                });
-            }
-            
-            const searchWorkoutsInput = document.getElementById('search-workouts');
-            const difficultyFilterSelect = document.getElementById('difficulty-filter');
-            
-            if (searchWorkoutsInput) {
-                searchWorkoutsInput.addEventListener('input', filterWorkouts);
-            }
-            
-            if (difficultyFilterSelect) {
-                difficultyFilterSelect.addEventListener('change', filterWorkouts);
-            }
-            
-            function filterWorkouts() {
-                const searchTerm = searchWorkoutsInput.value.toLowerCase();
-                const difficultyType = difficultyFilterSelect.value;
-                const workoutRows = document.querySelectorAll('#workouts-content .data-table tbody tr');
-                
-                workoutRows.forEach(row => {
-                    const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                    const difficulty = row.querySelector('td:nth-child(3)').textContent;
-                    const category = row.querySelector('td:nth-child(5)').textContent.toLowerCase();
-                    
-                    const nameMatch = name.includes(searchTerm);
-                    const categoryMatch = category.includes(searchTerm);
-                    const difficultyMatch = !difficultyType || difficulty === difficultyType;
-                    
-                    if ((nameMatch || categoryMatch) && difficultyMatch) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            }
-            
-            // Mobile navigation toggle
-            const mobileToggle = document.querySelector('.mobile-toggle');
-            const nav = document.querySelector('.nav');
-            
-            if (mobileToggle && nav) {
-                mobileToggle.addEventListener('click', function() {
-                    nav.classList.toggle('active');
-                });
-            }
-            
-            // Notification system
-            function showNotification(message, type = 'success') {
-                const notificationContainer = document.querySelector('.notification-container');
-                
-                const notification = document.createElement('div');
-                notification.className = `notification ${type}`;
-                notification.innerHTML = `
-                    ${message}
-                    <button class="notification-close">&times;</button>
-                `;
-                
-                notificationContainer.appendChild(notification);
-                
-                // Add event listener to close button
-                const closeButton = notification.querySelector('.notification-close');
-                closeButton.addEventListener('click', function() {
-                    notification.remove();
-                });
-                
-                // Auto-remove after 5 seconds
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
-                    }
-                }, 5000);
-            }
-        });
-
-        // Member Management
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('search-members');
-            const membershipFilter = document.getElementById('membership-filter');
-            const membersTable = document.querySelector('#members-content .data-table tbody');
-
-            // Search functionality
-            searchInput.addEventListener('input', function() {
-                filterMembers();
-            });
-
-            // Membership filter
-            membershipFilter.addEventListener('change', function() {
-                filterMembers();
-            });
-
-            function filterMembers() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const membershipType = membershipFilter.value;
-                const rows = membersTable.getElementsByTagName('tr');
-
-                for (let row of rows) {
-                    if (row.cells.length < 2) continue; // Skip empty state row
-                    
-                    const name = row.cells[1].textContent.toLowerCase();
-                    const email = row.cells[2].textContent.toLowerCase();
-                    const membership = row.cells[3].textContent;
-                    
-                    const matchesSearch = name.includes(searchTerm) || email.includes(searchTerm);
-                    const matchesMembership = !membershipType || membership === membershipType;
-                    
-                    row.style.display = (matchesSearch && matchesMembership) ? '' : 'none';
-                }
-            }
-
-            // WebSocket connection for real-time updates
-            const ws = new WebSocket(`ws://${window.location.host}/ws`);
-            
-            ws.onmessage = function(event) {
-                const data = JSON.parse(event.data);
-                
-                if (data.type === 'new_member') {
-                    // Add new member to table
-                    const newRow = document.createElement('tr');
-                    newRow.dataset.id = data.member.id;
-                    newRow.innerHTML = `
-                        <td>${data.member.id}</td>
-                        <td>${data.member.name}</td>
-                        <td>${data.member.email}</td>
-                        <td>${data.member.membership_type}</td>
-                        <td>${new Date(data.member.join_date).toLocaleDateString()}</td>
-                        <td>
-                            <span class="status-badge active">Active</span>
-                        </td>
-                        <td>
-                            <button class="action-btn edit-member" data-id="${data.member.id}">Edit</button>
-                            <button class="action-btn delete-member" data-id="${data.member.id}">Delete</button>
-                        </td>
-                    `;
-                    
-                    // Add to table and apply filters
-                    membersTable.insertBefore(newRow, membersTable.firstChild);
-                    filterMembers();
-                    
-                    // Show notification
-                    showNotification('New Member', `${data.member.name} has joined with a ${data.member.membership_type} membership!`, 'success');
-                    
-                    // Update member count in summary
-                    updateMemberCount(1);
-                }
-            };
-
-            // Handle member deletion
-            document.querySelectorAll('.delete-member').forEach(button => {
-                button.addEventListener('click', async function() {
-                    if (confirm('Are you sure you want to delete this member?')) {
-                        const memberId = this.dataset.id;
-                        try {
-                            const response = await fetch(`/api/members/${memberId}`, {
-                                method: 'DELETE'
-                            });
-                            
-                            if (response.ok) {
-                                const row = this.closest('tr');
-                                row.remove();
-                                showNotification('Success', 'Member deleted successfully', 'success');
-                                updateMemberCount(-1);
-                            } else {
-                                showNotification('Error', 'Failed to delete member', 'error');
-                            }
-                        } catch (error) {
-                            showNotification('Error', 'Failed to delete member', 'error');
-                        }
-                    }
-                });
-            });
-
-            // Handle member editing
-            document.querySelectorAll('.edit-member').forEach(button => {
-                button.addEventListener('click', function() {
-                    const memberId = this.dataset.id;
-                    // Implement edit functionality
-                    // You can show a modal with a form to edit member details
-                });
-            });
-
-            function updateMemberCount(change) {
-                const memberCountElement = document.querySelector('.summary-card[data-type="members"] .number');
-                if (memberCountElement) {
-                    const currentCount = parseInt(memberCountElement.textContent);
-                    memberCountElement.textContent = currentCount + change;
+                } catch (error) {
+                    console.error('Error deleting workout:', error);
+                    showNotification('An error occurred while deleting the workout', 'error');
                 }
             }
         });
+    });
+    
+    // View workout button click
+    viewWorkoutBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const workoutId = this.getAttribute('data-id');
+            const workoutName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+            
+            // In a real app, you would redirect to workout detail page
+            // For demo, just show a notification
+            showNotification(`Viewing details for "${workoutName}"`, 'info');
+        });
+    });
+    
+    // Close modal when "Cancel" button is clicked
+    if (cancelWorkoutBtn) {
+        cancelWorkoutBtn.addEventListener('click', () => {
+            workoutModal.style.display = 'none';
+        });
+    }
+    
+    // Save workout when "Save" button is clicked
+    if (saveWorkoutBtn) {
+        saveWorkoutBtn.addEventListener('click', () => {
+            // In a real app, you would validate and save to database
+            // For demo, we'll just show a success message
+            const workoutId = document.getElementById('workout-id').value;
+            const isEdit = workoutId !== '';
+            
+            if (isEdit) {
+                showNotification('Workout updated successfully', 'success');
+            } else {
+                showNotification('New workout added successfully', 'success');
+            }
+            
+            workoutModal.style.display = 'none';
+        });
+    }
+    
+    // Modal functionality for Classes
+    const classModal = document.getElementById('class-modal');
+    const addClassBtn = document.getElementById('add-class-btn');
+    const quickAddClassBtn = document.getElementById('quick-add-class');
+    const cancelClassBtn = document.getElementById('cancel-class');
+    const saveClassBtn = document.getElementById('save-class');
+    const editClassBtns = document.querySelectorAll('.edit-class');
+    const deleteClassBtns = document.querySelectorAll('.delete-class');
+    
+    // Function to open class modal
+    function openClassModal(isEdit = false, classId = null) {
+        const modalTitle = document.getElementById('class-modal-title');
+        const classForm = document.getElementById('class-form');
+        
+        if (isEdit) {
+            modalTitle.textContent = 'Edit Class';
+            document.getElementById('class-id').value = classId;
+            
+            // In a real application, you would fetch class data here
+            // For demo purposes, we'll fill with dummy data
+            if (classId === '1') {
+                document.getElementById('class-name').value = 'Olympic Lifting';
+                document.getElementById('class-description').value = 'Master the snatch and clean & jerk with expert technique coaching for maximum power development.';
+                document.getElementById('class-instructor').value = 'Alex Hermes';
+                document.getElementById('class-schedule').value = 'Mon, Wed, Fri - 7:00 AM';
+                document.getElementById('class-level').value = 'All Levels';
+                document.getElementById('class-capacity').value = '15';
+            } else if (classId === '2') {
+                document.getElementById('class-name').value = 'Spartan HIIT';
+                document.getElementById('class-description').value = 'High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.';
+                document.getElementById('class-instructor').value = 'Marcus Leonidas';
+                document.getElementById('class-schedule').value = 'Tue, Thu - 6:00 PM';
+                document.getElementById('class-level').value = 'Intermediate';
+                document.getElementById('class-capacity').value = '20';
+            }
+        } else {
+            modalTitle.textContent = 'Add New Class';
+            classForm.reset();
+            document.getElementById('class-id').value = '';
+        }
+        
+        classModal.style.display = 'block';
+    }
+    
+    // Open modal when "Add New Class" button is clicked
+    if (addClassBtn) {
+        addClassBtn.addEventListener('click', () => openClassModal());
+    }
+    
+    // Open modal when quick action is clicked
+    if (quickAddClassBtn) {
+        quickAddClassBtn.addEventListener('click', () => openClassModal());
+    }
+    
+    // Edit class button click
+    editClassBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const classId = this.getAttribute('data-id');
+            openClassModal(true, classId);
+        });
+    });
+    
+    // Delete class button click
+    deleteClassBtns.forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const classId = this.getAttribute('data-id');
+            const className = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+            
+            if (confirm(`Are you sure you want to delete "${className}"? This action cannot be undone.`)) {
+                try {
+                    const response = await fetch(`/api/classes/${classId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        // Remove the row from the table
+                        this.closest('tr').remove();
+                        showNotification(`Class "${className}" deleted successfully`, 'success');
+                    } else {
+                        const errorData = await response.json().catch(() => ({}));
+                        showNotification(errorData.detail || 'Failed to delete class', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error deleting class:', error);
+                    showNotification('An error occurred while deleting the class', 'error');
+                }
+            }
+        });
+    });
+    
+    // Close modal when "Cancel" button is clicked
+    if (cancelClassBtn) {
+        cancelClassBtn.addEventListener('click', () => {
+            classModal.style.display = 'none';
+        });
+    }
+    
+    // Save class when "Save" button is clicked
+    if (saveClassBtn) {
+        saveClassBtn.addEventListener('click', () => {
+            // In a real app, you would validate and save to database
+            // For demo, we'll just show a success message
+            const classId = document.getElementById('class-id').value;
+            const isEdit = classId !== '';
+            
+            if (isEdit) {
+                showNotification('Class updated successfully', 'success');
+            } else {
+                showNotification('New class added successfully', 'success');
+            }
+            
+            classModal.style.display = 'none';
+        });
+    }
+    
+    // Close all modals when clicking the close button
+    closeModalBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+    
+    // Close modal when clicking outside the modal content
+    window.addEventListener('click', function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    });
+    
+    // Finance functions
+    const runFinancialReportBtn = document.getElementById('run-financial-report');
+    if (runFinancialReportBtn) {
+        runFinancialReportBtn.addEventListener('click', function() {
+            showNotification('Generating financial report...', 'info');
+            setTimeout(() => {
+                showNotification('Financial report generated successfully!', 'success');
+            }, 2000);
+        });
+    }
+    
+    // Settings functions
+    const saveSettingsBtn = document.getElementById('save-settings');
+    if (saveSettingsBtn) {
+        saveSettingsBtn.addEventListener('click', function() {
+            showNotification('Settings saved successfully', 'success');
+        });
+    }
+    
+    // Difficulty option selection
+    const difficultyOptions = document.querySelectorAll('.difficulty-option');
+    difficultyOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove active class from all options
+            difficultyOptions.forEach(opt => {
+                opt.classList.remove('active');
+            });
+            
+            // Add active class to clicked option
+            this.classList.add('active');
+            
+            // Check the corresponding radio button
+            const difficulty = this.getAttribute('data-difficulty');
+            document.querySelector(`input[name="difficulty"][value="${difficulty}"]`).checked = true;
+        });
+    });
+    
+    // Quick actions
+    const quickRunReportsBtn = document.getElementById('quick-run-reports');
+    if (quickRunReportsBtn) {
+        quickRunReportsBtn.addEventListener('click', function() {
+            showNotification('Generating reports...', 'info');
+            setTimeout(() => {
+                showNotification('Reports generated successfully!', 'success');
+            }, 2000);
+        });
+    }
+    
+    const quickSendEmailBtn = document.getElementById('quick-send-email');
+    if (quickSendEmailBtn) {
+        quickSendEmailBtn.addEventListener('click', function() {
+            showNotification('Email feature coming soon!', 'info');
+        });
+    }
+    
+    // Filter functions for tables
+    const searchMembersInput = document.getElementById('search-members');
+    const membershipFilterSelect = document.getElementById('membership-filter');
+    
+    if (searchMembersInput) {
+        searchMembersInput.addEventListener('input', filterMembers);
+    }
+    
+    if (membershipFilterSelect) {
+        membershipFilterSelect.addEventListener('change', filterMembers);
+    }
+    
+    function filterMembers() {
+        const searchTerm = searchMembersInput.value.toLowerCase();
+        const membershipType = membershipFilterSelect.value;
+        const memberRows = document.querySelectorAll('#members-content .data-table tbody tr');
+        
+        memberRows.forEach(row => {
+            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            const membership = row.querySelector('td:nth-child(4)').textContent;
+            
+            const nameMatch = name.includes(searchTerm);
+            const emailMatch = email.includes(searchTerm);
+            const membershipMatch = !membershipType || membership === membershipType;
+            
+            if ((nameMatch || emailMatch) && membershipMatch) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+    
+    const searchWorkoutsInput = document.getElementById('search-workouts');
+    const difficultyFilterSelect = document.getElementById('difficulty-filter');
+    
+    if (searchWorkoutsInput) {
+        searchWorkoutsInput.addEventListener('input', filterWorkouts);
+    }
+    
+    if (difficultyFilterSelect) {
+        difficultyFilterSelect.addEventListener('change', filterWorkouts);
+    }
+    
+    function filterWorkouts() {
+        const searchTerm = searchWorkoutsInput.value.toLowerCase();
+        const difficultyType = difficultyFilterSelect.value;
+        const workoutRows = document.querySelectorAll('#workouts-content .data-table tbody tr');
+        
+        workoutRows.forEach(row => {
+            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const difficulty = row.querySelector('td:nth-child(3)').textContent;
+            const category = row.querySelector('td:nth-child(5)').textContent.toLowerCase();
+            
+            const nameMatch = name.includes(searchTerm);
+            const categoryMatch = category.includes(searchTerm);
+            const difficultyMatch = !difficultyType || difficulty === difficultyType;
+            
+            if ((nameMatch || categoryMatch) && difficultyMatch) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+    
+    // Mobile navigation toggle
+    const mobileToggle = document.querySelector('.mobile-toggle');
+    const nav = document.querySelector('.nav');
+    
+    if (mobileToggle && nav) {
+        mobileToggle.addEventListener('click', function() {
+            nav.classList.toggle('active');
+        });
+    }
+    
+    // Notification system
+    function showNotification(message, type = 'success') {
+        const notificationContainer = document.querySelector('.notification-container');
+        
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            ${message}
+            <button class="notification-close">&times;</button>
+        `;
+        
+        notificationContainer.appendChild(notification);
+        
+        // Add event listener to close button
+        const closeButton = notification.querySelector('.notification-close');
+        closeButton.addEventListener('click', function() {
+            notification.remove();
+        });
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+});
     </script>
 </body>
 </html>
