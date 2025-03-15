@@ -87,22 +87,7 @@
             filter: brightness(1.1);
         }
 
-        .gallery-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .gallery-item:hover .gallery-caption {
-            transform: translateY(0);
-        }
+        /* Gallery caption styles removed */
 
         /* Lightbox styles */
         .lightbox {
@@ -205,34 +190,7 @@
             background-color: rgba(0, 0, 0, 0.6);
         }
 
-        /* Category filter */
-        .gallery-filter {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 2rem;
-        }
-
-        .filter-btn {
-            padding: 8px 16px;
-            background-color: var(--gray-200);
-            color: var(--text-dark);
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .filter-btn:hover {
-            background-color: var(--gray-300);
-        }
-
-        .filter-btn.active {
-            background-color: var(--primary);
-            color: white;
-        }
+        /* Removed category filter styles */
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
@@ -321,73 +279,50 @@
                 <p>Step inside and see where legends are made. Our premium equipment, specialized training zones, and inspiring atmosphere are designed to help you forge your legacy.</p>
             </div>
             
-            <div class="gallery-filter">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="facility">Facility</button>
-                <button class="filter-btn" data-filter="equipment">Equipment</button>
-                <button class="filter-btn" data-filter="classes">Classes</button>
-            </div>
-            
             <div class="gallery-grid">
                 <!-- Gallery items -->
-                <div class="gallery-item" data-category="facility">
-                    <img src="/static/img/gallery/gym-entrance.jpg" alt="Gym Entrance" class="gallery-img">
-                    <div class="gallery-caption">Welcome to Olympus Strength</div>
+                <div class="gallery-item">
+                    <img src="/static/img/gallery/gym1.jpg" alt="Olympus Strength Facility" class="gallery-img">
                 </div>
                 
-                <div class="gallery-item" data-category="facility">
-                    <img src="/static/img/gallery/weight-area.jpg" alt="Free Weight Area" class="gallery-img">
-                    <div class="gallery-caption">Free Weight Training Zone</div>
+                <div class="gallery-item">
+                    <img src="/static/img/gallery/gym2.jpg" alt="Olympus Strength Facility" class="gallery-img">
                 </div>
                 
-                <div class="gallery-item" data-category="equipment">
-                    <img src="/static/img/gallery/squat-racks.jpg" alt="Squat Racks" class="gallery-img">
-                    <div class="gallery-caption">Olympic Lifting Platforms</div>
+                <div class="gallery-item">
+                    <img src="/static/img/gallery/gym3.jpg" alt="Olympus Strength Facility" class="gallery-img">
                 </div>
                 
-                <div class="gallery-item" data-category="classes">
-                    <img src="/static/img/gallery/group-class.jpg" alt="Group Fitness Class" class="gallery-img">
-                    <div class="gallery-caption">Spartan HIIT Class in Action</div>
+                <div class="gallery-item">
+                    <img src="/static/img/gallery/gym4.jpg" alt="Olympus Strength Facility" class="gallery-img">
                 </div>
                 
-                <div class="gallery-item" data-category="facility">
-                    <img src="/static/img/gallery/cardio-zone.jpg" alt="Cardio Zone" class="gallery-img">
-                    <div class="gallery-caption">State-of-the-Art Cardio Zone</div>
+                <div class="gallery-item">
+                    <img src="/static/img/gallery/gym5.jpg" alt="Olympus Strength Facility" class="gallery-img">
                 </div>
                 
-                <div class="gallery-item" data-category="equipment">
-                    <img src="/static/img/gallery/dumbbells.jpg" alt="Dumbbell Rack" class="gallery-img">
-                    <div class="gallery-caption">Full Range of Dumbbells</div>
+                <div class="gallery-item">
+                    <img src="/static/img/gallery/gym6.jpg" alt="Olympus Strength Facility" class="gallery-img">
                 </div>
                 
-                <div class="gallery-item" data-category="classes">
-                    <img src="/static/img/gallery/personal-training.jpg" alt="Personal Training" class="gallery-img">
-                    <div class="gallery-caption">One-on-One Coaching</div>
+                <div class="gallery-item">
+                    <img src="/static/img/gallery/gym7.jpg" alt="Olympus Strength Facility" class="gallery-img">
                 </div>
                 
-                <div class="gallery-item" data-category="facility">
-                    <img src="/static/img/gallery/stretching-area.jpg" alt="Stretching Area" class="gallery-img">
-                    <div class="gallery-caption">Dedicated Stretching and Recovery Zone</div>
+                <div class="gallery-item">
+                    <img src="/static/img/gallery/gym8.jpg" alt="Olympus Strength Facility" class="gallery-img">
                 </div>
                 
-                <div class="gallery-item" data-category="equipment">
-                    <img src="/static/img/gallery/cable-machines.jpg" alt="Cable Machines" class="gallery-img">
-                    <div class="gallery-caption">Multi-Functional Cable Stations</div>
+                <div class="gallery-item">
+                    <img src="/static/img/gallery/gym9.jpg" alt="Olympus Strength Facility" class="gallery-img">
                 </div>
                 
-                <div class="gallery-item" data-category="classes">
-                    <img src="/static/img/gallery/yoga-class.jpg" alt="Yoga Class" class="gallery-img">
-                    <div class="gallery-caption">Olympian Recovery Session</div>
+                <div class="gallery-item">
+                    <img src="/static/img/gallery/gym10.jpg" alt="Olympus Strength Facility" class="gallery-img">
                 </div>
                 
-                <div class="gallery-item" data-category="facility">
-                    <img src="/static/img/gallery/locker-rooms.jpg" alt="Locker Rooms" class="gallery-img">
-                    <div class="gallery-caption">Premium Locker Rooms</div>
-                </div>
-                
-                <div class="gallery-item" data-category="equipment">
-                    <img src="/static/img/gallery/functional-zone.jpg" alt="Functional Training Zone" class="gallery-img">
-                    <div class="gallery-caption">Functional Training Equipment</div>
+                <div class="gallery-item">
+                    <img src="/static/img/gallery/gym11.jpg" alt="Olympus Strength Facility" class="gallery-img">
                 </div>
             </div>
         </div>
@@ -473,54 +408,28 @@
                 });
             }
             
-            // Gallery filtering functionality
-            const filterBtns = document.querySelectorAll('.filter-btn');
+            // Gallery filtering functionality removed
             const galleryItems = document.querySelectorAll('.gallery-item');
-            
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Remove active class from all buttons
-                    filterBtns.forEach(b => b.classList.remove('active'));
-                    
-                    // Add active class to clicked button
-                    this.classList.add('active');
-                    
-                    // Get filter value
-                    const filterValue = this.getAttribute('data-filter');
-                    
-                    // Filter gallery items
-                    galleryItems.forEach(item => {
-                        if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
-                            item.style.display = 'block';
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
-                });
-            });
             
             // Lightbox functionality
             const lightbox = document.querySelector('.lightbox');
             const lightboxImg = document.querySelector('.lightbox-img');
-            const lightboxCaption = document.querySelector('.lightbox-caption');
             const lightboxClose = document.querySelector('.lightbox-close');
             const lightboxPrev = document.querySelector('.lightbox-prev');
             const lightboxNext = document.querySelector('.lightbox-next');
             
             let currentIndex = 0;
-            const visibleItems = () => Array.from(galleryItems).filter(item => item.style.display !== 'none');
+            const visibleItems = () => Array.from(galleryItems);
             
             galleryItems.forEach(item => {
                 item.addEventListener('click', function() {
                     const img = this.querySelector('.gallery-img');
-                    const caption = this.querySelector('.gallery-caption').textContent;
                     const items = visibleItems();
                     
                     currentIndex = items.indexOf(this);
                     
                     lightboxImg.src = img.src;
                     lightboxImg.alt = img.alt;
-                    lightboxCaption.textContent = caption;
                     
                     lightbox.classList.add('active');
                     document.body.style.overflow = 'hidden'; // Prevent scrolling
@@ -552,7 +461,6 @@
                 
                 lightboxImg.src = img.src;
                 lightboxImg.alt = img.alt;
-                lightboxCaption.textContent = caption;
             });
             
             // Next image
@@ -566,7 +474,6 @@
                 
                 lightboxImg.src = img.src;
                 lightboxImg.alt = img.alt;
-                lightboxCaption.textContent = caption;
             });
             
             // Keyboard navigation
