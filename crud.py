@@ -446,73 +446,101 @@ def get_monthly_revenue(db: Session, year: int =datetime.now().year, month: int 
     return result or 0
 
 def get_financial_summary(db: Session, year: int = datetime.now().year, month: int = datetime.now().month):
-    # Get start and end dates for the month
-    start_date = datetime(year, month, 1)
-    if month == 12:
-        end_date = datetime(year + 1, 1, 1)
-    else:
-        end_date = datetime(year, month + 1, 1)
-    
-    # Get all active members and their membership types
-    active_members = db.query(models.Member).filter(models.Member.is_active == True).all()
-    
-    # Calculate revenue from memberships
-    membership_prices = {
-        "Bronze": 29.99,
-        "Silver": 49.99,
-        "Gold": 79.99
-    }
-    
-    membership_revenue = sum(membership_prices[member.membership_type] for member in active_members)
-    
-    # Get other transactions (e.g., personal training, merchandise)
-    other_transactions = db.query(func.sum(models.Transaction.amount)).filter(
-        models.Transaction.date >= start_date,
-        models.Transaction.date < end_date,
-        models.Transaction.status == "completed",
-        models.Transaction.type != "Membership Fee"
-    ).scalar() or 0
-    
-    # Total revenue
-    revenue = membership_revenue + other_transactions
-    
-    # Get expenses
-    expenses = db.query(func.sum(models.Transaction.amount)).filter(
-        models.Transaction.date >= start_date,
-        models.Transaction.date < end_date,
-        models.Transaction.status == "completed",
-        models.Transaction.amount < 0
-    ).scalar() or 0
-    
-    # Calculate net profit
-    net_profit = revenue + expenses  # expenses are negative
-    
-    # Calculate membership statistics
-    membership_stats = {
-        "Bronze": len([m for m in active_members if m.membership_type == "Bronze"]),
-        "Silver": len([m for m in active_members if m.membership_type == "Silver"]),
-        "Gold": len([m for m in active_members if m.membership_type == "Gold"])
-    }
-    
-    # Calculate growth compared to previous month
-    prev_month = month - 1
-    prev_year = year
-    if prev_month == 0:
-        prev_month = 12
-        prev_year -= 1
-    
-    prev_revenue = get_monthly_revenue(db, prev_year, prev_month)
-    growth = 0
-    if prev_revenue > 0:
-        growth = ((revenue - prev_revenue) / prev_revenue) * 100
-    
-    return {
-        "revenue": revenue,
-        "expenses": abs(expenses),  # Convert to positive for display
-        "net_profit": net_profit,
-        "growth": growth,
-        "membership_revenue": membership_revenue,
-        "other_revenue": other_transactions,
-        "membership_stats": membership_stats
-    }
+    try:
+        # Get start and end dates for the month
+        start_date = datetime(year, month, 1)
+        if month == 12:
+            end_date = datetime(year + 1, 1, 1)
+        else:
+            end_date = datetime(year, month + 1, 1)
+        
+        # Get all active members and their membership types
+        active_members = db.query(models.Member).filter(
+            models.Member.is_active == True,
+            models.Member.role == "customer"  # Only count customers
+        ).all()
+        
+        # Calculate revenue from memberships
+        membership_prices = {
+            "Bronze": 29.99,
+            "Silver": 49.99,
+            "Gold": 79.99
+        }
+        
+        # Calculate membership revenue safely
+        membership_revenue = 0
+        for member in active_members:
+            if member.membership_type and member.membership_type in membership_prices:
+                membership_revenue += membership_prices[member.membership_type]
+        
+        # Get other transactions (e.g., personal training, merchandise)
+        other_transactions = db.query(func.sum(models.Transaction.amount)).filter(
+            models.Transaction.date >= start_date,
+            models.Transaction.date < end_date,
+            models.Transaction.status == "completed",
+            models.Transaction.type != "Membership Fee"
+        ).scalar() or 0
+        
+        # Total revenue
+        revenue = membership_revenue + other_transactions
+        
+        # Get expenses
+        expenses = db.query(func.sum(models.Transaction.amount)).filter(
+            models.Transaction.date >= start_date,
+            models.Transaction.date < end_date,
+            models.Transaction.status == "completed",
+            models.Transaction.amount < 0
+        ).scalar() or 0
+        
+        # Calculate net profit
+        net_profit = revenue + expenses  # expenses are negative
+        
+        # Calculate membership statistics safely
+        membership_stats = {
+            "Bronze": 0,
+            "Silver": 0,
+            "Gold": 0
+        }
+        
+        for member in active_members:
+            if member.membership_type and member.membership_type in membership_stats:
+                membership_stats[member.membership_type] += 1
+        
+        # Calculate growth compared to previous month
+        prev_month = month - 1
+        prev_year = year
+        if prev_month == 0:
+            prev_month = 12
+            prev_year -= 1
+        
+        prev_revenue = get_monthly_revenue(db, prev_year, prev_month)
+        growth = 0
+        if prev_revenue > 0:
+            growth = ((revenue - prev_revenue) / prev_revenue) * 100
+        
+        return {
+            "revenue": revenue,
+            "expenses": abs(expenses),  # Convert to positive for display
+            "net_profit": net_profit,
+            "growth": growth,
+            "membership_revenue": membership_revenue,
+            "other_revenue": other_transactions,
+            "membership_stats": membership_stats
+        }
+    except Exception as e:
+        logger.error(f"Error in get_financial_summary: {str(e)}")
+        # Return default values in case of error
+        return {
+            "revenue": 0,
+            "expenses": 0,
+            "net_profit": 0,
+            "growth": 0,
+            "membership_revenue": 0,
+            "other_revenue": 0,
+            "membership_stats": {
+                "Bronze": 0,
+                "Silver": 0,
+                "Gold": 0
+            }
+        }
 
