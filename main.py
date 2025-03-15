@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends, HTTPException, Response, Form, Cookie, status
+from fastapi import FastAPI, Request, Depends, HTTPException, Response, Form, Cookie, status, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
@@ -13,6 +13,7 @@ from passlib.context import CryptContext
 import secrets
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.templating import Jinja2Templates
+import asyncio
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -39,7 +40,39 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-#Create route handlers
+# WebSocket connection manager
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: dict):
+        for connection in self.active_connections:
+            try:
+                await connection.send_json(message)
+            except:
+                # Remove failed connections
+                self.disconnect(connection)
+
+manager = ConnectionManager()
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            # Keep the connection alive
+            data = await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+
+# Create route handlers
 @app.get("/workouts/personal", response_class=HTMLResponse)
 async def my_workouts(request: Request, db: Session = Depends(get_db)):
     current_user = await get_optional_user(request, db)
