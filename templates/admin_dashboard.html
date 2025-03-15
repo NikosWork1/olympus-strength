@@ -1063,6 +1063,51 @@ FF<!DOCTYPE html>
             width: auto;
             object-fit: contain;
         }
+
+        .stat-details {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        
+        .membership-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .membership-stat {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+        
+        .membership-stat h3 {
+            color: var(--text-dark);
+            margin: 0 0 1rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-revenue {
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+        
+        @media (max-width: 768px) {
+            .membership-stats {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1493,26 +1538,51 @@ FF<!DOCTYPE html>
                         <div class="admin-stats">
                             <div class="stat-card">
                                 <div class="stat-icon">💰</div>
-                                <div class="stat-value">$12,450</div>
+                                <div class="stat-value">€{{ "{:,.2f}".format(financial_summary.revenue) }}</div>
                                 <div class="stat-label">Monthly Revenue</div>
+                                <div class="stat-details">
+                                    <small>Memberships: €{{ "{:,.2f}".format(financial_summary.membership_revenue) }}</small><br>
+                                    <small>Other: €{{ "{:,.2f}".format(financial_summary.other_revenue) }}</small>
+                                </div>
                             </div>
                             
                             <div class="stat-card">
                                 <div class="stat-icon">📈</div>
-                                <div class="stat-value">+15%</div>
+                                <div class="stat-value">{{ "{:+.1f}%".format(financial_summary.growth) }}</div>
                                 <div class="stat-label">Growth</div>
                             </div>
                             
                             <div class="stat-card">
                                 <div class="stat-icon">🧾</div>
-                                <div class="stat-value">$7,800</div>
+                                <div class="stat-value">€{{ "{:,.2f}".format(financial_summary.expenses) }}</div>
                                 <div class="stat-label">Expenses</div>
                             </div>
                             
                             <div class="stat-card">
                                 <div class="stat-icon">💲</div>
-                                <div class="stat-value">$4,650</div>
+                                <div class="stat-value">€{{ "{:,.2f}".format(financial_summary.net_profit) }}</div>
                                 <div class="stat-label">Net Profit</div>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-section">
+                            <h2 class="admin-section-title">Membership Distribution</h2>
+                            <div class="membership-stats">
+                                <div class="membership-stat">
+                                    <h3>Bronze Members</h3>
+                                    <div class="stat-number">{{ financial_summary.membership_stats.Bronze }}</div>
+                                    <div class="stat-revenue">€{{ "{:,.2f}".format(financial_summary.membership_stats.Bronze * 29.99) }}/month</div>
+                                </div>
+                                <div class="membership-stat">
+                                    <h3>Silver Members</h3>
+                                    <div class="stat-number">{{ financial_summary.membership_stats.Silver }}</div>
+                                    <div class="stat-revenue">€{{ "{:,.2f}".format(financial_summary.membership_stats.Silver * 49.99) }}/month</div>
+                                </div>
+                                <div class="membership-stat">
+                                    <h3>Gold Members</h3>
+                                    <div class="stat-number">{{ financial_summary.membership_stats.Gold }}</div>
+                                    <div class="stat-revenue">€{{ "{:,.2f}".format(financial_summary.membership_stats.Gold * 79.99) }}/month</div>
+                                </div>
                             </div>
                         </div>
                         
