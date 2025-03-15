@@ -591,8 +591,8 @@
                                     {% for booking_tuple in today_schedule %}
                                         <div class="schedule-item">
                                             <div class="schedule-time">
-                                                {{ booking_tuple[0].class_date.strftime('%H:%M') }} - 
-                                                {{ calculate_end_time(booking_tuple[0].class_date).strftime('%H:%M') }}
+                                               {{ booking_tuple[0].class_date.strftime('%H:%M') }} - 
+                                               {{ booking_tuple[0].class_date.strftime('%H:%M') }}
                                             </div>
                                             <div class="schedule-details">
                                                 <div class="schedule-title">{{ booking_tuple[1].name }}</div>
