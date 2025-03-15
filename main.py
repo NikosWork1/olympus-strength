@@ -39,11 +39,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-#Calculating time function
-def calculate_end_time(start_time):
-    """Calculate end time by adding one hour to start time"""
-    end_time = start_time + timedelta(hours=1)
-    return end_time
 #Create route handlers
 @app.get("/workouts/personal", response_class=HTMLResponse)
 async def my_workouts(request: Request, db: Session = Depends(get_db)):
@@ -365,8 +360,6 @@ async def coach_dashboard(request: Request, db: Session = Depends(get_db)):
             "session_count": session_count,
             "today_schedule": today_schedule,
             "workouts": workouts
-            "calculate_end_time": calculate_end_time,  
-            "now": datetime.now() 
             })
     except Exception as e:
         logger.error(f"Error rendering coach dashboard: {e}")
