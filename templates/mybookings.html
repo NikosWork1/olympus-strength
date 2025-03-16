@@ -463,6 +463,7 @@
             });
             
             // Handle cancel confirmation
+            
             cancelYesBtn.addEventListener('click', async function() {
                 const bookingId = bookingIdInput.value;
                 
@@ -473,14 +474,22 @@
                 cancelYesBtn.disabled = true;
                 
                 try {
+                    console.log(`Attempting to cancel booking: ${bookingId}`); // Debug log
+                    
                     const response = await fetch(`/api/bookings/${bookingId}/cancel`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
-                        }
+                        },
+                        body: JSON.stringify({}) // Send empty body
                     });
                     
+                    console.log(`Response status: ${response.status}`); // Debug log
+                    
                     if (response.ok) {
+                        const responseData = await response.json();
+                        console.log('Cancellation successful:', responseData);
+                        
                         // Update the booking card status
                         const bookingCard = document.querySelector(`.booking-card .cancel-booking[data-id="${bookingId}"]`).closest('.booking-card');
                         bookingCard.setAttribute('data-status', 'cancelled');
@@ -491,13 +500,22 @@
                         statusBadge.textContent = 'Cancelled';
                         
                         // Remove cancel button
-                        bookingCard.querySelector('.booking-actions').remove();
+                        const actionsDiv = bookingCard.querySelector('.booking-actions');
+                        if (actionsDiv) {
+                            actionsDiv.remove();
+                        }
                         
                         // Show success message
                         showNotification('Booking cancelled successfully', 'success');
                     } else {
-                        const data = await response.json();
-                        showNotification(data.detail || 'Failed to cancel booking', 'error');
+                        try {
+                            const errorData = await response.json();
+                            console.error('Error response:', errorData);
+                            showNotification(errorData.detail || 'Failed to cancel booking', 'error');
+                        } catch (parseError) {
+                            console.error('Error parsing error response:', parseError);
+                            showNotification('Failed to cancel booking', 'error');
+                        }
                     }
                 } catch (error) {
                     console.error('Error cancelling booking:', error);
