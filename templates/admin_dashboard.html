@@ -1952,31 +1952,25 @@
             modalTitle.textContent = 'Edit Member';
             document.getElementById('member-id').value = memberId;
             
-            // In a real application, you would fetch member data here
-            // For demo purposes, we'll fill with dummy data
-            if (memberId === '1') {
-                document.getElementById('member-name').value = 'John Doe';
-                document.getElementById('member-email').value = 'john.doe@example.com';
-                document.getElementById('member-phone').value = '(555) 123-4567';
-                document.getElementById('member-membership').value = 'Gold';
-                document.querySelector('input[name="is_active"][value="true"]').checked = true;
-            } else if (memberId === '2') {
-                document.getElementById('member-name').value = 'Jane Smith';
-                document.getElementById('member-email').value = 'jane.smith@example.com';
-                document.getElementById('member-phone').value = '(555) 987-6543';
-                document.getElementById('member-membership').value = 'Silver';
-                document.querySelector('input[name="is_active"][value="true"]').checked = true;
-            } else if (memberId === '3') {
-                document.getElementById('member-name').value = 'Michael Johnson';
-                document.getElementById('member-email').value = 'michael.j@example.com';
-                document.getElementById('member-phone').value = '(555) 246-8135';
-                document.getElementById('member-membership').value = 'Bronze';
-                document.querySelector('input[name="is_active"][value="false"]').checked = true;
-            }
+            // Fetch member data from API
+            fetch(`/api/members/${memberId}`)
+                .then(response => response.json())
+                .then(member => {
+                    document.getElementById('member-name').value = member.name;
+                    document.getElementById('member-email').value = member.email;
+                    document.getElementById('member-phone').value = member.phone || '';
+                    document.getElementById('member-membership').value = member.membership_type;
+                    document.querySelector(`input[name="is_active"][value="${member.is_active}"]`).checked = true;
+                })
+                .catch(error => {
+                    console.error('Error fetching member:', error);
+                    showNotification('Error fetching member data', 'error');
+                });
         } else {
             modalTitle.textContent = 'Add New Member';
             memberForm.reset();
             document.getElementById('member-id').value = '';
+            document.querySelector('input[name="is_active"][value="true"]').checked = true;
         }
         
         memberModal.style.display = 'block';
@@ -2044,19 +2038,153 @@
     
     // Save member when "Save" button is clicked
     if (saveMemberBtn) {
-        saveMemberBtn.addEventListener('click', () => {
-            // In a real app, you would validate and save to database
-            // For demo, we'll just show a success message
+        saveMemberBtn.addEventListener('click', async () => {
+            // Get form data
             const memberId = document.getElementById('member-id').value;
             const isEdit = memberId !== '';
             
-            if (isEdit) {
-                showNotification('Member updated successfully', 'success');
-            } else {
-                showNotification('New member added successfully', 'success');
+            const formData = {
+                name: document.getElementById('member-name').value,
+                email: document.getElementById('member-email').value,
+                phone: document.getElementById('member-phone').value,
+                membership_type: document.getElementById('member-membership').value,
+                is_active: document.querySelector('input[name="is_active"]:checked').value === 'true'
+            };
+            
+            // Add password only if provided (for new accounts or password changes)
+            const password = document.getElementById('member-password').value;
+            if (password) {
+                formData.password = password;
             }
             
-            memberModal.style.display = 'none';
+            try {
+                let response;
+                
+                if (isEdit) {
+                    // Update existing member
+                    response = await fetch(`/api/members/${memberId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                } else {
+                    // Create new member
+                    // For new members, password is required
+                    if (!formData.password) {
+                        showNotification('Password is required for new members', 'error');
+                        return;
+                    }
+                    
+                    response = await fetch('/api/members', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            ...formData,
+                            password: password,
+                            role: 'customer'  // Default role for new members
+                        })
+                    });
+                }
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (isEdit) {
+                        // Update the row in the table
+                        const row = document.querySelector(`tr[data-id="${memberId}"]`);
+                        if (row) {
+                            row.querySelector('td:nth-child(2)').textContent = formData.name;
+                            row.querySelector('td:nth-child(3)').textContent = formData.email;
+                            row.querySelector('td:nth-child(4)').textContent = formData.membership_type;
+                            const statusBadge = row.querySelector('.status-badge');
+                            statusBadge.textContent = formData.is_active ? 'Active' : 'Inactive';
+                            statusBadge.className = `status-badge ${formData.is_active ? 'active' : 'inactive'}`;
+                        }
+                        
+                        showNotification('Member updated successfully', 'success');
+                    } else {
+                        // Add new row to the table
+                        const membersTableBody = document.querySelector('#members-content .data-table tbody');
+                        const newRow = document.createElement('tr');
+                        newRow.dataset.id = data.id;
+                        newRow.innerHTML = `
+                            <td>${data.id}</td>
+                            <td>${data.name}</td>
+                            <td>${data.email}</td>
+                            <td>${data.membership_type}</td>
+                            <td>${new Date().toISOString().split('T')[0]}</td>
+                            <td>
+                                <span class="status-badge active">Active</span>
+                            </td>
+                            <td>
+                                <button class="action-btn edit-member" data-id="${data.id}">Edit</button>
+                                <button class="action-btn delete-member" data-id="${data.id}">Delete</button>
+                            </td>
+                        `;
+                        
+                        // Add event listeners to the new buttons
+                        newRow.querySelector('.edit-member').addEventListener('click', function() {
+                            openMemberModal(true, this.getAttribute('data-id'));
+                        });
+                        
+                        newRow.querySelector('.delete-member').addEventListener('click', async function() {
+                            const memberId = this.getAttribute('data-id');
+                            const memberName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+                            
+                            if (confirm(`Are you sure you want to delete ${memberName}? This action cannot be undone.`)) {
+                                try {
+                                    const response = await fetch(`/api/members/${memberId}`, {
+                                        method: 'DELETE'
+                                    });
+                                    
+                                    if (response.ok) {
+                                        this.closest('tr').remove();
+                                        showNotification(`Member ${memberName} deleted successfully`, 'success');
+                                        
+                                        // Update member count
+                                        const memberCountElement = document.querySelector('.stat-card .stat-value');
+                                        if (memberCountElement) {
+                                            const currentCount = parseInt(memberCountElement.textContent);
+                                            memberCountElement.textContent = currentCount - 1;
+                                        }
+                                    } else {
+                                        const errorData = await response.json().catch(() => ({}));
+                                        showNotification(errorData.detail || 'Failed to delete member', 'error');
+                                    }
+                                } catch (error) {
+                                    console.error('Error deleting member:', error);
+                                    showNotification('An error occurred while deleting the member', 'error');
+                                }
+                            }
+                        });
+                        
+                        if (membersTableBody) {
+                            membersTableBody.appendChild(newRow);
+                        }
+                        
+                        // Update member count
+                        const memberCountElement = document.querySelector('.stat-card .stat-value');
+                        if (memberCountElement) {
+                            const currentCount = parseInt(memberCountElement.textContent);
+                            memberCountElement.textContent = currentCount + 1;
+                        }
+                        
+                        showNotification('New member added successfully', 'success');
+                    }
+                    
+                    memberModal.style.display = 'none';
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    showNotification(errorData.detail || 'Failed to save member', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving member:', error);
+                showNotification('An error occurred while saving the member', 'error');
+            }
         });
     }
     
@@ -2083,27 +2211,27 @@
             modalTitle.textContent = 'Edit Workout';
             document.getElementById('workout-id').value = workoutId;
             
-            // In a real application, you would fetch workout data here
-            // For demo purposes, we'll fill with dummy data
-            if (workoutId === '1') {
-                document.getElementById('workout-name').value = 'Olympic Weightlifting';
-                document.getElementById('workout-description').value = 'Master the snatch and clean & jerk with expert technique coaching for maximum power development.';
-                document.getElementById('workout-duration').value = '60';
-                document.getElementById('workout-category').value = 'Strength';
-                
-                // Set difficulty
-                document.querySelector('.difficulty-option[data-difficulty="Advanced"]').classList.add('active');
-                document.querySelector('input[name="difficulty"][value="Advanced"]').checked = true;
-            } else if (workoutId === '2') {
-                document.getElementById('workout-name').value = 'Spartan HIIT';
-                document.getElementById('workout-description').value = 'High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.';
-                document.getElementById('workout-duration').value = '45';
-                document.getElementById('workout-category').value = 'Cardio';
-                
-                // Set difficulty
-                document.querySelector('.difficulty-option[data-difficulty="Intermediate"]').classList.add('active');
-                document.querySelector('input[name="difficulty"][value="Intermediate"]').checked = true;
-            }
+            // Fetch workout data from API
+            fetch(`/api/workouts/${workoutId}`)
+                .then(response => response.json())
+                .then(workout => {
+                    document.getElementById('workout-name').value = workout.name;
+                    document.getElementById('workout-description').value = workout.description;
+                    document.getElementById('workout-duration').value = workout.duration;
+                    document.getElementById('workout-category').value = workout.category || '';
+                    
+                    // Set difficulty
+                    const difficultyOption = document.querySelector(`.difficulty-option[data-difficulty="${workout.difficulty}"]`);
+                    if (difficultyOption) {
+                        difficultyOption.classList.add('active');
+                        const radio = difficultyOption.querySelector('input[type="radio"]');
+                        if (radio) radio.checked = true;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching workout:', error);
+                    showNotification('Error fetching workout data', 'error');
+                });
         } else {
             modalTitle.textContent = 'Add New Workout';
             workoutForm.reset();
@@ -2175,19 +2303,67 @@
     
     // Save workout when "Save" button is clicked
     if (saveWorkoutBtn) {
-        saveWorkoutBtn.addEventListener('click', () => {
-            // In a real app, you would validate and save to database
-            // For demo, we'll just show a success message
+        saveWorkoutBtn.addEventListener('click', async () => {
             const workoutId = document.getElementById('workout-id').value;
             const isEdit = workoutId !== '';
             
-            if (isEdit) {
-                showNotification('Workout updated successfully', 'success');
-            } else {
-                showNotification('New workout added successfully', 'success');
+            // Get form data
+            const selectedDifficulty = document.querySelector('input[name="difficulty"]:checked');
+            if (!selectedDifficulty) {
+                showNotification('Please select a difficulty level', 'error');
+                return;
             }
             
-            workoutModal.style.display = 'none';
+            const formData = {
+                name: document.getElementById('workout-name').value,
+                description: document.getElementById('workout-description').value,
+                difficulty: selectedDifficulty.value,
+                category: document.getElementById('workout-category').value,
+                duration: parseInt(document.getElementById('workout-duration').value)
+            };
+            
+            try {
+                let response;
+                
+                if (isEdit) {
+                    // Update existing workout
+                    response = await fetch(`/api/workouts/${workoutId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                } else {
+                    // Create new workout
+                    response = await fetch('/api/workouts/create', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                }
+                
+                if (response.ok) {
+                    if (isEdit) {
+                        showNotification('Workout updated successfully', 'success');
+                    } else {
+                        showNotification('New workout added successfully', 'success');
+                    }
+                    
+                    // Reload the page to show updated workouts
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    showNotification(errorData.detail || 'Failed to save workout', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving workout:', error);
+                showNotification('An error occurred while saving the workout', 'error');
+            }
         });
     }
     
@@ -2209,23 +2385,21 @@
             modalTitle.textContent = 'Edit Class';
             document.getElementById('class-id').value = classId;
             
-            // In a real application, you would fetch class data here
-            // For demo purposes, we'll fill with dummy data
-            if (classId === '1') {
-                document.getElementById('class-name').value = 'Olympic Lifting';
-                document.getElementById('class-description').value = 'Master the snatch and clean & jerk with expert technique coaching for maximum power development.';
-                document.getElementById('class-instructor').value = 'Alex Hermes';
-                document.getElementById('class-schedule').value = 'Mon, Wed, Fri - 7:00 AM';
-                document.getElementById('class-level').value = 'All Levels';
-                document.getElementById('class-capacity').value = '15';
-            } else if (classId === '2') {
-                document.getElementById('class-name').value = 'Spartan HIIT';
-                document.getElementById('class-description').value = 'High-intensity interval training inspired by warrior conditioning to push your limits and maximize calorie burn.';
-                document.getElementById('class-instructor').value = 'Marcus Leonidas';
-                document.getElementById('class-schedule').value = 'Tue, Thu - 6:00 PM';
-                document.getElementById('class-level').value = 'Intermediate';
-                document.getElementById('class-capacity').value = '20';
-            }
+            // Fetch class data from API
+            fetch(`/api/classes/${classId}`)
+                .then(response => response.json())
+                .then(gymClass => {
+                    document.getElementById('class-name').value = gymClass.name;
+                    document.getElementById('class-description').value = gymClass.description;
+                    document.getElementById('class-instructor').value = gymClass.instructor;
+                    document.getElementById('class-schedule').value = gymClass.schedule;
+                    document.getElementById('class-level').value = gymClass.level;
+                    document.getElementById('class-capacity').value = gymClass.max_capacity;
+                })
+                .catch(error => {
+                    console.error('Error fetching class:', error);
+                    showNotification('Error fetching class data', 'error');
+                });
         } else {
             modalTitle.textContent = 'Add New Class';
             classForm.reset();
@@ -2290,19 +2464,62 @@
     
     // Save class when "Save" button is clicked
     if (saveClassBtn) {
-        saveClassBtn.addEventListener('click', () => {
-            // In a real app, you would validate and save to database
-            // For demo, we'll just show a success message
+        saveClassBtn.addEventListener('click', async () => {
             const classId = document.getElementById('class-id').value;
             const isEdit = classId !== '';
             
-            if (isEdit) {
-                showNotification('Class updated successfully', 'success');
-            } else {
-                showNotification('New class added successfully', 'success');
-            }
+            // Get form data
+            const formData = {
+                name: document.getElementById('class-name').value,
+                description: document.getElementById('class-description').value,
+                instructor: document.getElementById('class-instructor').value,
+                schedule: document.getElementById('class-schedule').value,
+                level: document.getElementById('class-level').value,
+                max_capacity: parseInt(document.getElementById('class-capacity').value)
+            };
             
-            classModal.style.display = 'none';
+            try {
+                let response;
+                
+                if (isEdit) {
+                    // Update existing class
+                    response = await fetch(`/api/classes/${classId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                } else {
+                    // Create new class
+                    response = await fetch('/api/classes', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                }
+                
+                if (response.ok) {
+                    if (isEdit) {
+                        showNotification('Class updated successfully', 'success');
+                    } else {
+                        showNotification('New class added successfully', 'success');
+                    }
+                    
+                    // Reload the page to show updated classes
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    showNotification(errorData.detail || 'Failed to save class', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving class:', error);
+                showNotification('An error occurred while saving the class', 'error');
+            }
         });
     }
     
