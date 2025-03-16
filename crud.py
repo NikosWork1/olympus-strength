@@ -241,16 +241,10 @@ def get_member_bookings(db: Session, member_id: int, skip: int = 0, limit: int =
 def get_class_bookings(db: Session, class_id: int, skip: int = 0, limit: int = 100):
     return db.query(models.Booking).filter(models.Booking.class_id == class_id).offset(skip).limit(limit).all()
 
+#create_booking function 
 def create_booking(db: Session, booking: schemas.BookingCreate):
     """
     Creates a new booking for a member in a specific class at a specific date/time
-    
-    Args:
-        db: Database session
-        booking: BookingCreate schema with member_id, class_id, and class_date
-        
-    Returns:
-        Created Booking object
     """
     try:
         # Create the booking with all required fields
