@@ -800,9 +800,19 @@ async def create_booking_api(
             
         # Parse the class_date into a datetime object
         try:
-            class_date = datetime.fromisoformat(booking_data["class_date"])
+            # Ensure proper ISO format with validation
+            date_string = booking_data["class_date"]
+            if 'T' not in date_string:
+                raise ValueError("Date string must contain 'T' separator")
+                
+            # Manually parse the date to ensure it's correct
+            date_part, time_part = date_string.split('T')
+            year, month, day = map(int, date_part.split('-'))
+            hour, minute, second = map(int, time_part.split(':'))
+            
+            class_date = datetime(year, month, day, hour, minute, second)
             logger.info(f"Parsed class_date: {class_date}")
-        except ValueError as e:
+        except Exception as e:
             logger.error(f"Error parsing date: {e}")
             raise HTTPException(status_code=400, detail=f"Invalid date format: {e}")
             
