@@ -869,16 +869,21 @@ bookingForm.addEventListener('submit', async function(e) {
             function convertTo24Hour(time12h) {
                 const [time, modifier] = time12h.split(' ');
                 let [hours, minutes] = time.split(':');
-                
-                if (hours === '12') {
-                    hours = '00';
+    
+                // Convert hours to number for proper formatting
+                hours = parseInt(hours, 10);
+    
+                if (hours === 12) {
+                    hours = modifier === 'AM' ? 0 : 12;
+                } else if (modifier === 'PM') {
+                    hours = hours + 12;
                 }
-                
-                if (modifier === 'PM') {
-                    hours = parseInt(hours, 10) + 12;
-                }
-                
-                return `${hours}:${minutes}:00`;
+    
+                // Ensure hours and minutes are formatted with leading zeros
+                hours = hours.toString().padStart(2, '0');
+                minutes = minutes.toString().padStart(2, '0');
+    
+                 return `${hours}:${minutes}:00`;
             }
 
             // Notification function
