@@ -911,29 +911,42 @@ async def my_bookings(request: Request, db: Session = Depends(get_db)):
     if not current_user:
         return RedirectResponse(url="/login", status_code=303)
 
-    # Retrieve bookings from the database with error handling
     try:
-        # Get all bookings for this user
-        bookings = db.query(models.Booking).filter(models.Booking.member_id == current_user.id).all()
+        # Log for debugging
+        logger.info(f"Fetching bookings for user ID: {current_user.id}")
+        
+        # Direct database query for bookings
+        bookings_query = db.query(models.Booking).filter(
+            models.Booking.member_id == current_user.id
+        )
+        
+        # Log the SQL query for debugging
+        logger.info(f"SQL Query: {str(bookings_query)}")
+        
+        # Execute query
+        bookings = bookings_query.all()
+        logger.info(f"Found {len(bookings)} bookings for user")
 
-        # Safely get class details with error handling
+        # Prepare booking details
         booking_details = []
         for booking in bookings:
             try:
-                # Get class details for this booking with error handling
+                # Get class details
                 gym_class = db.query(models.GymClass).filter(models.GymClass.id == booking.class_id).first()
-
+                
                 booking_details.append({
                     "id": booking.id,
-                    "class_name": gym_class.name if gym_class else "Unknown",
+                    "class_name": gym_class.name if gym_class else "Unknown Class",
                     "class_instructor": gym_class.instructor if gym_class else "Unknown",
                     "booking_date": booking.booking_date,
                     "class_date": booking.class_date,
                     "status": booking.status
                 })
+                
+                logger.info(f"Added booking: {booking.id} for class: {gym_class.name if gym_class else 'Unknown'}")
+                
             except Exception as e:
                 logger.error(f"Error processing booking {booking.id}: {e}")
-                # Add a placeholder for the problematic booking
                 booking_details.append({
                     "id": booking.id,
                     "class_name": "Error loading class",
@@ -943,21 +956,23 @@ async def my_bookings(request: Request, db: Session = Depends(get_db)):
                     "status": "Error"
                 })
 
-        # Render the template with the user's booking details
-        # Note: Use mybookings.html not my_bookings.html
+        # Check if bookings were found
+        if not booking_details:
+            logger.info("No bookings found for this user")
+
+        # Render template with bookings
         return templates.TemplateResponse("mybookings.html", {
             "request": request,
             "current_user": current_user,
             "bookings": booking_details
         })
     except Exception as e:
-        logger.error(f"Error in my_bookings route: {e}")
+        logger.error(f"Error in my_bookings route: {e}", exc_info=True)
         return templates.TemplateResponse("error.html", {
             "request": request,
-            "error_message": "There was an error loading your bookings. Please try again later.",
+            "error_message": f"There was an error loading your bookings: {str(e)}",
             "current_user": current_user
         })
-
 
 # Maps page
 @app.get("/maps", response_class=HTMLResponse)
@@ -1365,6 +1380,48 @@ async def gallery(request: Request, db: Session = Depends(get_db)):
         "request": request,
         "current_user": current_user
     })
+
+#Cancel booking endpoint
+
+@app.put("/api/bookings/{booking_id}/cancel", response_model=schemas.Booking)
+async def cancel_booking(
+    booking_id: int,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    try:
+        # Get current user
+        current_user = await get_optional_user(request, db)
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Not authenticated")
+        
+        # Get the booking
+        booking = db.query(models.Booking).filter(models.Booking.id == booking_id).first()
+        if not booking:
+            raise HTTPException(status_code=404, detail="Booking not found")
+        
+        # Check if the booking belongs to the user
+        if booking.member_id != current_user.id:
+            raise HTTPException(status_code=403, detail="You don't have permission to cancel this booking")
+        
+        # Check if the booking can be cancelled (not already cancelled or completed)
+        if booking.status != "confirmed":
+            raise HTTPException(status_code=400, detail=f"Cannot cancel booking in '{booking.status}' status")
+        
+        # Update booking status
+        booking.status = "cancelled"
+        db.commit()
+        db.refresh(booking)
+        
+        # Log the cancellation
+        logger.info(f"Booking {booking_id} cancelled by user {current_user.id}")
+        
+        return booking
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error cancelling booking: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 # Run the app
 if __name__ == "__main__":
